@@ -1,0 +1,312 @@
+<app-cart [(isCartOpen)]="isCartOpen"></app-cart>
+
+<div class="page-header">
+  <div class="header-main-bar">
+    <div class="header-logo">
+      <a (click)="goToHome()"><img src="assets/images/content/logo.png"></a>
+    </div>
+
+    <div class="header-user-utilities">
+      <button *ngIf="isMobile && sizeChecked"
+              class="utility-btn mobile-menu-toggle"
+              type="button"
+              (click)="toggleMobileNav()"
+              aria-label="Open menu">
+        <img src="assets/images/content/menu-icon.svg" alt="Menu icon" />
+      </button>
+
+      <button class="utility-btn" type="button" aria-label="Search" (click)="toggleSearch()">
+        <img src="assets/images/content/search-icon.svg" alt="Search icon" />
+      </button>
+      <button class="utility-btn cart-button" (click)="toggleOpenCart()" aria-label="Cart">
+        <img src="assets/images/content/cart-icon.svg" alt="Cart icon">
+        <span class="cart-badge" *ngIf="cartCount">{{cartCount}}</span>
+      </button>
+
+      <div *ngIf="!isMobile && sizeChecked" class="language-dropdown" [class.open]="isLanguageDropdownOpen">
+        <button class="language-dropdown__trigger" (click)="toggleLanguageDropdown($event)">
+          {{selectedLanguage}}
+          <svg class="menu-chevron" xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 100 100" fill="currentColor"><path d="M78.466,35.559L50.15,63.633L22.078,35.317c-0.777-0.785-2.044-0.789-2.828-0.012s-0.789,2.044-0.012,2.827L48.432,67.58c0.365,0.368,0.835,0.563,1.312,0.589c0.139,0.008,0.278-0.001,0.415-0.021c0.054,0.008,0.106,0.021,0.16,0.022c0.544,0.029,1.099-0.162,1.515-0.576l29.447-29.196c0.785-0.777,0.79-2.043,0.012-2.828S79.249,34.781,78.466,35.559z"/></svg>
+        </button>
+        <div class="language-dropdown__menu" *ngIf="isLanguageDropdownOpen">
+          <button class="language-dropdown__option"
+                  *ngFor="let language of languages"
+                  [class.active]="selectedLanguage === language"
+                  (click)="selectLanguage(language, $event)">
+            {{language}}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="header-nav-bar" *ngIf="!isMobile && sizeChecked">
+    <div class="nav-item-wrap nav-item-wrap--catalog"
+         (mouseenter)="onNavMouseEnter()"
+         (mouseleave)="onNavMouseLeave()">
+      <button class="nav-item nav-item--catalog" [class.active]="menuOpened"
+              (click)="toggleMenuOpened(!menuOpened)">
+        {{ data.QUICK_MENU['CATALOG'] | translate }}
+        <svg class="menu-chevron" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 100 100" fill="currentColor"><path d="M78.466,35.559L50.15,63.633L22.078,35.317c-0.777-0.785-2.044-0.789-2.828-0.012s-0.789,2.044-0.012,2.827L48.432,67.58c0.365,0.368,0.835,0.563,1.312,0.589c0.139,0.008,0.278-0.001,0.415-0.021c0.054,0.008,0.106,0.021,0.16,0.022c0.544,0.029,1.099-0.162,1.515-0.576l29.447-29.196c0.785-0.777,0.79-2.043,0.012-2.828S79.249,34.781,78.466,35.559z"/></svg>
+      </button>
+    </div>
+
+        <button class="nav-item" *ngFor="let link of topNavLinks"
+          [class.active]="isTopNavLinkActive(link)"
+          (click)="handleTopNavClick(link)">
+      {{ link.label }}
+    </button>
+
+        <button class="nav-item" *ngFor="let link of staticNavLinks"
+          [class.active]="isActiveNav(link.path)"
+          (click)="goToNavLink(link)">
+          {{ link.label }}
+        </button>
+  </div>
+
+  <div class="mobile-nav-backdrop" [class.visible]="isMobileNavOpen" (click)="toggleMobileNav(false)"></div>
+
+  <aside class="mobile-nav" [class.open]="isMobileNavOpen">
+    <div class="mobile-nav__head">
+      <a class="mobile-nav__logo" (click)="goToHome()">
+        <img src="assets/images/content/logo-white.png" alt="Altdecor" />
+      </a>
+      <button type="button" class="mobile-nav__close" aria-label="Close menu" (click)="toggleMobileNav(false)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="mobile-nav__links">
+      <div class="mobile-nav__section" *ngIf="generalDetails?.catalog?.length">
+        <button class="mobile-nav-link mobile-nav-link--catalog" type="button"
+                [class.fade-row]="isMobileNavOpen"
+                [style.animation-delay]="isMobileNavOpen ? '0ms' : '0ms'"
+                (click)="downloadPdf(generalDetails.catalog)">
+          {{ data.QUICK_MENU['CATALOG'] | translate }}
+          <svg class="external-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="mobile-nav__divider" *ngIf="generalDetails?.catalog?.length"></div>
+
+      <div class="mobile-nav__section">
+        <div class="mobile-nav-expandable" *ngFor="let productType of drawerMenuItems; let j = index"
+             [style.animation-delay]="isMobileNavOpen ? ((j + 1) * 28) + 'ms' : '0ms'"
+             [class.fade-row]="isMobileNavOpen">
+          <button class="mobile-nav-link mobile-nav-link--expandable" type="button"
+                  [class.expanded]="expandedMobileType === productType.type.id"
+                  (click)="productType.categories?.length ? toggleMobileType(productType.type.id) : navigateDrawerLink(productType.drawerLink)">
+            <span class="mobile-nav-link__wrapper"><span class="mobile-nav-link__icon" [ngSwitch]="getIconKey(productType)">
+              <img *ngSwitchCase="'__img__'" [src]="productType.drawerIcon" alt="" width="20" height="20" style="object-fit: contain;"/>
+              <svg *ngSwitchCase="'layers'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+              <svg *ngSwitchCase="'hexagon'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+              <svg *ngSwitchCase="'square'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>
+              <svg *ngSwitchCase="'puzzle'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19.439 7.85c-.049.322.059.648.289.878l1.568 1.568c.47.47.706 1.087.706 1.704s-.235 1.233-.706 1.704l-1.611 1.611a.98.98 0 0 1-.837.276c-.47-.07-.802-.48-.968-.925a2.501 2.501 0 1 0-3.214 3.214c.446.166.855.497.925.968a.979.979 0 0 1-.276.837l-1.61 1.61a2.404 2.404 0 0 1-1.705.707 2.402 2.402 0 0 1-1.704-.706l-1.568-1.568a1.026 1.026 0 0 0-.877-.29c-.493.074-.84.504-1.02.968a2.5 2.5 0 1 1-3.237-3.237c.464-.18.894-.527.967-1.02a1.026 1.026 0 0 0-.289-.877l-1.568-1.568A2.402 2.402 0 0 1 1.998 12c0-.617.236-1.234.706-1.704L4.23 8.77c.24-.24.581-.353.917-.303.515.077.877.528 1.073 1.01a2.5 2.5 0 1 0 3.259-3.259c-.482-.196-.933-.558-1.01-1.073-.05-.336.062-.676.303-.917l1.525-1.525A2.402 2.402 0 0 1 12 1.998c.617 0 1.234.236 1.704.706l1.568 1.568c.23.23.556.338.877.29.493-.074.84-.504 1.02-.969a2.5 2.5 0 1 1 3.237 3.237c-.464.18-.894.527-.967 1.02Z"/></svg>
+              <svg *ngSwitchCase="'home'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              <svg *ngSwitchCase="'ruler'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></svg>
+              <svg *ngSwitchCase="'sliders'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+              <svg *ngSwitchCase="'droplets'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/></svg>
+              <svg *ngSwitchCase="'settings'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              <svg *ngSwitchDefault xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+            </span>
+            <span class="mobile-nav-link__text">{{ getLocalizedLabel(productType.type?.label) }}</span></span>
+            <svg class="chevron-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </button>
+
+          <div class="mobile-nav-subcategories" [class.open]="expandedMobileType === productType.type.id">
+            <button type="button" class="mobile-nav-subcategory mobile-nav-subcategory--viewall"
+                    *ngIf="productType.drawerLink"
+                    (click)="navigateDrawerLink(productType.drawerLink)">
+              <span class="mobile-nav-subcategory__icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 16 16 12 12 8"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+              </span>
+              {{ getStaticLinkLabel('viewAll') }}
+            </button>
+            <button type="button"
+                    class="mobile-nav-subcategory"
+                    *ngFor="let category of $any(productType.categories)"
+                    (click)="goToCategoryMobile($any(category))">
+              <span class="mobile-nav-subcategory__icon" [ngSwitch]="getSubcategoryIcon($any(category).label)">
+                <svg *ngSwitchCase="'pentagon'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l9.09 6.61L18.18 20H5.82L2.91 8.61z"/></svg>
+                <svg *ngSwitchCase="'palette'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="0.5"/><circle cx="17.5" cy="10.5" r="0.5"/><circle cx="8.5" cy="7.5" r="0.5"/><circle cx="6.5" cy="12.5" r="0.5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+                <svg *ngSwitchCase="'box'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                <svg *ngSwitchCase="'sticker'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 3H5a2 2 0 0 0-2 2v14c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2V8.5L15.5 3Z"/><path d="M14 3v4a2 2 0 0 0 2 2h4"/></svg>
+                <svg *ngSwitchCase="'leaf'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.9C15.5 4.9 17 3.5 19 2c1 2 2 4.5 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+                <svg *ngSwitchDefault xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
+              </span>
+              {{ getLocalizedLabel($any(category).label) }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mobile-nav__divider"></div>
+
+      <div class="mobile-nav__section">
+        <button class="mobile-nav-link" type="button"
+                [style.animation-delay]="isMobileNavOpen ? ((drawerMenuItems.length + 1) * 28) + 'ms' : '0ms'"
+                [class.fade-row]="isMobileNavOpen"
+                (click)="goToNavLink({ path: '/blog' })">
+          <span class="mobile-nav-link__icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          </span>
+          {{ getStaticLinkLabel('blog') }}
+        </button>
+
+        <button class="mobile-nav-link" type="button"
+                [style.animation-delay]="isMobileNavOpen ? ((drawerMenuItems.length + 2) * 28) + 'ms' : '0ms'"
+                [class.fade-row]="isMobileNavOpen"
+                (click)="goToNavLink({ path: '/contacts' })">
+          <span class="mobile-nav-link__icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </span>
+          {{ getStaticLinkLabel('contacts') }}
+        </button>
+      </div>
+    </div>
+
+    <div class="mobile-nav__footer" *ngIf="isMobile && sizeChecked">
+      <svg class="mobile-nav__globe" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+      <button class="mobile-lang-btn"
+              [class.active]="selectedLanguage === language"
+              (click)="switchLanguage(language)"
+              *ngFor="let language of languages">
+        {{language}}
+      </button>
+    </div>
+  </aside>
+
+  <div class="product-menu"
+      (mouseenter)="onNavMouseEnter()"
+      (mouseleave)="onNavMouseLeave()"
+       *ngIf="menuOpened && !isMobile">
+    <div class="main-panel">
+      <div class="product-main-type" *ngFor="let productType of productsMenuData">
+        <div class="type-label" [ngClass]="{active: productType.type.active}"
+             (mouseover)="setActiveType(productType.type.id)">
+          <span class="type-label__icon" [ngSwitch]="getDesktopIconKey(productType)">
+            <img *ngSwitchCase="'__img__'" [src]="productType.desktopIcon" alt="" width="20" height="20" style="object-fit: contain;"/>
+            <svg *ngSwitchCase="'layers'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+            <svg *ngSwitchCase="'hexagon'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            <svg *ngSwitchCase="'square'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>
+            <svg *ngSwitchCase="'puzzle'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19.439 7.85c-.049.322.059.648.289.878l1.568 1.568c.47.47.706 1.087.706 1.704s-.235 1.233-.706 1.704l-1.611 1.611a.98.98 0 0 1-.837.276c-.47-.07-.802-.48-.968-.925a2.501 2.501 0 1 0-3.214 3.214c.446.166.855.497.925.968a.979.979 0 0 1-.276.837l-1.61 1.61a2.404 2.404 0 0 1-1.705.707 2.402 2.402 0 0 1-1.704-.706l-1.568-1.568a1.026 1.026 0 0 0-.877-.29c-.493.074-.84.504-1.02.968a2.5 2.5 0 1 1-3.237-3.237c.464-.18.894-.527.967-1.02a1.026 1.026 0 0 0-.289-.877l-1.568-1.568A2.402 2.402 0 0 1 1.998 12c0-.617.236-1.234.706-1.704L4.23 8.77c.24-.24.581-.353.917-.303.515.077.877.528 1.073 1.01a2.5 2.5 0 1 0 3.259-3.259c-.482-.196-.933-.558-1.01-1.073-.05-.336.062-.676.303-.917l1.525-1.525A2.402 2.402 0 0 1 12 1.998c.617 0 1.234.236 1.704.706l1.568 1.568c.23.23.556.338.877.29.493-.074.84-.504 1.02-.969a2.5 2.5 0 1 1 3.237 3.237c-.464.18-.894.527-.967 1.02Z"/></svg>
+            <svg *ngSwitchCase="'home'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <svg *ngSwitchCase="'ruler'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></svg>
+            <svg *ngSwitchCase="'sliders'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+            <svg *ngSwitchCase="'droplets'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/></svg>
+            <svg *ngSwitchCase="'settings'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <svg *ngSwitchDefault xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+          </span>
+          {{ getLocalizedLabel(productType.type.label) }}
+          <svg class="menu-chevron" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 100 100" fill="currentColor"><path d="M78.466,35.559L50.15,63.633L22.078,35.317c-0.777-0.785-2.044-0.789-2.828-0.012s-0.789,2.044-0.012,2.827L48.432,67.58c0.365,0.368,0.835,0.563,1.312,0.589c0.139,0.008,0.278-0.001,0.415-0.021c0.054,0.008,0.106,0.021,0.16,0.022c0.544,0.029,1.099-0.162,1.515-0.576l29.447-29.196c0.785-0.777,0.79-2.043,0.012-2.828S79.249,34.781,78.466,35.559z"/></svg>
+        </div>
+
+        <ng-container *ngIf="productType.type.active">
+          <div class="type-categories" *ngFor="let category of productType.categories">
+            <div class="type-category" [ngClass]="{active: category.id === activeCategoryId}"
+                (click)="goToCategory(category.url, category.label)"
+                 (mouseover)="setActiveCategory(category.id, category.products)">
+              {{ getLocalizedLabel(category.label) }}
+            </div>
+          </div>
+        </ng-container>
+      </div>
+
+      <div class="product-main-type">
+        <div class="type-label" (click)="downloadPdf(generalDetails.catalog)">
+          <span class="type-label__icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          </span>
+          {{ data.QUICK_MENU['CATALOG'] | translate }}
+        </div>
+      </div>
+
+      <div class="product-main-type">
+        <a class="link-item type-label" (click)="goToNavLink({ path: data.MENU['CONTACTS']['LINK'] || '/contacts' })">
+          <span class="type-label__icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </span>
+          {{ data.MENU['CONTACTS']['LABEL'] | translate }}
+        </a>
+      </div>
+
+      <div *ngIf="isMobile && sizeChecked" class="language-switch mobile-language-switch">
+        <button class="language-switch-button language-switch-margin"
+                [ngClass]="{ 'selected-language': selectedLanguage === language }"
+                (click)="switchLanguage(language)"
+                *ngFor="let language of languages">
+          {{language}}
+        </button>
+      </div>
+    </div>
+
+    <div class="product-preview" *ngIf="showProducts?.length">
+      <div class="preview-card"
+              *ngFor="let product of showProducts | slice:0:21"
+              (click)="goToNavLink({ path: '/products/' + product.id })">
+        <div class="preview-image" [style.background-image]="'url(' + product.image + ')'">
+        </div>
+        <div class="preview-info">
+          <h4>{{ getLocalizedLabel(product.title) }}</h4>
+        </div>
+      </div>
+    </div>
+    <div class="product-preview product-preview--empty" *ngIf="!showProducts?.length">
+      <div class="no-products-msg">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <p>Selectați o categorie</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search overlay -->
+  <div class="search-overlay" [class.visible]="isSearchOpen">
+    <div class="search-overlay__bar">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input #searchInput type="text"
+             [(ngModel)]="clientSearchQuery"
+             (ngModelChange)="onClientSearch($event)"
+             (keydown.escape)="toggleSearch(false)"
+             (keydown.enter)="goToSearchResults()"
+             [placeholder]="searchPlaceholder"
+             autocomplete="off" />
+      <button type="button" class="search-overlay__close" (click)="toggleSearch(false)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="search-overlay__results" *ngIf="clientSearchResults.length">
+      <button class="search-overlay__item" *ngFor="let result of clientSearchResults"
+              (click)="goToProduct(result.id)">
+        <img *ngIf="result.image" [src]="result.image" [alt]="result.title" class="search-overlay__thumb" />
+        <div class="search-overlay__info">
+          <span class="search-overlay__title">{{ result.title }}</span>
+          <span class="search-overlay__price" *ngIf="result.price">{{ result.price }}</span>
+        </div>
+      </button>
+    </div>
+    <div class="search-overlay__empty" *ngIf="clientSearchQuery.length >= 2 && !clientSearchResults.length && !isClientSearching">
+      {{ searchNoResults }}
+    </div>
+  </div>
+
+</div>

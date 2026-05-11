@@ -1,0 +1,81 @@
+@import "../variables";
+
+.card-title {
+  font-family: $font-sans-serif-bd;
+  font-size: $font-size-base * 1.5;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.17;
+  letter-spacing: normal;
+  color: $main-text-color;
+}
+
+.btn {
+  font-family: $font-sans-serif-bd;
+  box-shadow: $btn-box-shadow;
+  padding-top: $size-1 * .565;
+  padding-bottom: $size-1 * .565;
+
+  &:hover {
+    box-shadow: $btn-box-shadow-hover;
+  }
+
+  &:focus,
+  &:active,
+  &:not(:disabled):not(.disabled):active:focus {
+    box-shadow: $btn-box-shadow-hover;
+  }
+
+  &:disabled {
+    background-color: $gray-300;
+    border-color: $gray-300;
+    color: $gray-500;
+    box-shadow: $btn-box-shadow;
+  }
+}
+
+.btn-primary {
+  border-color: $yellow !important;
+  &:hover:not(:disabled) {
+    background-color: $yellow-hover;
+    border-color: $yellow;
+  }
+
+  &:focus,
+  &:active,
+  &:not(:disabled):not(.disabled):active {
+    background-color: $yellow-active;
+    border-color: $yellow-active;
+  }
+}
+
+.card-header {
+  border: none !important;
+}
+
+.modal-content {
+  border: none;
+}
+
+.modal {
+  app-confirmation-dialog {
+    .card {
+      border: none;
+    }
+  }
+}
+
+code {
+  padding: ($size-1 * .75) ($size-1 * .875);
+  background: $gray-200;
+  color: $yellow !important;
+  display: flex;
+  align-items: center;
+
+  svg {
+    path {
+      fill: $yellow !important;
+    }
+  }
+}

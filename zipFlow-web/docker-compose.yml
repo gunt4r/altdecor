@@ -1,0 +1,21 @@
+services:
+  altdecor-client:
+    build: .
+    image: altdecor-client:latest
+    container_name: altdecor-client
+    env_file:
+      - .env
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ${SSL_CERT_PATH:-/etc/letsencrypt/live/altdecor.md/fullchain.pem}:/etc/letsencrypt/live/altdecor.md/fullchain.pem
+      - ${SSL_KEY_PATH:-/etc/letsencrypt/live/altdecor.md/privkey.pem}:/etc/letsencrypt/live/altdecor.md/privkey.pem
+    ports:
+      - "${WEB_HTTPS_PORT:-443}:443"
+      - "${WEB_HTTP_PORT:-80}:80"
+    networks:
+      - altdecor-network
+    restart: always
+
+networks:
+  altdecor-network:
+    external: true

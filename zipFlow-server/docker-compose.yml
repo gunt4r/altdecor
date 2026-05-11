@@ -1,0 +1,44 @@
+services:
+  altdecor-db:
+    image: postgres:15-alpine
+    container_name: altdecor-db
+    environment:
+      POSTGRES_DB: altdecor
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - altdecor-network
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  altdecor-server:
+    container_name: altdecor-server
+    build: .
+    image: altdecor-server
+    depends_on:
+      altdecor-db:
+        condition: service_healthy
+    ports:
+      - "${SERVER_PORT:-8080}:8080"
+    env_file:
+      - .env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://altdecor-db:5432/altdecor
+    networks:
+      - altdecor-network
+    restart: always
+
+volumes:
+  postgres_data:
+
+networks:
+  altdecor-network:
+    external: true

@@ -1,0 +1,191 @@
+<section class="site-config-page">
+  <div class="site-config-page__head">
+    <div>
+      <p class="site-config-page__eyebrow">Admin content</p>
+      <h1>Site configuration</h1>
+      <p class="site-config-page__description">Desktop menu, drawer menu, homepage categories, hero banners, promo banners, catalog PDF, and designer contacts are editable from here.</p>
+    </div>
+    <button class="site-config-page__primary" type="button" (click)="startCreate()" [disabled]="loading || saving">
+      Add {{ getActiveTypeDef().label }}
+    </button>
+  </div>
+
+  <div class="site-config-tabs">
+    <button
+      *ngFor="let type of configTypes"
+      type="button"
+      class="site-config-tab"
+      [class.active]="activeTab === type.value"
+      (click)="selectTab(type.value)">
+      <span>{{ type.label }}</span>
+      <small>{{ getEntryCount(type.value) }}</small>
+    </button>
+  </div>
+
+  <div class="site-config-toolbar">
+    <input
+      type="search"
+      class="site-config-toolbar__search"
+      placeholder="Search labels, links, tags..."
+      [ngModel]="entrySearch"
+      (ngModelChange)="onSearchChange($event)">
+    <div class="site-config-toolbar__meta">
+      <span>{{ getActiveTypeDef().description }}</span>
+    </div>
+  </div>
+
+  <div class="site-config-grid">
+    <div class="site-config-list">
+      <div class="site-config-empty" *ngIf="!loading && !filteredEntries.length">
+        No entries found for this section.
+      </div>
+
+      <article class="site-config-card" *ngFor="let entry of filteredEntries">
+        <div class="site-config-card__content">
+          <p class="site-config-card__type">{{ getActiveTypeDef().label }}</p>
+          <h3>{{ getLocalizedLabel(getField(entry, 'label')) || 'Untitled entry' }}</h3>
+          <p *ngIf="getField(entry, 'link')" class="site-config-card__link">{{ getField(entry, 'link') }}</p>
+          <div class="site-config-card__meta">
+            <span>Order {{ getField(entry, 'order_index') || '—' }}</span>
+            <span [class.inactive]="getField(entry, 'is_active') === false">{{ getField(entry, 'is_active') === false ? 'Inactive' : 'Active' }}</span>
+          </div>
+        </div>
+        <div class="site-config-card__actions">
+          <button type="button" (click)="startEdit(entry)">Edit</button>
+          <button type="button" (click)="cloneEntry(entry)">Clone</button>
+          <button type="button" class="danger" (click)="deleteEntry(entry)">Delete</button>
+        </div>
+      </article>
+    </div>
+
+    <div class="site-config-editor" *ngIf="isCreating || editingEntry">
+      <div class="site-config-editor__head">
+        <div>
+          <p>{{ isCreating ? 'Create entry' : 'Edit entry' }}</p>
+          <h2>{{ getActiveTypeDef().label }}</h2>
+        </div>
+        <button type="button" class="ghost" (click)="cancelEdit()">Close</button>
+      </div>
+
+      <div class="site-config-language-switch" *ngIf="getActiveTypeDef().fields.length">
+        <button
+          *ngFor="let lang of languages"
+          type="button"
+          [class.active]="activeLang === lang"
+          (click)="activeLang = lang">
+          {{ lang | uppercase }}
+        </button>
+      </div>
+
+      <div class="site-config-form">
+        <ng-container *ngFor="let field of getActiveTypeDef().fields">
+          <label class="site-config-field">
+            <span class="site-config-field__label">{{ field.label }}</span>
+            <small *ngIf="field.help" class="site-config-field__help">{{ field.help }}</small>
+
+            <ng-container [ngSwitch]="field.type">
+              <input
+                *ngSwitchCase="'text'"
+                [placeholder]="field.placeholder || ''"
+                [(ngModel)]="formData[field.key]"
+                type="text">
+
+              <textarea
+                *ngSwitchCase="'textarea'"
+                [placeholder]="field.placeholder || ''"
+                [(ngModel)]="formData[field.key]"
+                rows="4"></textarea>
+
+              <input
+                *ngSwitchCase="'number'"
+                [placeholder]="field.placeholder || ''"
+                [(ngModel)]="formData[field.key]"
+                type="number">
+
+              <div *ngSwitchCase="'toggle'" class="site-config-toggle">
+                <button
+                  type="button"
+                  [class.active]="formData[field.key]"
+                  (click)="formData[field.key] = !formData[field.key]">
+                  {{ formData[field.key] ? 'Enabled' : 'Disabled' }}
+                </button>
+              </div>
+
+              <div *ngSwitchCase="'translated'" class="site-config-translated">
+                <input
+                  *ngFor="let lang of languages"
+                  [placeholder]="(field.placeholder || field.label) + ' (' + lang.toUpperCase() + ')'"
+                  [(ngModel)]="formData[field.key][lang]"
+                  [class.active]="activeLang === lang"
+                  type="text">
+              </div>
+
+              <div *ngSwitchCase="'dropdown'" class="site-config-dropdown">
+                <select [(ngModel)]="formData[field.key]">
+                  <option *ngFor="let option of field.options || []" [ngValue]="option.value">{{ option.label }}</option>
+                </select>
+              </div>
+
+              <div *ngSwitchCase="'file'" class="site-config-upload">
+                <input [placeholder]="field.placeholder || ''" [(ngModel)]="formData[field.key]" type="text">
+                <div class="site-config-upload__actions">
+                  <input type="file" [accept]="field.accept || '*'" (change)="onFileSelected($event, field.key)">
+                  <button type="button" class="ghost" (click)="clearFileField(field.key)">Clear</button>
+                </div>
+                <small *ngIf="uploadedFileNames[field.key]">Uploaded: {{ uploadedFileNames[field.key] }}</small>
+              </div>
+
+              <div *ngSwitchCase="'icon'" class="site-config-icon">
+                <div class="site-config-icon__modes">
+                  <button type="button" [class.active]="getIconMode(field.key) === 'predefined'" (click)="setIconMode(field.key, 'predefined')">Preset</button>
+                  <button type="button" [class.active]="getIconMode(field.key) === 'url'" (click)="setIconMode(field.key, 'url')">URL</button>
+                  <button type="button" [class.active]="getIconMode(field.key) === 'file'" (click)="setIconMode(field.key, 'file')">Upload</button>
+                </div>
+
+                <select *ngIf="getIconMode(field.key) === 'predefined'" [(ngModel)]="formData[field.key]">
+                  <option *ngFor="let option of predefinedIcons" [ngValue]="option.value">{{ option.label }}</option>
+                </select>
+
+                <input *ngIf="getIconMode(field.key) === 'url'" [(ngModel)]="formData[field.key]" type="text" placeholder="https://...">
+
+                <div *ngIf="getIconMode(field.key) === 'file'" class="site-config-upload">
+                  <input [placeholder]="field.placeholder || ''" [(ngModel)]="formData[field.key]" type="text">
+                  <input type="file" accept="image/*" (change)="onIconFileSelected($event, field.key)">
+                </div>
+              </div>
+
+              <div *ngSwitchCase="'tags'" class="site-config-repeaters">
+                <div class="site-config-repeater" *ngFor="let tag of formData[field.key] || []; let i = index">
+                  <div class="site-config-translated">
+                    <input *ngFor="let lang of languages" [(ngModel)]="formData[field.key][i][lang]" [placeholder]="'Tag (' + lang.toUpperCase() + ')'" type="text">
+                  </div>
+                  <button type="button" class="danger ghost" (click)="removeTag(field.key, i)">Remove tag</button>
+                </div>
+                <button type="button" class="ghost" (click)="addTag(field.key)">Add tag</button>
+              </div>
+
+              <div *ngSwitchCase="'children'" class="site-config-repeaters">
+                <div class="site-config-repeater" *ngFor="let child of formData[field.key] || []; let i = index">
+                  <div class="site-config-translated">
+                    <input *ngFor="let lang of languages" [(ngModel)]="formData[field.key][i].label[lang]" [placeholder]="'Child label (' + lang.toUpperCase() + ')'" type="text">
+                  </div>
+                  <input [(ngModel)]="formData[field.key][i].link" type="text" placeholder="/products?...">
+                  <input [(ngModel)]="formData[field.key][i].icon" type="text" placeholder="Icon key (optional)">
+                  <button type="button" class="danger ghost" (click)="removeChild(i)">Remove sub-item</button>
+                </div>
+                <button type="button" class="ghost" (click)="addChild()">Add sub-item</button>
+              </div>
+            </ng-container>
+          </label>
+        </ng-container>
+      </div>
+
+      <div class="site-config-editor__actions">
+        <button type="button" class="ghost" (click)="cancelEdit()">Cancel</button>
+        <button type="button" class="primary" (click)="save()" [disabled]="saving">
+          {{ saving ? 'Saving...' : 'Save entry' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

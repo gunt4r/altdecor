@@ -1,0 +1,49 @@
+.page {
+  &.inactive {
+    overflow: hidden;
+    max-height: 100vh;
+  }
+}
+
+.app-container {
+  margin: auto;
+  position: relative;
+  min-height: calc(100vh - 700px);
+
+  .dialog {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+  }
+}
+
+@media only screen and (max-width: 1440px) {
+  .app-container {
+    max-width: 100%;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .app-container {
+    .dialog {
+      top: 40px;
+    }
+  }
+}
+
+@media only screen and (max-width: 531px) {
+  .app-container {
+    .dialog {
+      top: 20px;
+    }
+  }
+}
+
+@media only screen and (max-width: 382px) {
+  .app-container {
+    .dialog {
+      top: 0;
+    }
+  }
+}

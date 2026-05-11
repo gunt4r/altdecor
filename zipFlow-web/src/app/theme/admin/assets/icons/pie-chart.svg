@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16.3" height="16.303" viewBox="0 0 16.3 16.303">
+    <defs>
+        <style>
+            .cls-2-pie-chart-icon{fill:currentColor;stroke:currentColor;stroke-width:.3px}
+        </style>
+    </defs>
+    <g id="pie-chart" transform="translate(.1 .15)" style="opacity:.8">
+        <g id="Group_22638" data-name="Group 22638" transform="translate(.05)">
+            <path id="Path_17477" data-name="Path 17477" class="cls-2-pie-chart-icon" d="M13.883 57.79H7.647v-6.236a.452.452 0 0 0-.454-.454 7.143 7.143 0 1 0 7.143 7.143.456.456 0 0 0-.453-.453zm-6.69 6.69a6.236 6.236 0 0 1-.453-12.456v6.219a.452.452 0 0 0 .454.454h6.219a6.242 6.242 0 0 1-6.22 5.782z" transform="translate(-.05 -49.383)"/>
+            <path id="Path_17478" data-name="Path 17478" class="cls-2-pie-chart-icon" d="M257.747 7.12A7.142 7.142 0 0 0 250.6 0a.452.452 0 0 0-.454.454v6.69a.452.452 0 0 0 .454.454h6.69a.452.452 0 0 0 .454-.454zm-6.69-.427V.927a6.24 6.24 0 0 1 5.766 5.766h-5.766z" transform="translate(-241.747)"/>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,58 @@
+<div class="page-footer">
+  <div class="footer-inner">
+    <section class="footer-brand">
+      <a class="footer-logo" (click)="navigate('/')">
+        <img src="assets/images/content/logo-white.png" alt="Altdecor logo" />
+      </a>
+      <p class="footer-description">{{ footerDescription }}</p>
+
+      <div class="footer-socials">
+        <a class="social-link" *ngFor="let socialMediaItem of socialMediaKeys"
+           (click)="navigate(data.SOCIAL_MEDIA[socialMediaItem]['LINK'])"
+           [attr.aria-label]="data.SOCIAL_MEDIA[socialMediaItem]['ALT']">
+          <img [src]="data.SOCIAL_MEDIA[socialMediaItem]['IMG']" [alt]="data.SOCIAL_MEDIA[socialMediaItem]['ALT']" />
+        </a>
+      </div>
+    </section>
+
+    <section class="footer-column">
+      <h3>{{ footerLabels.magazine }}</h3>
+      <a class="footer-link" (click)="navigate('/contacts')">str. Grenoble 149B</a>
+      <a class="footer-link" (click)="navigate('/contacts')">str. Uzinelor 205/1, et.2</a>
+      <div class="footer-schedule" *ngIf="generalDetails.schedule">
+        <p class="footer-schedule-item">{{ generalDetails.schedule | translate }}</p>
+      </div>
+    </section>
+
+    <section class="footer-column">
+      <h3>{{ footerLabels.produse }}</h3>
+      <a class="footer-link"
+         *ngFor="let menuItemKey of getMenuItems('Collections') | slice:0:7"
+         (click)="navigate(data.MENU['Collections'][menuItemKey]['LINK'])">
+        {{data.MENU['Collections'][menuItemKey]['LABEL']}}
+      </a>
+    </section>
+
+    <section class="footer-column">
+      <h3>{{ footerLabels.informatii }}</h3>
+      <a class="footer-link"
+         *ngFor="let menuItemKey of getMenuItems('Informatii') | slice:0:4"
+         (click)="navigate(data.MENU['Informatii'][menuItemKey]['LINK'])">
+        {{data.MENU['Informatii'][menuItemKey]['LABEL']}}
+      </a>
+    </section>
+  </div>
+
+  <div class="footer-bottom">
+    <p class="copyright-text">
+      {{data.COPYRIGHT}} {{currentYear}} <a routerLink="/">{{data.COPYRIGHT_OWNER}}</a>. All rights reserved. Prices subject to change.
+    </p>
+
+    <div class="footer-legal-links">
+      <a *ngFor="let legalKey of getMenuItems('Legal')"
+         (click)="navigate(data.MENU['Legal'][legalKey]['LINK'])">
+        {{data.MENU['Legal'][legalKey]['LABEL']}}
+      </a>
+    </div>
+  </div>
+</div>

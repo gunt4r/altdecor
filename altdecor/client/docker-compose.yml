@@ -1,0 +1,19 @@
+services:
+  altdecor-client:
+    build: .
+    image: altdecor-client:latest
+    container_name: altdecor-client
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - /etc/letsencrypt/live/altdecor.md/fullchain.pem:/etc/letsencrypt/live/altdecor.md/fullchain.pem
+      - /etc/letsencrypt/live/altdecor.md/privkey.pem:/etc/letsencrypt/live/altdecor.md/privkey.pem
+    ports:
+      - "443:443"
+      - "80:80"
+    networks:
+      - altdecor-network
+    restart: always
+
+networks:
+  altdecor-network:
+    external: true

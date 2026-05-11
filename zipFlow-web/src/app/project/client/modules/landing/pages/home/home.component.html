@@ -1,0 +1,167 @@
+<main class="figma-home">
+  <section class="hero">
+    <div class="hero__skeleton" *ngIf="!heroImageLoaded">
+      <div class="hero__skeleton-shimmer"></div>
+      <div class="hero__skeleton-content">
+        <div class="skeleton skeleton--hero-title"></div>
+        <div class="skeleton skeleton--hero-btn"></div>
+        <div class="hero__skeleton-stats">
+          <div class="skeleton skeleton--hero-stat" *ngFor="let i of [1, 2, 3]"></div>
+        </div>
+      </div>
+    </div>
+    <img class="hero__bg-image"
+         [class.loaded]="heroImageLoaded"
+         [src]="heroImageUrl"
+         alt=""
+         aria-hidden="true"
+         loading="eager"
+         (load)="onHeroImageLoad($event)" />
+    <div class="hero__overlay"></div>
+    <div class="hero__content" [class.visible]="heroImageLoaded">
+      <h1>{{ heroTitle || ui.heroTitle }}</h1>
+      <button class="primary-btn" (click)="heroButtonLink ? navigateToLink(heroButtonLink) : navigateToProducts()">{{ ui.catalogCta }}</button>
+
+      <div class="hero__stats">
+        <div class="hero__stat" *ngFor="let stat of heroStats; let i = index">
+          <div class="hero__stat-icon">
+            <img [src]="i === 0 ? 'assets/images/content/dealer.svg' : (i === 1 ? 'assets/images/content/delivery.svg' : 'assets/images/content/coins.svg')" alt="Stat icon" />
+          </div>
+          <div class="hero__stat-content">
+            <h3>{{ stat.title }}</h3>
+            <p>{{ stat.subtitle }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="promo-banners" *ngIf="!loading && promoBanners.length">
+    <article class="promo-card" *ngFor="let banner of promoBanners">
+      <img class="promo-card__image" [src]="banner.image" [alt]="banner.title" loading="lazy" />
+      <div class="promo-card__overlay"></div>
+      <div class="promo-card__content">
+        <span class="promo-card__title" *ngIf="banner.title">{{ banner.title }}</span>
+        <button class="promo-card__btn" type="button" (click)="navigateToLink(banner.link)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </div>
+    </article>
+  </section>
+
+  <section class="section section--categories">
+    <div class="section__header">
+      <h2>{{ ui.categoriesTitle }}</h2>
+      <div class="section__line"></div>
+    </div>
+
+    <div class="categories-grid">
+      <article class="category-card" *ngFor="let card of categoryCards">
+        <div class="category-card__image" [style.background-image]="'url(' + card.image + ')'" aria-hidden="true"></div>
+        <div class="category-card__body">
+          <h3 class="category-card__title">{{ card.title }}</h3>
+          <div class="category-card__tags">
+            <span *ngFor="let tag of card.tags | slice:0:4">{{ tag }}</span>
+          </div>
+          <button class="category-card__cta" type="button" (click)="navigateToCategory(card)">
+            {{ card.action }}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="section section--offers">
+    <div class="section__header section__header--split">
+      <div>
+        <h2>{{ ui.offersTitle }}</h2>
+        <div class="section__line"></div>
+      </div>
+      <button class="view-all" type="button" (click)="openAllOffers()">{{ ui.offersAll }}</button>
+    </div>
+
+    <div class="offers-grid">
+      <article class="offer-card" *ngFor="let offer of offerCards">
+        <button class="offer-card__media" type="button" (click)="navigateToOfferDetails(offer.id)">
+          <span class="offer-card__badge">{{ offer.discount }}</span>
+          <img [src]="offer.image" [alt]="offer.title" />
+        </button>
+        <div class="offer-card__body">
+          <h3>
+            <button type="button" class="offer-card__title" (click)="navigateToOfferDetails(offer.id)">
+              {{ offer.title }}
+            </button>
+          </h3>
+          <div class="offer-card__footer">
+            <div class="offer-card__price">
+              <span class="old" *ngIf="offer.oldPrice">{{ offer.oldPrice }}</span>
+              <span class="new">{{ offer.price }}</span>
+            </div>
+            <button class="add-btn" (click)="addOfferToCart(offer)">{{ ui.addToCart }}</button>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="section section--contact">
+    <div class="section__header">
+      <h2>{{ ui.contactsTitle }}</h2>
+      <div class="section__line"></div>
+    </div>
+
+    <div class="contact-grid">
+      <div class="contact-info">
+        <div class="contact-addresses-grid" [class.grid-layout]="addresses.length > 1">
+          <article class="contact-item"
+                   *ngFor="let address of addresses; let i = index"
+                   [class.contact-item--bordered]="i > 0 && addresses.length < 2">
+            <div class="contact-item__icon">
+              <img src="assets/icons/map-pin.svg" alt="Location icon" />
+            </div>
+
+            <div class="contact-item__content">
+              <h3>{{ address.name }}</h3>
+              <p>{{ address.street }}</p>
+              <p *ngFor="let schedule of address.schedule">{{ schedule }}</p>
+              <a *ngIf="address.phone" [href]="'tel:' + address.phone">{{ address.phone }}</a>
+              <a *ngIf="address.email" [href]="'mailto:' + address.email">{{ address.email }}</a>
+              <a *ngIf="address.mapUrl" class="address-link" (click)="openMap(address.mapUrl)">{{ ui.mapButton }}</a>
+            </div>
+          </article>
+        </div>
+
+        <div class="contact-note">
+          <strong>{{ ui.designerTitle }}</strong>
+          <ng-container *ngIf="designerPhones.length; else designerFallback">
+            <a *ngFor="let designer of designerPhones" [href]="'tel:' + designer.phone">
+              {{ designer.name ? designer.name + ': ' : '' }}{{ designer.phone }}
+            </a>
+          </ng-container>
+          <ng-template #designerFallback>
+            <span>{{ ui.designerNote }}</span>
+          </ng-template>
+        </div>
+      </div>
+
+      <div class="map-card">
+        <iframe *ngIf="mapEmbedUrl; else mapFallback"
+                [src]="mapEmbedUrl"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                title="Altdecor map"></iframe>
+        <ng-template #mapFallback>
+          <img src="assets/images/content/map.png" alt="Map preview" />
+        </ng-template>
+        <button class="map-btn" type="button" (click)="openMap(addresses[0]?.mapUrl || mapUrl)">{{ ui.mapButton }}</button>
+      </div>
+    </div>
+  </section>
+</main>

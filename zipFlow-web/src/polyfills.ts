@@ -1,0 +1,2 @@
+import 'localstorage-polyfill';
+

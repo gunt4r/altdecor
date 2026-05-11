@@ -1,0 +1,1055 @@
+{
+  "ro": {
+    "Header": {
+      "Menu": {
+        "Home": "Home",
+        "Shop": "Shop",
+        "SmartTech": "Smart Tehnica",
+        "Portfolio": "Portfolio",
+        "Blog": "Blog",
+        "About": "Despre noi",
+        "FAQ": "FAQ",
+        "Contacts": "Contacte",
+        "Checkout": "Checkout"
+      },
+      "QuickMenu": {
+        "Catalog": "Catalog",
+        "About": "Despre Altdecor"
+      },
+      "HeaderInfo": "Midseason Sale: 20% Off — Auto Applied at Checkout — Limited Time Only",
+      "BuyNowButton": "Toate produsele",
+      "ContactUs": "Ai nevoie de ajutor? Contactează-ne: "
+    },
+    "Recommendations": {
+      "Title": "Recomandat pentru tine",
+      "Button": {
+        "All": "Toate",
+        "Catalogue": "Catalog"
+      },
+      "NoProducts": "Nu s-au putut găsi produse"
+    },
+    "InteriorDivision": {
+      "Button": {
+        "Choose": "Alege acum"
+      }
+    },
+    "Product": {
+      "FreeDelivery": "Livrare ~ 7 zile lucratoare • Gratuit",
+      "Vat": {
+        "Include": "Taxa inclusă",
+        "NotInclude": "Taxa nu e inclusă"
+      },
+      "Label": {
+        "Cod": "Cod produs",
+        "Color": "Culoarea:",
+        "Model": "Model:",
+        "Type": "Tip:",
+        "Material": "Material:",
+        "FilterMaterial": "Material",
+        "Depth": "Grosimea:",
+        "Width": "Lățimea:",
+        "Length": "Lungimea:",
+        "Amount": "Cantitatea:"
+      },
+      "Button": {
+        "Buy": "Cumpără acum",
+        "AddToCart": "Adauga în coș"
+      },
+      "ViewFullDetails": "Vezi Toate Detaliile",
+      "Stock": "În stoc"
+    },
+    "Trendings": {
+      "Title": "Ultimele noutăți și tendințe",
+      "Button": {
+        "More": "Mai Multe"
+      },
+      "Label": {
+        "By": "by"
+      }
+    },
+    "Component": {
+      "Select": {
+        "Option": "Selectează o opțiune"
+      }
+    },
+    "Footer": {
+      "Contacts": {
+        "ClientAssist": "Asistenta clienti: ",
+        "Showroom": "Showroom: ",
+        "Email": "E-mail: "
+      },
+      "Menu": {
+        "Home": {
+          "Shop": "Shop now",
+          "AboutUs": "About us",
+          "Portfolio": "Portfolio",
+          "Blog": "Blog",
+          "FAQ": "FAQ",
+          "ContactUs": "Contact us"
+        },
+        "Collections": {
+          "PiatraD": "Piatra decorativa",
+          "PU": "PU Component Panel",
+          "PC": "Placl Charcoal",
+          "ProfileD": "Profile Decorative",
+          "Amestec": "Panouri din amestec de piatra",
+          "Lamele": "Lamele (PVC)"
+        },
+        "Smart": {
+          "Toalete": "Toalete Smart",
+          "Chiuvete": "Chiuvete",
+          "Robinete": "robinete Smart"
+        },
+        "Support": {
+          "HowToBuy": "Cum sa cumperi",
+          "Plata": "Plata",
+          "Livrare": "Livrare",
+          "Ridicare": "Punctul de ridicare",
+          "Garantii": "Garantii si retururi"
+        },
+        "Legal": {
+          "Confidentialitate": "Politica de confidentialitate",
+          "Retur": "Politica retur produse",
+          "Livrare": "Modalitati de plata si livrare",
+          "Termeni": "Termeni si conditii"
+        }
+      },
+      "Location": "Showroom: str. Uzinelor 90 , Chisinau, Rep. Moldova",
+      "WorkingHours": "Lu - Sa, 8:00 - 17:30",
+      "Language": "Language",
+      "WeAccept": "We accept:",
+      "FollowUs": "Follow Us:",
+      "Subscribe": "Subscribe to Our Newsletter ",
+      "SendButton": "Trimite",
+      "ErrorMessages": {
+        "InvalidEmail": "Please enter a valid email address.",
+        "RequiredEmail": "Email is required."
+      }
+    },
+    "FAQ": {
+      "FAQTitle": "Cele mai populare întrebări",
+      "FAQSubTitle": "Tot ce trebuie să știți despre produs, instalarea și achitarea"
+    },
+    "Contact": {
+      "Title": "Aveți întrebări?",
+      "Subtitle": "Nu puteți găsi răspunsul pe care îl căutați? Vă invităm să discutați cu echipa noastră prietenoasă.",
+      "Button": {
+        "Contact": "Contactează-ne"
+      }
+    },
+    "Products": {
+      "Label": {
+        "Sort": "Sortează dupa:",
+        "Products": "Produse:"
+      },
+      "DataSheet": "Fișa tehnică",
+      "SortCategories": {
+        "Last": "Ultimele",
+        "Expensive2Cheap": "Scump spre ieftin",
+        "Cheap2Expensive": "Ieftin spre scump"
+      },
+      "Badge": {
+        "New": "New",
+        "Sale": "Promoții",
+        "OutOfStock": "Stoc epuizat",
+        "ComingSoon": "Curând pe stoc"
+      },
+      "Button": {
+        "More": "Mai mult"
+      },
+      "Categories": "Shop Categorii",
+      "NoProducts": "Sorry, no products found"
+    },
+    "ProductPage": {
+      "Summary": {
+        "Tab": {
+          "Description": "Descriere",
+          "Material": "Material",
+          "Delivery": "Livrare"
+        }
+      },
+      "Share": "Distribuie"
+    },
+    "Page": {
+      "Shop": "Shop",
+      "ProductsPage": "Produse",
+      "Blog": "Blog",
+      "Portfolio": "Portfoliu"
+    },
+    "Cart": {
+      "TotalProducts": "Total produse: ",
+      "EmptyCart": "Coșul tau nu are niciun produs.",
+      "EmptyCartMessage": " Se pare că încă nu ați adăugat niciun articol în coș. Începeți cumpărăturile pentru a o completa.",
+      "EmptyButton": "Începe cumparaturile",
+      "FullButton": "Finalizare comanda",
+      "Subtotal": "Subtotal",
+      "Delivery": "Livrare",
+      "Total": "Total",
+      "Model": "Model",
+      "SKU": "SKU",
+      "Size": "Marime",
+      "Color": "Culoare"
+    },
+    "Checkout": {
+      "Stage": {
+        "Details": "Detalii comanda",
+        "Delivery": "Livrare",
+        "Finish": "Finalizare"
+      },
+      "Total": {
+        "Title": "Total",
+        "Label": {
+          "Products": "Produse",
+          "Subtotal": "Subtotal",
+          "Vat": "Taxe",
+          "Delivery": "Livrare",
+          "Total": "Total"
+        },
+        "Discount": "Introdu codul de reducere",
+        "Detail": {
+          "Security": {
+            "Title": "Securitate",
+            "Description": "Este ambalat cu grijă, cu o notă personală"
+          },
+          "Delivery": {
+            "Title": "Livram rapid",
+            "Description": "Veți primi confirmarea expedierii și o dată de sosire"
+          },
+          "Return": {
+            "Title": "Returnare?",
+            "Description": "Oferim returnarea gratuit, în termenul de 14 zile"
+          }
+        }
+      },
+      "Details": {
+        "Title": "Detalii comanda",
+        "Benefits": "Beneficiile unui cont gratuit",
+        "PersonalAccount": "Creaza-mi un cont personal",
+        "Accept": "Eu accept",
+        "TermsConditions": "Termeni și Condiții",
+        "Button": {
+          "Continue": "Inregistrare comanda"
+        }
+      },
+      "Delivery": {
+        "Title": "Livrare",
+        "Judiciary": "Persoana juridica",
+        "Method": {
+          "Title": "Metoda de livrare",
+          "Address": "Livrare la adresa indicata",
+          "Phone": "Precizare la telefon",
+          "Store": "Ridicare de la magazin"
+        },
+        "Button": {
+          "Next": "Continuă spre achitare",
+          "Previous": "Editea-za date personale"
+        }
+      },
+      "Finish": {
+        "Success": {
+          "Title": "Comandă înregistrată cu succes",
+          "OrderNumber": "Numarul comenzii",
+          "OrderCopy": "O copie confirmati-va a fost trimisa la adresa de email: {{ email }}"
+        },
+        "Details": {
+          "Title": "Detalii comanda"
+        },
+        "Instructions": {
+          "Title": "Instrucțiuni",
+          "Description": "Aduceți un ID valid și ID-ul dvs. de comandă ({{ orderId }}) la magazinul nostru. Pentru a vă ridica comanda, puteți merge direct la ghișeul de casă și puteți oferi reprezentantului numărul de comandă."
+        },
+        "Review": {
+          "Title": "Revizuirea comenzii",
+          "PersonalData": "Date personale",
+          "Delivery": "Livrare",
+          "Address": {
+            "Title": "Adresa de facturare",
+            "Coincide": "Coincide cu adresa ta personala"
+          }
+        },
+        "Button": {
+          "Continue": "Continuă cumpărăturile"
+        }
+      },
+      "Field": {
+        "Name": "Nume",
+        "Surname": "Prenume",
+        "Email": "Email",
+        "Password": "Parola",
+        "RepeatPassword": "Introdu repetat parola",
+        "Street": "Strada",
+        "Apartment": "Apartament",
+        "City": "Oras",
+        "Region": "Regiune",
+        "ZipCode": "Cod poștal",
+        "Country": "Țara",
+        "Phone": "Mobil",
+        "CompanyName": "Denumirea companiei",
+        "JudiciaryAddress": "Adresa juridica",
+        "IDNO": "IDNO",
+        "TVACode": "Cod TVA"
+      },
+      "NoProducts": {
+        "Description": "Nu aveți niciun produs selectat",
+        "Button": "Începe cumpărăturile"
+      }
+    },
+    "Validators": {
+      "Required": "Acest camp e obligator",
+      "RequiredTrue": "Acest camp trebuie sa fie verificat",
+      "Email": "Formatul email-ului e invalid",
+      "Pattern": "Invalid Pattern",
+      "NotEqualPassword": "Nu coincide cu parola",
+      "InvalidPhone": "Introduceti un numar de telefon valid",
+      "MinLength5": "Introduceti minim 5 caractere"
+    },
+    "Blog": {
+      "Header": "Blog",
+      "Articles": "Articole: ",
+      "NoArticles": "Niciun articol nu a fost găsit",
+      "Category": "Categoria: ",
+      "FilterCategory": "Categoria",
+      "Author": "Autor: ",
+      "PublishedOn": "Publicat pe ",
+      "Share": "Distribuie",
+      "Review": {
+        "ReviewTitle": "Vi s-a părut articolul util?",
+        "ReviewDescription": "Alegeți produsul potrivit în magazinul nostru online gardecor.md",
+        "ReviewButton": "Cumpărați acum"
+      },
+      "RecommendationTitle": "Articole Populare"
+    },
+    "Portfolio": {
+      "Review": {
+        "Title": "Vi sa parut util?",
+        "Description": "Alege produs potrivit în magazinul nostru online gardecor.md",
+        "Button": "Cumpără acum"
+      },
+      "PopularArticles": "Articole folosite"
+    },
+    "Contacts": {
+      "Title": "Contacte",
+      "Logo": "Logo",
+      "SendPhone": {
+        "Title": "Scrie-ne doar numărul tău de telefon, te sunăm, te consultăm și-ți propunem soluția potrivită pentru tine.",
+        "Placeholder": "Numărul tău",
+        "Send": "Trimite"
+      }
+    },
+    "Shop": {
+      "Popular": "Cele mai populare"
+    },
+    "NotFound": {
+      "Title": "Nu găsim pagina",
+      "Subtitle": "Din păcate, nu găsim pagina pe care o cauți.",
+      "Button": "Catalog produse"
+    },
+    "MobileFilterButton": "Filtreaza",
+    "CategoriesBanner": {
+      "Categories": "Categorii",
+      "ViewProducts": "Vezi produsele"
+    }
+  },
+  "ru": {
+    "Header": {
+      "Menu": {
+        "Home": "Главная",
+        "Shop": "Магазин",
+        "SmartTech": "Умная Техника",
+        "Portfolio": "Портфолио",
+        "Blog": "Блог",
+        "About": "О нас",
+        "FAQ": "Вопросы и ответы",
+        "Contacts": "Контакты",
+        "Checkout": "Checkout"
+      },
+      "QuickMenu": {
+        "Catalog": "Каталог",
+        "About": "О Altdecor"
+      },
+      "HeaderInfo": "Скидка среди сезона: 20% скидка — автоматически применяется при оформлении заказа — ограниченное время",
+      "BuyNowButton": "Все товары",
+      "ContactUs": "Нужна помощь? Свяжитесь с нами: "
+    },
+    "Recommendations": {
+      "Title": "Рекомендации для вас",
+      "Button": {
+        "All": "Все",
+        "Catalogue": "Каталог"
+      },
+      "NoProducts": "Продукты не найдены"
+    },
+    "InteriorDivision": {
+      "Button": {
+        "Choose": "Выбрать сейчас"
+      }
+    },
+    "Product": {
+      "FreeDelivery": "Доставка ~ 7 рабочих дней • Бесплатно",
+      "Vat": {
+        "Include": "НДС включен",
+        "NotInclude": "НДС не включен"
+      },
+      "Label": {
+        "Cod": "Код продукта",
+        "Color": "Цвет:",
+        "Model": "Модель:",
+        "Type": "Тип:",
+        "Material": "Материал:",
+        "FilterMaterial": "Материал",
+        "Depth": "Толщина:",
+        "Width": "Ширина:",
+        "Length": "Длина:",
+        "Amount": "Количество:"
+      },
+      "Button": {
+        "Buy": "Купить сейчас",
+        "AddToCart": "Добавить в корзину"
+      },
+      "ViewFullDetails": "Просмотреть все детали",
+      "Stock": "В наличии"
+    },
+    "Trendings": {
+      "Title": "Последние новости и тренды",
+      "Button": {
+        "More": "Больше"
+      },
+      "Label": {
+        "By": "от"
+      }
+    },
+    "Component": {
+      "Select": {
+        "Option": "Выберите опцию"
+      }
+    },
+    "Footer": {
+      "Contacts": {
+        "ClientAssist": "Служба поддержки клиентов: ",
+        "Showroom": "Шоурум: ",
+        "Email": "Электронная почта: "
+      },
+      "Menu": {
+        "Home": {
+          "Shop": "Магазин сейчас",
+          "AboutUs": "О нас",
+          "Portfolio": "Портфолио",
+          "Blog": "Блог",
+          "FAQ": "Вопросы и ответы",
+          "ContactUs": "Свяжитесь с нами"
+        },
+        "Collections": {
+          "PiatraD": "Декоративный камень",
+          "PU": "Панели из ПУ-компонента",
+          "PC": "Угольные плиты",
+          "ProfileD": "Декоративные профили",
+          "Amestec": "Панели из смеси камня",
+          "Lamele": "Ламели (PVC)"
+        },
+        "Smart": {
+          "Toalete": "Умные туалеты",
+          "Chiuvete": "Раковины",
+          "Robinete": "Умные краны"
+        },
+        "Support": {
+          "HowToBuy": "Как купить",
+          "Plata": "Оплата",
+          "Livrare": "Доставка",
+          "Ridicare": "Пункт выдачи",
+          "Garantii": "Гарантии и возврат"
+        },
+        "Legal": {
+          "Confidentialitate": "Политика конфиденциальности",
+          "Retur": "Политика возврата товара",
+          "Livrare": "Способы оплаты и доставки",
+          "Termeni": "Условия и положения"
+        }
+      },
+      "Location": "Шоурум: ул. Узинелор 90, Кишинев, Респ. Молдова",
+      "WorkingHours": "Пн - Сб, 8:00 - 17:30",
+      "Language": "Язык",
+      "WeAccept": "Мы принимаем:",
+      "FollowUs": "Подписывайтесь на нас:",
+      "Subscribe": "Подпишитесь на нашу рассылку ",
+      "SendButton": "Отправить",
+      "ErrorMessages": {
+        "InvalidEmail": "Пожалуйста, введите действительный адрес электронной почты.",
+        "RequiredEmail": "Требуется адрес электронной почты."
+      }
+    },
+    "FAQ": {
+      "FAQTitle": "Самые популярные вопросы",
+      "FAQSubTitle": "Все, что вам нужно знать о продукте, установке и оплате"
+    },
+    "Contact": {
+      "Title": "У вас есть вопросы?",
+      "Subtitle": "Не можете найти ответ на ваш вопрос? Пожалуйста, свяжитесь с нашей дружелюбной командой.",
+      "Button": {
+        "Contact": "Свяжитесь с нами"
+      }
+    },
+    "Products": {
+      "Label": {
+        "Sort": "Сортировать по:",
+        "Products": "Продукты:"
+      },
+      "DataSheet": "Техническая спецификация",
+      "SortCategories": {
+        "Last": "Последние",
+        "Expensive2Cheap": "От дорогих к дешевым",
+        "Cheap2Expensive": "От дешевых к дорогим"
+      },
+      "Badge": {
+        "New": "Новинка",
+        "Sale": "Акции",
+        "OutOfStock": "Распродано",
+        "ComingSoon": "Скоро в наличии"
+      },
+      "Button": {
+        "More": "Больше"
+      },
+      "Categories": "Категории магазина",
+      "NoProducts": "Извините, продукты не найдены"
+    },
+    "ProductPage": {
+      "Summary": {
+        "Tab": {
+          "Description": "Описание",
+          "Material": "Материал",
+          "Delivery": "Доставка"
+        }
+      },
+      "Share": "Поделиться"
+    },
+    "Page": {
+      "Shop": "Магазин",
+      "ProductsPage": "Продукты",
+      "Blog": "Блог",
+      "Portfolio": "Портфолио"
+    },
+    "Cart": {
+      "TotalProducts": "Всего продуктов: ",
+      "EmptyCart": "Ваша корзина пуста.",
+      "EmptyCartMessage": "Похоже, вы еще не добавили ни одного товара. Начните покупки, чтобы заполнить ее.",
+      "EmptyButton": "Начать покупки",
+      "FullButton": "Оформить заказ",
+      "Subtotal": "Промежуточный итог",
+      "Delivery": "Доставка",
+      "Total": "Итого",
+      "Model": "Модель",
+      "SKU": "SKU",
+      "Size": "Размер",
+      "Color": "Цвет"
+    },
+    "Checkout": {
+      "Stage": {
+        "Details": "Данные заказа",
+        "Delivery": "Доставка",
+        "Finish": "Завершение"
+      },
+      "Total": {
+        "Title": "Итого",
+        "Label": {
+          "Products": "Продукты",
+          "Subtotal": "Промежуточный итог",
+          "Vat": "НДС",
+          "Delivery": "Доставка",
+          "Total": "Итого"
+        },
+        "Discount": "Введите код скидки",
+        "Detail": {
+          "Security": {
+            "Title": "Безопасность",
+            "Description": "Осторожно упаковано с личным подходом"
+          },
+          "Delivery": {
+            "Title": "Быстрая доставка",
+            "Description": "Вы получите подтверждение отправки и дату прибытия"
+          },
+          "Return": {
+            "Title": "Возврат?",
+            "Description": "Мы предоставляем бесплатный возврат в течение 14 дней"
+          }
+        }
+      },
+      "Details": {
+        "Title": "Детали заказа",
+        "Benefits": "Преимущества бесплатной учетной записи",
+        "PersonalAccount": "Создайте мой личный аккаунт",
+        "Accept": "Я соглашаюсь",
+        "TermsConditions": "Условия использования",
+        "Button": {
+          "Continue": "Продолжить к оплате"
+        }
+      },
+      "Delivery": {
+        "Title": "Доставка",
+        "Judiciary": "Юридическое лицо",
+        "Method": {
+          "Title": "Способ доставки",
+          "Address": "Доставка по указанному адресу",
+          "Phone": "Точное по телефону",
+          "Store": "Самовывоз из магазина"
+        },
+        "Button": {
+          "Next": "Продолжить к оплате",
+          "Previous": "Изменить личные данные"
+        }
+      },
+      "Finish": {
+        "Success": {
+          "Title": "Заказ успешно зарегистрирован",
+          "OrderNumber": "Номер заказа",
+          "OrderCopy": "Копия подтверждения отправлена на электронную почту: {{ email }}"
+        },
+        "Details": {
+          "Title": "Детали заказа"
+        },
+        "Instructions": {
+          "Title": "Инструкции",
+          "Description": "Принесите действующий идентификационный документ и номер вашего заказа ({{ orderId }}) в наш магазин. Для получения заказа вы можете направиться прямо к кассе и предоставить представителю номер заказа."
+        },
+        "Review": {
+          "Title": "Просмотр заказа",
+          "PersonalData": "Личные данные",
+          "Delivery": "Доставка",
+          "Address": {
+            "Title": "Адрес для выставления счета",
+            "Coincide": "Совпадает с вашим личным адресом"
+          }
+        },
+        "Button": {
+          "Continue": "Продолжить покупки"
+        }
+      },
+      "Field": {
+        "Name": "Имя",
+        "Surname": "Фамилия",
+        "Email": "Электронная почта",
+        "Password": "Пароль",
+        "RepeatPassword": "Повторите пароль",
+        "Street": "Улица",
+        "Apartment": "Квартира",
+        "City": "Город",
+        "Region": "Регион",
+        "ZipCode": "Почтовый индекс",
+        "Country": "Страна",
+        "Phone": "Мобильный",
+        "CompanyName": "Название компании",
+        "JudiciaryAddress": "Юридический адрес",
+        "IDNO": "ИНН",
+        "TVACode": "Код НДС"
+      },
+      "NoProducts": {
+        "Description": "У вас нет выбранных продуктов",
+        "Button": "Начать покупки"
+      }
+    },
+    "Validators": {
+      "Required": "Это поле обязательно",
+      "RequiredTrue": "Это поле должно быть отмечено",
+      "Email": "Неверный формат адреса электронной почты",
+      "Pattern": "Неверный шаблон",
+      "NotEqualPassword": "Не совпадает с паролем",
+      "InvalidPhone": "Введите действительный номер телефона",
+      "MinLength5": "Введите не менее 5 символов"
+    },
+    "Blog": {
+      "Header": "Блог",
+      "Articles": "Статьи: ",
+      "NoArticles": "Ни одна статья не найдена",
+      "Category": "Категория: ",
+      "FilterCategory": "Категория",
+      "Author": "Автор: ",
+      "PublishedOn": "Опубликовано ",
+      "Share": "Поделиться",
+      "Review": {
+        "ReviewTitle": "Вам понравилась статья?",
+        "ReviewDescription": "Выберите подходящий товар в нашем интернет-магазине gardecor.md",
+        "ReviewButton": "Купить сейчас"
+      },
+      "RecommendationTitle": "Популярные статьи"
+    },
+    "Portfolio": {
+      "Review": {
+        "Title": "Вам понравилась?",
+        "Description": "Выберите подходящий товар в нашем интернет-магазине gardecor.md",
+        "Button": "Купить сейчас"
+      },
+      "PopularArticles": "Популярные статьи"
+    },
+    "Contacts": {
+      "Title": "Контакты",
+      "Logo": "Логотип",
+      "SendPhone": {
+        "Title": "Просто напишите нам свой номер телефона, мы вам перезвоним, проконсультируем и предложим подходящее решение для вас.",
+        "Placeholder": "Ваш номер",
+        "Send": "Отправить"
+      }
+    },
+    "Shop": {
+      "Popular": "Самые популярные"
+    },
+    "NotFound": {
+      "Title": "Страница не найдена",
+      "Subtitle": "К сожалению, мы не можем найти страницу, которую вы ищете.",
+      "Button": "Каталог продуктов"
+    },
+    "MobileFilterButton": "Фильтры",
+    "CategoriesBanner": {
+      "Categories": "Категории",
+      "ViewProducts": "Просмотреть продукты"
+    }
+  },
+  "en": {
+    "Header": {
+      "Menu": {
+        "Home": "Home",
+        "Shop": "Shop",
+        "SmartTech": "Smart Tech",
+        "Portfolio": "Portfolio",
+        "Blog": "Blog",
+        "About": "About Us",
+        "FAQ": "FAQ",
+        "Contacts": "Contacts",
+        "Checkout": "Checkout"
+      },
+      "QuickMenu": {
+        "Catalog": "Catalog",
+        "About": "About Altdecor"
+      },
+      "HeaderInfo": "Midseason Sale: 20% Off — Auto Applied at Checkout — Limited Time Only",
+      "BuyNowButton": "All products",
+      "ContactUs": "Need help? Contact us: "
+    },
+    "Recommendations": {
+      "Title": "Recommended for you",
+      "Button": {
+        "All": "All",
+        "Catalogue": "Catalog"
+      },
+      "NoProducts": "No products found"
+    },
+    "InteriorDivision": {
+      "Button": {
+        "Choose": "Choose now"
+      }
+    },
+    "Product": {
+      "FreeDelivery": "Delivery ~ 7 working days • Free",
+      "Vat": {
+        "Include": "VAT included",
+        "NotInclude": "VAT not included"
+      },
+      "Label": {
+        "Cod": "Product code",
+        "Color": "Color:",
+        "Model": "Model:",
+        "Type": "Type:",
+        "Material": "Material:",
+        "FilterMaterial": "Material",
+        "Depth": "Depth:",
+        "Width": "Width:",
+        "Length": "Length:",
+        "Amount": "Quantity:"
+      },
+      "Button": {
+        "Buy": "Buy Now",
+        "AddToCart": "Add to Cart"
+      },
+      "ViewFullDetails": "View Full Details",
+      "Stock": "In stock"
+    },
+    "Trendings": {
+      "Title": "Latest News and Trends",
+      "Button": {
+        "More": "More"
+      },
+      "Label": {
+        "By": "by"
+      }
+    },
+    "Component": {
+      "Select": {
+        "Option": "Select an option"
+      }
+    },
+    "Footer": {
+      "Contacts": {
+        "ClientAssist": "Customer Assistance: ",
+        "Showroom": "Showroom: ",
+        "Email": "Email: "
+      },
+      "Menu": {
+        "Home": {
+          "Shop": "Shop now",
+          "AboutUs": "About us",
+          "Portfolio": "Portfolio",
+          "Blog": "Blog",
+          "FAQ": "FAQ",
+          "ContactUs": "Contact us"
+        },
+        "Collections": {
+          "PiatraD": "Decorative Stone",
+          "PU": "PU Component Panel",
+          "PC": "Charcoal Placl",
+          "ProfileD": "Decorative Profile",
+          "Amestec": "Stone Blend Panels",
+          "Lamele": "Lamellae (PVC)"
+        },
+        "Smart": {
+          "Toalete": "Smart Toilets",
+          "Chiuvete": "Sinks",
+          "Robinete": "Smart Faucets"
+        },
+        "Support": {
+          "HowToBuy": "How to Buy",
+          "Payment": "Payment",
+          "Delivery": "Delivery",
+          "Pickup": "Pickup Point",
+          "Warranties": "Warranties and Returns"
+        },
+        "Legal": {
+          "Confidentialitate": "Privacy Policy",
+          "Retur": "Return Policy",
+          "Livrare": "Payment and Delivery Methods",
+          "Termeni": "Terms and Conditions"
+        }
+      },
+      "Location": "Showroom: str. Uzinelor 90, Chisinau, Rep. Moldova",
+      "WorkingHours": "Mon - Sat, 8:00 - 17:30",
+      "Language": "Language",
+      "WeAccept": "We accept:",
+      "FollowUs": "Follow Us:",
+      "Subscribe": "Subscribe to Our Newsletter",
+      "SendButton": "Send",
+      "ErrorMessages": {
+        "InvalidEmail": "Please enter a valid email address.",
+        "RequiredEmail": "Email is required."
+      }
+    },
+    "FAQ": {
+      "FAQTitle": "Most Popular Questions",
+      "FAQSubTitle": "Everything you need to know about the product, installation, and payment"
+    },
+    "Contact": {
+      "Title": "Have questions?",
+      "Subtitle": "Can't find the answer you're looking for? Feel free to chat with our friendly team.",
+      "Button": {
+        "Contact": "Contact Us"
+      }
+    },
+    "Products": {
+      "Label": {
+        "Sort": "Sort by:",
+        "Products": "Products:"
+      },
+      "DataSheet": "Data Sheet",
+      "SortCategories": {
+        "Last": "Latest",
+        "Expensive2Cheap": "Expensive to Cheap",
+        "Cheap2Expensive": "Cheap to Expensive"
+      },
+      "Badge": {
+        "New": "New",
+        "Sale": "Promo",
+        "OutOfStock": "Out of stock",
+        "ComingSoon": "Coming soon"
+      },
+      "Button": {
+        "More": "More"
+      },
+      "Categories": "Shop Categories",
+      "NoProducts": "Sorry, no products found"
+    },
+    "ProductPage": {
+      "Summary": {
+        "Tab": {
+          "Description": "Description",
+          "Material": "Material",
+          "Delivery": "Delivery"
+        }
+      },
+      "Share": "Share"
+    },
+    "Page": {
+      "Shop": "Shop",
+      "ProductsPage": "Products",
+      "Blog": "Blog",
+      "Portfolio": "Portfolio"
+    },
+    "Cart": {
+      "TotalProducts": "Total products: ",
+      "EmptyCart": "Your cart is empty.",
+      "EmptyCartMessage": "Looks like you haven't added any items to your cart yet. Start shopping to fill it up.",
+      "EmptyButton": "Start Shopping",
+      "FullButton": "Checkout",
+      "Subtotal": "Subtotal",
+      "Delivery": "Delivery",
+      "Total": "Total",
+      "Model": "Model",
+      "SKU": "SKU",
+      "Size": "Size",
+      "Color": "Color"
+    },
+    "Checkout": {
+      "Stage": {
+        "Details": "Order Details",
+        "Delivery": "Delivery",
+        "Finish": "Finish"
+      },
+      "Total": {
+        "Title": "Total",
+        "Label": {
+          "Products": "Products",
+          "Subtotal": "Subtotal",
+          "Vat": "VAT",
+          "Delivery": "Delivery",
+          "Total": "Total"
+        },
+        "Discount": "Enter discount code",
+        "Detail": {
+          "Security": {
+            "Title": "Security",
+            "Description": "Carefully packaged with a personal touch"
+          },
+          "Delivery": {
+            "Title": "Fast Delivery",
+            "Description": "You’ll receive dispatch confirmation and an arrival date"
+          },
+          "Return": {
+            "Title": "Return?",
+            "Description": "We offer free returns within 14 days"
+          }
+        }
+      },
+      "Details": {
+        "Title": "Order Details",
+        "Benefits": "Benefits of a free account",
+        "PersonalAccount": "Create my personal account",
+        "Accept": "I accept",
+        "TermsConditions": "Terms and Conditions",
+        "Button": {
+          "Continue": "Continue to Delivery"
+        }
+      },
+      "Delivery": {
+        "Title": "Delivery",
+        "Judiciary": "Legal Entity",
+        "Method": {
+          "Title": "Delivery Method",
+          "Address": "Delivery to specified address",
+          "Phone": "Specify by phone",
+          "Store": "Pickup from store"
+        },
+        "Button": {
+          "Next": "Continue to Payment",
+          "Previous": "Edit Personal Data"
+        }
+      },
+      "Finish": {
+        "Success": {
+          "Title": "Order successfully registered",
+          "OrderNumber": "Order Number",
+          "OrderCopy": "A confirmation copy has been sent to your email address: {{ email }}"
+        },
+        "Details": {
+          "Title": "Order Details"
+        },
+        "Instructions": {
+          "Title": "Instructions",
+          "Description": "Bring a valid ID and your order ID ({{ orderId }}) to our store. To pick up your order, you can go directly to the cashier's desk and provide the representative with the order number."
+        },
+        "Review": {
+          "Title": "Order Review",
+          "PersonalData": "Personal Data",
+          "Delivery": "Delivery",
+          "Address": {
+            "Title": "Billing Address",
+            "Coincide": "Same as your personal address"
+          }
+        },
+        "Button": {
+          "Continue": "Continue Shopping"
+        }
+      },
+      "Field": {
+        "Name": "Name",
+        "Surname": "Surname",
+        "Email": "Email",
+        "Password": "Password",
+        "RepeatPassword": "Repeat Password",
+        "Street": "Street",
+        "Apartment": "Apartment",
+        "City": "City",
+        "Region": "Region",
+        "ZipCode": "Zip Code",
+        "Country": "Country",
+        "Phone": "Mobile",
+        "CompanyName": "Company Name",
+        "JudiciaryAddress": "Judiciary Address",
+        "IDNO": "IDNO",
+        "TVACode": "VAT Code"
+      },
+      "NoProducts": {
+        "Description": "You have no selected products",
+        "Button": "Start shopping"
+      }
+    },
+    "Validators": {
+      "Required": "This field is required",
+      "RequiredTrue": "This field must be checked",
+      "Email": "Invalid email format",
+      "Pattern": "Invalid Pattern",
+      "NotEqualPassword": "Does not match the password",
+      "InvalidPhone": "Please enter a valid phone number",
+      "MinLength5": "Enter at least 5 characters"
+    },
+    "Blog": {
+      "Header": "Blog",
+      "Articles": "Articles: ",
+      "NoArticles": "No articles found",
+      "Category": "Category: ",
+      "FilterCategory": "Category",
+      "Author": "Author: ",
+      "PublishedOn": "Published on ",
+      "Share": "Share",
+      "Review": {
+        "ReviewTitle": "Did you find the article helpful?",
+        "ReviewDescription": "Find a suitable product in our online store gardecor.md",
+        "ReviewButton": "Buy Now"
+      },
+      "RecommendationTitle": "Popular Articles"
+    },
+    "Portfolio": {
+      "Review": {
+        "Title": "Did you find it helpful?",
+        "Description": "Find a suitable product in our online store gardecor.md",
+        "Button": "Buy Now"
+      },
+      "PopularArticles": "Popular Articles"
+    },
+    "Contacts": {
+      "Title": "Contacts",
+      "Logo": "Logo",
+      "SendPhone": {
+        "Title": "Just write your phone number, we'll call you, consult you, and suggest the right solution for you.",
+        "Placeholder": "Your number",
+        "Send": "Send"
+      }
+    },
+    "Shop": {
+      "Popular": "Most Popular"
+    },
+    "NotFound": {
+      "Title": "Page Not Found",
+      "Subtitle": "Unfortunately, we couldn't find the page you're looking for.",
+      "Button": "Product Catalog"
+    },
+    "MobileFilterButton": "Filter",
+    "CategoriesBanner": {
+      "Categories": "Categories",
+      "ViewProducts": "View Products"
+    }
+  }
+}
