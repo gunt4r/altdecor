@@ -1,0 +1,43 @@
+// Background variables
+$dark-bg: #1B1B1B;
+$err-bg: #FC6666;
+$green-bg: #5ECE7B;
+
+// Color variables
+$primary-color: #FFE0B1;
+$white-color: #fff;
+
+@mixin dark() {
+  background-color: $dark-bg;
+  color: $primary-color;
+}
+
+@mixin green() {
+  background-color: $green-bg;
+  color: $white-color;
+}
+
+@mixin error() {
+  background-color: $err-bg;
+  color: $white-color;
+}
+
+.badge {
+  padding: 5px 20px;
+  font-size: 15px;
+  line-height: 21px;
+  font-weight: 700;
+  width: fit-content;
+
+  &.dark {
+    @include dark;
+  }
+
+  &.error {
+    @include error;
+  }
+
+  &.green {
+    @include green;
+  }
+}

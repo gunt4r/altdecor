@@ -1,0 +1,131 @@
+<div class="checkout-details" formGroupName="details">
+
+  <div class="checkout-details__left">
+<!--    <app-checkout-progress [stage]="checkoutStage"></app-checkout-progress>-->
+
+    <div class="checkout-details__content">
+      <div class="title">
+<!--        {{ checkoutStage + 1 }}. -->
+        {{ 'Checkout.Details.Title' | translate }}</div>
+
+      <ng-container *ngFor="let product of products">
+        <div class="product-card">
+          <div class="product-image">
+            <img src="{{product.img}}" alt="Product image">
+          </div>
+
+          <div class="product-info">
+            <div class="product-name">{{product.name | translate}}</div>
+
+            <div class="product-price">
+              <div class="product-old-price" *ngIf="product.oldPrice?.trim()">{{product.oldPrice}}</div>
+              <div class="product-new-price">{{product.price}}</div>
+            </div>
+
+            <div class="product-description" *ngIf="product.sku">
+              {{'Cart.SKU' | translate}}:
+              <span>{{product.sku}}</span>
+            </div>
+            <div class="product-description" *ngIf="product.model">
+              {{'Cart.Model' | translate}}:
+              <span>{{product.model}}</span>
+            </div>
+            <div class="product-description" *ngIf="product.size">
+              {{'Cart.Size' | translate}}:
+              <span>{{product.size}}</span>
+            </div>
+
+            <ng-container *ngIf="product.characteristic?.length">
+              <ng-container *ngFor="let carac of product.characteristic">
+                <div class="product-description" *ngIf="carac.key?.ro">
+                  {{carac.key | translate}}:
+                  <span>{{carac.value | translate}}</span>
+                </div>
+              </ng-container>
+            </ng-container>
+
+            <div class="delete-button">
+              <button class="delete-product-button" (click)="deleteProduct(product)">
+                <img src="assets/images/content/close-black.svg" alt="Delete product">
+              </button>
+            </div>
+
+            <div class="counter">
+              <app-counter [value]="product.quantity" (counterChange)="counterChange($event, product)"></app-counter>
+            </div>
+          </div>
+        </div>
+
+        <div class="spacer"></div>
+      </ng-container>
+
+      <div class="checkout-details__form">
+        <div class="form--row">
+          <app-custom-input class="form--col" formControlName="name"
+                            [label]="'Checkout.Field.Name' | translate"></app-custom-input>
+          <app-custom-input class="form--col" formControlName="surname"
+                            [label]="'Checkout.Field.Surname' | translate"></app-custom-input>
+        </div>
+
+        <div class="form--row">
+          <app-custom-input class="form--col" formControlName="email"
+                            [label]="'Checkout.Field.Email' | translate"
+                            [type]="inputType.Email"></app-custom-input>
+          <app-custom-input class="form--col" formControlName="phone"
+                            [label]="'Checkout.Field.Phone' | translate"
+                            [type]="inputType.Phone"></app-custom-input>
+        </div>
+
+<!--        <div class="checkout-details__benefits">-->
+<!--          <div class="title">{{ 'Checkout.Details.Benefits' | translate }}</div>-->
+
+<!--          <div class="benefits">-->
+<!--            <div class="benefit" *ngFor="let benefit of benefits">-->
+<!--              <img [src]="benefit.icon" alt="">-->
+<!--              <span class="label">{{ benefit.label }}</span>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+
+<!--        <div class="form&#45;&#45;row">-->
+<!--          <app-custom-input class="form&#45;&#45;col" formControlName="createAccount"-->
+<!--                            [label]="'Checkout.Details.PersonalAccount' | translate"-->
+<!--                            [type]="inputType.Checkbox"></app-custom-input>-->
+<!--        </div>-->
+
+
+<!--        <ng-container *ngIf="createAccount">-->
+<!--          <div class="form&#45;&#45;row">-->
+<!--            <app-custom-input class="form&#45;&#45;col" formControlName="password"-->
+<!--                              [label]="'Checkout.Field.Password' | translate"-->
+<!--                              [type]="inputType.Password"></app-custom-input>-->
+<!--          </div>-->
+
+<!--          <div class="form&#45;&#45;row">-->
+<!--            <app-custom-input class="form&#45;&#45;col" formControlName="repeatPassword"-->
+<!--                              [label]="'Checkout.Field.RepeatPassword' | translate"-->
+<!--                              [type]="inputType.Password"></app-custom-input>-->
+<!--          </div>-->
+<!--        </ng-container>-->
+
+
+        <div class="form--row">
+          <app-custom-input class="form--col" formControlName="termsConditions"
+                            [label]="'Checkout.Details.Accept' | translate" [type]="inputType.Checkbox">
+            <ng-container label>
+              <a routerLink="">
+                {{ 'Checkout.Details.TermsConditions' | translate }}
+              </a>
+            </ng-container>
+          </app-custom-input>
+        </div>
+
+        <button class="form--submit default"
+                (click)="submit()">{{ 'Checkout.Details.Button.Continue' | translate }}</button>
+      </div>
+    </div>
+  </div>
+  <div class="checkout-details__right">
+    <app-checkout-total></app-checkout-total>
+  </div>
+</div>

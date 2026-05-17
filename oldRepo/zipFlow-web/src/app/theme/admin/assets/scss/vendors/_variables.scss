@@ -1,0 +1,49 @@
+/*overwriting the variables from bootstrap variables*/
+$gray-100: #f5f5f5 !default;
+$gray-200: #eaebec !default;
+$gray-300: #e0e1e2 !default;
+$gray-400: #c0c3c5 !default;
+$gray-500: #a1a6a9 !default;
+$gray-600: #606669 !default;
+$gray-700: #404446 !default;
+$gray-800: #202223 !default;
+$body-color: $gray-800 !default;
+$body-bg: $gray-100 !default;
+
+/*fonts*/
+$font-family-base: "DM Sans", sans-serif;
+$font-family-bd: "DM Sans", sans-serif;
+
+/*btns*/
+$btn-padding-y: 0.688rem !default; /*11px*/
+$btn-line-height: 1.19 !default;
+
+$border-radius: 0.5rem; /*8px*/
+$input-color: $gray-600;
+$input-font-size: 0.875rem; /*14px*/
+
+/*color palette*/
+$yellow: #FFE0B1;
+$yellow-hover: #FFF8EF;
+$yellow-active: #EAB25B;
+
+$red: #c90000 !default;
+$red-active: #ff2424;
+
+$orange: #f46a00 !default;
+$orange-active: #ff8e38;
+
+$green: #4aa90f !default;
+$green-active: #5fd813;
+
+$cyan:    #00838d !default;
+$cyan-active:    #00b2c0;
+
+$purple:  #7c28b6 !default;
+$purple-active:  #a04ed8;
+
+$pink:    #d51387 !default;
+$pink-active:    #ee40a8;
+
+/*navbar*/
+$navbar-padding-y: 0;

@@ -1,0 +1,11 @@
+<div class="dropdown" *ngIf="filter.options">
+  <button class="dropdown__button" (click)="toggleOptions()" [ngClass]="{open: isOptionsVisible}">
+    <span>{{ filter.label | translate }}</span>
+    <img [src]="'assets/icons/dropdown-' + (isOptionsVisible ? 'show' : 'hide') + '.svg'" alt="dropdown">
+  </button>
+
+  <ul *ngIf="isOptionsVisible" class="dropdown__list">
+    <li *ngFor="let option of filter.options" (click)="setValue(option)"
+        [ngClass]="{ active: isActiveOption(option) }">{{ option | translate }}</li>
+  </ul>
+</div>

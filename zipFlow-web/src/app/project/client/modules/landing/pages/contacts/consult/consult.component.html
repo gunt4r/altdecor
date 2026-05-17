@@ -1,0 +1,17 @@
+<div class="consult">
+  <div class="consult__title">{{ 'Contacts.SendPhone.Title' | translate }}</div>
+  <form class="consult__form" [formGroup]="form" [ngClass]="{error: form!.invalid && (form.dirty || form.touched)}">
+
+    <div class="consult__field">
+      <input type="tel" formControlName="phone_number" [placeholder]="'Contacts.SendPhone.Placeholder' | translate">
+      <div class="field-error">
+        <app-validation-errors [errors]="getPhoneErrors()"></app-validation-errors>
+      </div>
+    </div>
+
+
+    <button class="default" (click)="submit()">
+      {{ 'Contacts.SendPhone.Send' | translate }}
+    </button>
+  </form>
+</div>

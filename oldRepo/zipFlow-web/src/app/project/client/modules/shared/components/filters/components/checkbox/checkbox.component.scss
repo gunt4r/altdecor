@@ -1,0 +1,46 @@
+.checkbox {
+
+  &__label {
+    font-size: 20px;
+    line-height: 25px;
+    font-weight: 700;
+  }
+
+  &__buttons {
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+
+    .button {
+      padding: 12px;
+      border-radius: 4px;
+      border: 2px solid #EEECEC;
+      cursor: pointer;
+      font-size: 12px;
+      line-height: 20px;
+      font-weight: 700;
+      color: #1B1B1B;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+
+      &:before {
+        content: "";
+        padding: 5px;
+        border: 2px solid #EEECEC;
+        border-radius: 50px;
+      }
+
+      &.active {
+        border-color: #FFE0B1;
+
+        &:before {
+          border-color: #FFE0B1;
+          background: #FFE0B1;
+        }
+      }
+    }
+  }
+}

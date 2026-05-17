@@ -1,0 +1,81 @@
+<div class="card">
+
+  <div class="flex-between card-padding-lr" *ngIf="configs">
+    <div class="card-title">{{configs.title}}</div>
+
+    <input
+      type="file"
+      accept="image/*"
+      id="image-upload"
+      multiple
+      (input)="processFile($event)">
+
+    <label for="image-upload" class="btn action-btn btn-primary ml-auto">{{configs.button}}</label>
+
+  </div>
+
+  <ng-container *ngIf="list; else emptyState">
+    <div class="per-page-section flex-between card-padding-lr section-mt">
+      <div class="f-group">
+        <span>Show</span>
+        <select
+          class="per-page-select f-control"
+          style="width: auto" name="pageSize"
+          [(ngModel)]="rowsPerPage" (change)="onPerPageSelected()"
+        >
+          <option [ngValue]="item" *ngFor="let item of perPageOptions">{{item}}</option>
+        </select>
+        <span>entries</span>
+      </div>
+    </div>
+
+    <div class="images">
+      <div class="tab-labels">
+        <div class="tab-label"
+             *ngFor="let entity of entities"
+             (click)="setActiveEntity(entity)"
+             [ngClass]="{'active': activeEntity === entity}">{{ entity | titlecase }}</div>
+      </div>
+
+      <div class="images__list">
+        <ng-container *ngFor="let data of imagesList | keyvalue">
+          <ng-container *ngIf="data.key === activeEntity">
+            <div class="images__preview" *ngFor="let image of data.value"
+                 [ngStyle]="{'background-image': 'url('+ image.file_url + ')'}">
+              <div class="actions">
+                <button
+                  [cdkCopyToClipboard]="image.file_url"
+                  (cdkCopyToClipboardCopied)="copyImage()"
+                  class="without-styles-btn ml-auto"
+                >
+                  <fa-icon [icon]="faCopy"></fa-icon>
+                </button>
+                <fa-icon [icon]="faTrash" (click)="removeImage(image.id)"></fa-icon>
+              </div>
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="flex-between card-padding-lr section-mt">
+      <div class="pagination-info">
+        Showing {{pageNr * rowsPerPage - rowsPerPage + 1}}
+        to {{(pageNr * rowsPerPage) > totalRows ? totalRows : pageNr * rowsPerPage}}
+        of {{totalRows}} entries
+      </div>
+      <ngb-pagination
+        class="pagination"
+        [collectionSize]="totalRows"
+        [(page)]="pageNr"
+        [pageSize]="rowsPerPage"
+        [maxSize]="3"
+        (pageChange)="onPageSelected($event)">
+      </ngb-pagination>
+    </div>
+  </ng-container>
+
+  <ng-template #emptyState>
+    No images found
+  </ng-template>
+</div>

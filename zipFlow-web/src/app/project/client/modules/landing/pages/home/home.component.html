@@ -16,7 +16,7 @@
          alt=""
          aria-hidden="true"
          loading="eager"
-         (load)="onHeroImageLoad($event)" />
+         (load)="onHeroImageLoad()" />
     <div class="hero__overlay"></div>
     <div class="hero__content" [class.visible]="heroImageLoaded">
       <h1>{{ heroTitle || ui.heroTitle }}</h1>
@@ -160,7 +160,7 @@
         <ng-template #mapFallback>
           <img src="assets/images/content/map.png" alt="Map preview" />
         </ng-template>
-        <button class="map-btn" type="button" (click)="openMap(addresses[0]?.mapUrl || mapUrl)">{{ ui.mapButton }}</button>
+        <button class="map-btn" type="button" (click)="openMap(addresses.length ? addresses[0].mapUrl : mapUrl)">{{ ui.mapButton }}</button>
       </div>
     </div>
   </section>

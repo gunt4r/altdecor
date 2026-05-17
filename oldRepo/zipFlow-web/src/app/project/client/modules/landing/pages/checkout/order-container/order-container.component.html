@@ -1,0 +1,21 @@
+<div class="order-container">
+  <div class="order-container__content">
+    <div class="order-container__title">
+      <ng-content select="[title]"></ng-content>
+    </div>
+
+    <ng-content></ng-content>
+  </div>
+
+
+  <div class="details">
+    <div class="order-container__details" *ngFor="let detail of details">
+      <img [src]="detail.icon" alt="">
+
+      <div class="details--content">
+        <div class="title">{{ detail.title | translate }}</div>
+        <div class="description">{{ detail.description | translate }}</div>
+      </div>
+    </div>
+  </div>
+</div>

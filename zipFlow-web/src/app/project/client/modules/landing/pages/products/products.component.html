@@ -1,0 +1,28 @@
+<app-page-container [pages]="pages">
+  <div class="products" *ngIf="products; else loading">
+
+    <div class="products__header">
+      <app-products-header [total]="products.total" (onSort)="onSort($event)"></app-products-header>
+    </div>
+
+    <div class="products__content">
+      <div class="products__filters">
+        <app-filters [filters]="filters"
+                     *ngIf="filters?.length"
+                     (filtersChange)="filtersChange($event)"
+                     (filterOpen)="openFilter($event)"></app-filters>
+      </div>
+
+      <div class="products__spacer"></div>
+
+      <div class="products__right">
+        <app-products-list [products]="products" [loading]="productsLoading" (loadNextPage)="loadNextPage()"
+                           [ngClass]="{'filter-open': isFilterOpen}"></app-products-list>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #loading>
+    <app-loader class="loader"></app-loader>
+  </ng-template>
+</app-page-container>

@@ -11,8 +11,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  PLATFORM_ID,
-  ViewChild
+  PLATFORM_ID
 } from '@angular/core';
 import {isPlatformBrowser} from "@angular/common";
 import {PageSlug} from "../../shared/components/page-container/pages.type";
@@ -20,8 +19,7 @@ import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 import {TranslateService} from "../../shared/services/translate.service";
 import {PublicService} from "../../shared/services/public.service";
 import {CartProductService} from "../../shared/services/cart-products.service";
-import {catchError, debounceTime, filter, forkJoin, of, Subject, Subscription, tap} from "rxjs";
-import {switchMap} from "rxjs/operators";
+import {catchError, debounceTime, filter, forkJoin, of, tap} from "rxjs";
 import {QueryParamsService} from "../../../../../theme/shared/services/query-params.service";
 import {SortTypes} from "../../../../../theme/client/utils/api-params.utils";
 import {findObjectByKey} from "../../../../../theme/shared/utils/form.utils";
@@ -47,13 +45,6 @@ interface MenuProduct {
   title: string;
   id: string | number;
   url: string;
-}
-
-interface ClientSearchResult {
-  id: string | number;
-  title: string;
-  image: string;
-  price: string;
 }
 
 interface NavProductLink {
@@ -99,7 +90,7 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   };
   menuKeys: string[] = [];
-  selectedLanguage = 'RO';
+  selectedLanguage = (localStorage.getItem('language') || 'ro').toUpperCase();
   isCartOpen: boolean = false;
   isSideMenuOpen: boolean = false;
   isMobile: boolean = false;
@@ -118,54 +109,6 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   navProductLinks: NavProductLink[] = [];
   topNavLinks: TopNavLink[] = [];
   staticNavLinks: Array<{ label: string; path: string }> = [];
-  private _desktopMenuConfig: any[] = [];
-  private _drawerMenuConfig: any[] = [];
-  private _hoverableMenuConfig: any[] = [];
-  private _catalogPdfUrl = '';
-  private _siteConfigLoaded = false;
-
-  // Client search
-  isSearchOpen = false;
-  clientSearchQuery = '';
-  clientSearchResults: ClientSearchResult[] = [];
-  isClientSearching = false;
-  private searchSubject = new Subject<string>();
-  private searchSub!: Subscription;
-  @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
-
-  get searchPlaceholder(): string {
-    const lang = this.getLanguage();
-    return lang === 'ru' ? 'Поиск товаров...' : lang === 'en' ? 'Search products...' : 'Caută produse...';
-  }
-
-  get searchNoResults(): string {
-    const lang = this.getLanguage();
-    return lang === 'ru' ? 'Ничего не найдено' : lang === 'en' ? 'No results found' : 'Niciun rezultat găsit';
-  }
-
-  get drawerMenuItems(): any[] {
-    if (this._drawerMenuConfig.length) {
-      return this._drawerMenuConfig.map((item: any, index: number) => {
-        const lang = this.getLanguage();
-        const label = typeof item.label === 'object' ? (item.label?.[lang] || item.label?.['ro'] || '') : (item.label || '');
-        const children = (item.children || []).map((child: any) => {
-          const childLabel = typeof child.label === 'object' ? (child.label?.[lang] || child.label?.['ro'] || '') : (child.label || '');
-          return {label: childLabel, link: child.link || ''};
-        }).filter((child: any) => child.label?.trim());
-        return {
-          type: {id: `drawer-${index}`, label: {[lang]: label, ro: label}, active: false},
-          categories: children,
-          drawerIcon: item.icon || '',
-          drawerLink: item.link || ''
-        };
-      }).filter((item: any) => {
-        const lang = this.getLanguage();
-        const label = typeof item.type.label === 'object' ? (item.type.label?.[lang] || item.type.label?.['ro'] || '') : (item.type.label || '');
-        return label?.trim();
-      });
-    }
-    return this.productsMenuData;
-  }
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object,
               private route: ActivatedRoute,
@@ -246,8 +189,6 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
 
-      this.loadSiteConfig();
-
       this.cartService.cartCountValue.pipe(
         debounceTime(100),
         tap((value: number) => {
@@ -268,51 +209,12 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
       if (!this.languages.length) {
         this.languages = [...FALLBACK_LANGUAGES];
       }
-
-      // Setup client search pipeline
-      this.searchSub = this.searchSubject.pipe(
-        debounceTime(350),
-        filter(q => q.length >= 2),
-        tap(() => { this.isClientSearching = true; this.cdr.detectChanges(); }),
-        switchMap(q => {
-          const searchParam = `title_contains_${q}_or_product_type_contains_${q}_or_product_category_contains_${q}_or_model_contains_${q}`;
-          return this.publicService.getProducts({ page: 1, rowsPerPage: 8, search: searchParam }).pipe(
-            catchError(() => of({ data: [] }))
-          );
-        })
-      ).subscribe((res: any) => {
-        const products = res?.data || [];
-        this.clientSearchResults = products.slice(0, 8).map((p: any) => {
-          const data = p.data || [];
-          const titleObj = findObjectByKey(data, 'title');
-          const imagesArr = findObjectByKey(data, 'images');
-          const configs = findObjectByKey(data, 'configurations') || [];
-          const mainConfig = configs?.[0]?.configuration?.[0] || {};
-          const currentPrice = mainConfig?.price?.[0];
-          const priceStr = currentPrice?.value ? `${currentPrice.value} ${currentPrice.currency || 'MDL'}` : '';
-          const firstImage = Array.isArray(imagesArr) && imagesArr.length ? (imagesArr[0]?.file_url || imagesArr[0]?.url || '') : '';
-          return {
-            id: p.id,
-            title: this.getLocalizedLabel(titleObj) || ('Product ' + p.id),
-            image: firstImage,
-            price: priceStr
-          };
-        });
-        this.isClientSearching = false;
-        this.cdr.detectChanges();
-      });
     }
   }
 
   ngAfterViewInit() {
-    // Products are now loaded by loadSiteConfig after it completes.
-    // This serves as a fallback only if siteConfig somehow fails to load.
-    if (isPlatformBrowser(this.platformId) && !this._siteConfigLoaded) {
-      setTimeout(() => {
-        if (!this._siteConfigLoaded && !this.productsMenuData.length) {
-          this.getProductsData();
-        }
-      }, 3000);
+    if (isPlatformBrowser(this.platformId)) {
+      this.getProductsData();
     }
   }
 
@@ -327,46 +229,9 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
       this.closeMenuTimer = null;
     }
     this.unlockScroll();
-    if (this.searchSub) this.searchSub.unsubscribe();
-  }
-
-  toggleSearch(open?: boolean) {
-    this.isSearchOpen = open !== undefined ? open : !this.isSearchOpen;
-    if (this.isSearchOpen) {
-      setTimeout(() => this.searchInput?.nativeElement?.focus(), 100);
-    } else {
-      this.clientSearchQuery = '';
-      this.clientSearchResults = [];
-    }
-    this.cdr.detectChanges();
-  }
-
-  onClientSearch(query: string) {
-    if (query.length < 2) {
-      this.clientSearchResults = [];
-      this.cdr.detectChanges();
-      return;
-    }
-    this.searchSubject.next(query);
-  }
-
-  goToProduct(id: string | number) {
-    this.toggleSearch(false);
-    this.router.navigate([`/${this.getLanguage()}/products`, id]);
-  }
-
-  goToSearchResults() {
-    const query = this.clientSearchQuery.trim();
-    if (!query) return;
-    this.toggleSearch(false);
-    this.router.navigate([`/${this.getLanguage()}/products`], {
-      queryParams: { search: query, sortBy: 'created_at', sortOrder: 'DESC', page: 1, rowsPerPage: 12 }
-    });
   }
 
   getProductsData() {
-    // Skip if mega menu is configured from admin hoverable_menu
-    if (this._hoverableMenuConfig.length || this.productsMenuData.length) return;
     this.productsMenuData = [];
 
     const params = {
@@ -407,18 +272,12 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
         });
 
         filteredTypes?.forEach(({id, label, categories}: any) => {
-          const matchedConfig = this._desktopMenuConfig.find((cfg: any) => {
-            const cfgLabel = typeof cfg.label === 'object' ? (cfg.label?.['ro'] || '') : (cfg.label || '');
-            const typeLabel = typeof label === 'object' ? (label?.['ro'] || '') : (label || '');
-            return cfgLabel.toLowerCase() === typeLabel.toLowerCase();
-          });
           this.productsMenuData.push({
             type: {
               label,
               id,
               active: false
             },
-            desktopIcon: matchedConfig?.icon || '',
             categories: categories?.map(({value: {id, label}}: any) => ({
               label,
               id,
@@ -466,15 +325,23 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   downloadPdf(catalog: any[]) {
-    // Prefer site_config catalog_pdf
-    if (this._catalogPdfUrl) {
-      window.open(this._catalogPdfUrl, '_blank');
-      return;
-    }
-    // Fallback to general_details
-    if (catalog?.[0]?.file_url) {
-      window.open(catalog[0].file_url, '_blank');
-    }
+    this.publicService.downloadPdf(catalog[0].file_url).pipe(takeUntilDestroyed(this.destroy)).subscribe((data: any) => {
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        const pdfData = reader.result as string;
+        this.downloadPdfFromStorage(pdfData);
+        this.toastr.success('PDF downloaded successfully!');
+      };
+      reader.readAsDataURL(data);
+    });
+  }
+
+  downloadPdfFromStorage(pdfData: string) {
+    const link = document.createElement('a');
+    link.href = pdfData;
+    link.download = 'Catalog.pdf';
+    link.click();
   }
 
   switchLanguage(language: string) {
@@ -545,7 +412,6 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.openMenuTimer = setTimeout(() => {
       this.toggleMenuOpened(true);
-      this.cdr.detectChanges();
       this.openMenuTimer = null;
     }, 90);
   }
@@ -566,7 +432,6 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.closeMenuTimer = setTimeout(() => {
       this.toggleMenuOpened(false);
-      this.cdr.detectChanges();
     }, 220);
   }
 
@@ -590,110 +455,6 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   toggleMobileType(typeId: string | number) {
     this.expandedMobileType = this.expandedMobileType === typeId ? null : typeId;
-  }
-
-  private categoryIconMap: Record<string, string> = {
-    'perete': 'layers',
-    'podea': 'hexagon',
-    'tavan': 'home',
-    'plinte': 'ruler',
-    'profile': 'sliders',
-    'adeziv': 'droplets',
-    'accesorii': 'settings',
-  };
-
-  private subcategoryIconMap: Record<string, string> = {
-    'pvc': 'pentagon',
-    'spc': 'palette',
-    'poliuretan': 'box',
-    'autocolante': 'sticker',
-    'bambus': 'leaf',
-  };
-
-  loadNavigationConfig() {
-    this.publicService.getNavigationConfig().pipe(
-      catchError(() => of({data: []})),
-      takeUntilDestroyed(this.destroy)
-    ).subscribe((res: any) => {
-      const items = res?.data || [];
-      items.forEach((item: any) => {
-        const d = item.data?.[0] || item;
-        const key = (d.match_key || '').toLowerCase();
-        const icon = d.icon_key;
-        const target = d.type === 'subcategory' ? this.subcategoryIconMap : this.categoryIconMap;
-        if (key && icon) {
-          target[key] = icon;
-        }
-      });
-      this.cdr.detectChanges();
-    });
-  }
-
-  private readonly KNOWN_ICONS = new Set([
-    'layers', 'hexagon', 'square', 'puzzle', 'home', 'ruler',
-    'sliders', 'droplets', 'settings', 'pentagon', 'palette',
-    'box', 'sticker', 'leaf'
-  ]);
-
-  getIconKey(productType: any): string {
-    const icon = productType.drawerIcon || '';
-    if (icon.includes('/')) return '__img__';
-    if (this.KNOWN_ICONS.has(icon)) return icon;
-    return this.getCategoryIcon(productType.type?.label);
-  }
-
-  getStaticLinkLabel(key: string): string {
-    const language = this.getLanguage();
-    const labels: Record<string, Record<string, string>> = {
-      blog: {ro: 'Blog', ru: 'Блог', en: 'Blog'},
-      contacts: {ro: 'Contacte', ru: 'Контакты', en: 'Contacts'},
-      viewAll: {ro: 'Vezi tot', ru: 'Смотреть все', en: 'View all'}
-    };
-    return labels[key]?.[language] || labels[key]?.['ro'] || key;
-  }
-
-  getDesktopIconKey(productType: any): string {
-    const icon = productType.desktopIcon || '';
-    if (icon.includes('/')) return '__img__';
-    if (this.KNOWN_ICONS.has(icon)) return icon;
-    return this.getCategoryIcon(productType.type?.label);
-  }
-
-  getCategoryIcon(label: any): string {
-    const text = this.normalizeText(this.getLocalizedLabel(label));
-    for (const [key, icon] of Object.entries(this.categoryIconMap)) {
-      if (text.includes(key)) return icon;
-    }
-    return 'layers';
-  }
-
-  getSubcategoryIcon(label: any): string {
-    const text = this.normalizeText(this.getLocalizedLabel(label));
-    for (const [key, icon] of Object.entries(this.subcategoryIconMap)) {
-      if (text.includes(key)) return icon;
-    }
-    return 'circle';
-  }
-
-  getNavLinkIcon(label: string): string {
-    const text = this.normalizeText(label);
-    for (const [key, icon] of Object.entries(this.categoryIconMap)) {
-      if (text.includes(key)) return icon;
-    }
-    return 'arrow-right';
-  }
-
-  get mobileNavLinks(): TopNavLink[] {
-    const productTypeLabels = new Set(
-      this.productsMenuData.map((item: any) =>
-        this.normalizeText(this.getLocalizedLabel(item.type?.label))
-      )
-    );
-
-    return this.topNavLinks.filter(link => {
-      if (link.type === 'route') return true;
-      return !productTypeLabels.has(this.normalizeText(link.label));
-    });
   }
 
   handleTopNavClick(link: TopNavLink) {
@@ -728,20 +489,6 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    // Try matching a product type
-    const matchedType = this.productsMenuData.find((productType: any) => {
-      const typeLabel = this.normalizeText(this.getLocalizedLabel(productType.type?.label));
-      return typeLabel.includes(normalizedTarget) || normalizedTarget.includes(typeLabel);
-    });
-
-    if (matchedType) {
-      this.goToProductType({
-        label: this.getLocalizedLabel(matchedType.type?.label),
-        filter: `product_type_contains_${this.getLocalizedLabel(matchedType.type?.label)}`
-      });
-      return;
-    }
-
     this.goToProductType({label, filter: `product_category_contains_${label}`});
   }
 
@@ -753,20 +500,9 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   goToCategory(url: string, label: any) {
     const language = this.getLanguage();
-
-    // If the URL already contains query params, parse and use them as-is
-    if (url && url.includes('?')) {
-      const [path, qs] = url.split('?');
-      const queryParams = this.parseQueryString(qs);
-      this.router.navigate([`/${language}${path}`], {queryParams});
-      this.toggleMenuOpened(false);
-      this.toggleMobileNav(false);
-      return;
-    }
-
     const localizedLabel = typeof label === 'string' ? label : (label[language] || label['ro']);
 
-    this.router.navigate([`/${language}${url || '/products'}`], {
+    this.router.navigate([`/${language}${url}`], {
       queryParams: {
         sortBy: 'created_at',
         sortOrder: 'DESC',
@@ -780,23 +516,8 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
     this.toggleMobileNav(false);
   }
 
-  goToCategoryMobile(category: any) {
+  goToCategoryMobile(category: { id: string | number; label: any }) {
     const language = this.getLanguage();
-
-    // If the category has a direct link (from drawer config), use it
-    if (category.link) {
-      this.toggleMenuOpened(false);
-      this.toggleMobileNav(false);
-      if (category.link.includes('?')) {
-        const [path, qs] = category.link.split('?');
-        const queryParams = this.parseQueryString(qs);
-        this.router.navigate([`/${language}${path}`], {queryParams});
-      } else {
-        this.router.navigate([`/${language}${category.link}`]);
-      }
-      return;
-    }
-
     this.router.navigate([`/${language}/products`], {
       queryParams: {
         sortBy: 'created_at',
@@ -835,33 +556,6 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
     this.toggleMobileNav(false);
   }
 
-  goToTypeLink(productType: any) {
-    const link = productType.typeLink;
-    if (!link) return;
-    const language = this.getLanguage();
-    if (link.includes('?')) {
-      const [path, qs] = link.split('?');
-      const queryParams = this.parseQueryString(qs);
-      this.router.navigate([`/${language}${path}`], {queryParams});
-    } else {
-      this.router.navigate([`/${language}${link}`]);
-    }
-    this.toggleMenuOpened(false);
-    this.toggleMobileNav(false);
-  }
-
-  private parseQueryString(qs: string): Record<string, string> {
-    const params: Record<string, string> = {};
-    if (!qs) return params;
-    qs.split('&').forEach((pair: string) => {
-      const eqIdx = pair.indexOf('=');
-      if (eqIdx > 0) {
-        params[decodeURIComponent(pair.substring(0, eqIdx))] = decodeURIComponent(pair.substring(eqIdx + 1));
-      }
-    });
-    return params;
-  }
-
   isActiveNav(path: string): boolean {
     if (!this.currentUrl) {
       return false;
@@ -873,20 +567,6 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isTopNavLinkActive(link: TopNavLink): boolean {
     if (link.type === 'route' && link.path) {
-      if (link.path === '/products' && link.query?.filter) {
-        const currentFilter = this.normalizeText(this.qpService.getParamValue('filter') || '');
-        const linkFilter = this.normalizeText(link.query.filter);
-        return this.isActiveNav('/products') && currentFilter === linkFilter;
-      }
-      if (link.path === '/products' && link.query?.search) {
-        const currentSearch = this.normalizeText(this.qpService.getParamValue('search') || '');
-        const linkSearch = this.normalizeText(link.query.search);
-        return this.isActiveNav('/products') && currentSearch === linkSearch;
-      }
-      if (link.path === '/products') {
-        const currentFilter = this.qpService.getParamValue('filter') || '';
-        return this.isActiveNav('/products') && !currentFilter;
-      }
       return this.isActiveNav(link.path);
     }
 
@@ -929,26 +609,6 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
       .trim();
   }
 
-  private parseLinkQuery(link?: string): any {
-    if (!link || !link.includes('?')) {
-      return undefined;
-    }
-
-    const [, queryString] = link.split('?');
-    const params: Record<string, string> = {};
-
-    queryString.split('&').forEach((pair) => {
-      const [rawKey, rawValue] = pair.split('=');
-      if (!rawKey || rawValue === undefined) {
-        return;
-      }
-
-      params[decodeURIComponent(rawKey)] = decodeURIComponent(rawValue);
-    });
-
-    return Object.keys(params).length ? params : undefined;
-  }
-
   private ensureActiveTypeAndCategory() {
     if (!this.productsMenuData.length) {
       return;
@@ -969,188 +629,20 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private rebuildNavLabels() {
-    // If we have dynamic config, use it
-    if (this._desktopMenuConfig.length) {
-      this.topNavLinks = this._desktopMenuConfig
-        .sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
-        .map((item: any) => {
-          const label = this.getLocalizedLabel(item.label) || '';
-          const link = item.link || '';
-          if (link.includes('product_category_contains_') || link.includes('product_type_contains_')) {
-            // Has a filter — determine type
-            const isType = link.includes('product_type_contains_');
-            const filterMatch = link.match(/filter=(.+?)(?:&|$)/);
-            const filterValue = filterMatch ? filterMatch[1] : '';
-            return {
-              label,
-              type: (isType ? 'route' : 'category') as 'route' | 'category',
-              path: '/products',
-              query: this.parseLinkQuery(link)
-            };
-          }
-          return {label, type: 'route' as 'route', path: link || '/products', query: this.parseLinkQuery(link)};
-        });
-    } else {
-      const language = this.getLanguage();
-      const t = (ro: string, ru: string, en: string) =>
-        language === 'ru' ? ru : language === 'en' ? en : ro;
-      this.topNavLinks = [
-        {label: t('Promoții', 'Промо', 'Promotions'), type: 'route', path: '/products',
-          query: {sortBy: 'created_at', sortOrder: 'DESC', page: 1, rowsPerPage: 12, filter: 'product_type_contains_Promoții'}},
-        {label: t('Perete', 'Стена', 'Wall'), type: 'category'},
-        {label: t('Podea', 'Пол', 'Floor'), type: 'category'},
-        {label: t('Tavan', 'Потолок', 'Ceiling'), type: 'route', path: '/products',
-          query: {sortBy: 'created_at', sortOrder: 'DESC', page: 1, rowsPerPage: 12, filter: 'product_type_contains_Panou decorativ INTERIOR'}},
-        {label: t('Accesorii', 'Аксессуары', 'Accessories'), type: 'route', path: '/products',
-          query: {sortBy: 'created_at', sortOrder: 'DESC', page: 1, rowsPerPage: 12, filter: 'product_type_contains_Profil'}}
-      ];
-    }
-
     const language = this.getLanguage();
-    const t2 = (ro: string, ru: string, en: string) =>
-      language === 'ru' ? ru : language === 'en' ? en : ro;
-    this.staticNavLinks = [
-      {label: t2('Blog', 'Блог', 'Blog'), path: '/blog'},
-      {label: t2('Contacte', 'Контакты', 'Contacts'), path: '/contacts'}
+
+    this.topNavLinks = [
+      {label: language === 'ru' ? 'Промо' : language === 'en' ? 'Promotions' : 'Promoții', type: 'route', path: '/products'},
+      {label: language === 'ru' ? 'Стена' : language === 'en' ? 'Wall' : 'Perete', type: 'category'},
+      {label: language === 'ru' ? 'Пол' : language === 'en' ? 'Floor' : 'Podea', type: 'category'},
+      {label: language === 'ru' ? 'Потолок' : language === 'en' ? 'Ceiling' : 'Tavan', type: 'category'},
+      {label: language === 'ru' ? 'Аксессуары' : language === 'en' ? 'Accessories' : 'Accesorii', type: 'category'}
     ];
-  }
 
-  /**
-   * Build mega menu from admin hoverable_menu config entries.
-   * Each entry becomes a section (product type), its children become categories.
-   * Products are loaded from the API based on category filter links.
-   */
-  private buildMegaMenuFromConfig() {
-    // Match desktop_menu icons by comparing labels
-    this.productsMenuData = this._hoverableMenuConfig.map((section: any, idx: number) => {
-      const matchedConfig = this._desktopMenuConfig.find((cfg: any) => {
-        const cfgLabel = typeof cfg.label === 'object' ? (cfg.label?.['ro'] || '') : (cfg.label || '');
-        const secLabel = typeof section.label === 'object' ? (section.label?.['ro'] || '') : (section.label || '');
-        return cfgLabel.toLowerCase() === secLabel.toLowerCase();
-      });
-      return {
-        type: {
-          label: section.label,
-          id: `config-${idx}`,
-          active: idx === 0
-        },
-        typeLink: section.link || '',
-        desktopIcon: matchedConfig?.icon || '',
-        categories: (section.children || []).map((child: any, cIdx: number) => ({
-          label: child.label,
-          id: `config-${idx}-${cIdx}`,
-          url: child.link || '/products',
-          products: []
-        }))
-      };
-    });
-
-    this.navProductLinks = this.productsMenuData.map((item: any) => ({
-      label: this.getLocalizedLabel(item.type?.label),
-      filter: `product_type_contains_${this.getLocalizedLabel(item.type?.label)}`
-    }));
-
-    this.ensureActiveTypeAndCategory();
-    this.cdr.detectChanges();
-
-    this.productsMenuData.forEach((section: any, typeIndex: number) => {
-      if (!section.categories?.length) return;
-      const requests = section.categories.map((cat: any) => {
-        const catLabel = this.getLocalizedLabel(cat.label);
-        return this.publicService.getProducts({
-          page: 1,
-          rowsPerPage: 21,
-          filter: `product_category_contains_${catLabel}`,
-          sortBy: 'created_at',
-          sortOrder: 'DESC'
-        }).pipe(catchError(() => of({data: []})));
-      });
-      forkJoin(requests).pipe(
-        takeUntilDestroyed(this.destroy)
-      ).subscribe((data: any) => {
-        data.forEach((productData: any, index: number) => {
-          this.productsMenuData[typeIndex].categories[index].products = productData?.data?.map((product: any) => ({
-            image: findObjectByKey(product.data, 'images')?.[0]?.['file_url'],
-            title: findObjectByKey(product.data, 'title'),
-            id: product.id,
-            url: `/products/${product.id}`
-          })) || [];
-        });
-
-        if (typeIndex === 0 && this.productsMenuData[0]?.categories?.length) {
-          this.showProducts = this.productsMenuData[0].categories[0].products || [];
-          this.activeCategoryId = this.productsMenuData[0].categories[0].id;
-        }
-        this.cdr.detectChanges();
-      });
-    });
-  }
-
-  private loadSiteConfig() {
-    this.publicService.getSiteConfig({page: 1, rowsPerPage: 100}).pipe(
-      catchError(() => of({data: []})),
-      takeUntilDestroyed(this.destroy)
-    ).subscribe((response: any) => {
-      const items = response?.data || [];
-      const language = this.getLanguage();
-
-      this._desktopMenuConfig = items
-        .filter((item: any) => findObjectByKey(item.data, 'config_type') === 'desktop_menu')
-        .filter((item: any) => findObjectByKey(item.data, 'is_active') !== false)
-        .map((item: any) => ({
-          label: findObjectByKey(item.data, 'label'),
-          link: findObjectByKey(item.data, 'link') || '',
-          icon: findObjectByKey(item.data, 'icon') || '',
-          order: findObjectByKey(item.data, 'order_index') || 0,
-          children: findObjectByKey(item.data, 'children') || []
-        }));
-
-      this._drawerMenuConfig = items
-        .filter((item: any) => findObjectByKey(item.data, 'config_type') === 'drawer_menu')
-        .filter((item: any) => findObjectByKey(item.data, 'is_active') !== false)
-        .map((item: any) => ({
-          label: findObjectByKey(item.data, 'label'),
-          link: findObjectByKey(item.data, 'link') || '',
-          icon: findObjectByKey(item.data, 'icon') || '',
-          order: findObjectByKey(item.data, 'order_index') || 0,
-          children: findObjectByKey(item.data, 'children') || []
-        }));
-
-      const catalogPdfEntries = items
-        .filter((item: any) => findObjectByKey(item.data, 'config_type') === 'catalog_pdf')
-        .filter((item: any) => findObjectByKey(item.data, 'is_active') !== false);
-
-      if (catalogPdfEntries.length > 0) {
-        const catalogLink = findObjectByKey(catalogPdfEntries[0].data, 'link');
-        if (catalogLink) {
-          this._catalogPdfUrl = catalogLink;
-        }
-      }
-
-      // Hoverable menu (mega menu structure from admin)
-      this._hoverableMenuConfig = items
-        .filter((item: any) => findObjectByKey(item.data, 'config_type') === 'hoverable_menu')
-        .filter((item: any) => findObjectByKey(item.data, 'is_active') !== false)
-        .sort((a: any, b: any) => (findObjectByKey(a.data, 'order_index') || 0) - (findObjectByKey(b.data, 'order_index') || 0))
-        .map((item: any) => ({
-          label: findObjectByKey(item.data, 'label'),
-          link: findObjectByKey(item.data, 'link') || '',
-          order: findObjectByKey(item.data, 'order_index') || 0,
-          children: (findObjectByKey(item.data, 'children') || []).filter((c: any) => {
-            const lbl = c.label;
-            return typeof lbl === 'object' ? (lbl?.ro?.trim() || lbl?.ru?.trim() || lbl?.en?.trim()) : (lbl && lbl.trim());
-          })
-        }));
-
-      this.rebuildNavLabels();
-      this._siteConfigLoaded = true;
-      if (this._hoverableMenuConfig.length) {
-        this.buildMegaMenuFromConfig();
-      } else {
-        this.getProductsData();
-      }
-      this.cdr.detectChanges();
-    });
+    this.staticNavLinks = [
+      {label: language === 'ru' ? 'Блог' : language === 'en' ? 'Blog' : 'Blog', path: '/blog'},
+      {label: language === 'ru' ? 'Контакты' : language === 'en' ? 'Contacts' : 'Contacte', path: '/contacts'}
+    ];
   }
 
   private syncScrollLock() {
@@ -1158,7 +650,6 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    // Only lock scroll for mobile nav overlay — desktop mega-menu should not lock scroll
     if (this.isMobileNavOpen) {
       document.documentElement.style.overflow = 'hidden';
       document.body.style.overflow = 'hidden';
@@ -1175,21 +666,5 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
 
     document.documentElement.style.overflow = '';
     document.body.style.overflow = '';
-  }
-
-  navigateDrawerLink(link: string) {
-    this.toggleMobileNav(false);
-    const lang = this.getLanguage();
-    if (link.includes('?')) {
-      const [path, qs] = link.split('?');
-      const queryParams: any = {};
-      qs.split('&').forEach(pair => {
-        const [k, v] = pair.split('=');
-        if (k && v) queryParams[decodeURIComponent(k)] = decodeURIComponent(v);
-      });
-      this.router.navigate([`/${lang}${path}`], {queryParams});
-    } else {
-      this.router.navigate([`/${lang}${link}`]);
-    }
   }
 }

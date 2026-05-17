@@ -1,0 +1,47 @@
+<app-authorization
+    [entity]="entities.Analytics"
+    [action]="[policyActions.VIEW, policyActions.UPDATE]"
+>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header card-padding-lr">
+          <div class="flex-between align-items-end">
+            <div class="card-title">Analytics details</div>
+            <div class="actions">
+              <button class="btn action-btn btn-outlined-gray mr-2" [routerLink]="['/admin/analytics']">
+                Cancel
+              </button>
+              <app-authorization
+                  [entity]="entities.Analytics"
+                  [action]="modelId ? policyActions.UPDATE : policyActions.CREATE"
+                  [class]="'d-table-cell'"
+              >
+                <button class="btn action-btn btn-primary ml-2"
+                        [disabled]="submitButtonDisabled"
+                        (click)="submitFormSubject.next()">
+                  {{modelId ? 'Update' : 'Create'}} analytics
+                </button>
+              </app-authorization>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body card-padding-lr">
+         <!--TODO: Add Select custom-input-->
+          <app-form
+              [modelId]="modelId"
+              [setFormConfig]="formData"
+              [service]="service"
+              [setModel]="currentModel"
+              [name]="'Analytics'"
+              [entity]="entities.LANGUAGE"
+              [urlSegment]="'analytics'"
+              [submitForm]="submitFormSubject.asObservable()"
+              (submitButtonState)="submitButtonDisabled = $event"
+          ></app-form>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-authorization>

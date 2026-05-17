@@ -1,0 +1,30 @@
+<div class="card">
+  <app-table
+    [rows]="list"
+    [columns]="columns"
+    [pendingRequest]="isLoading"
+    [totalCount]="totalRows"
+    [selectedPage]="pageNr"
+    [perPage]="rowsPerPage"
+    [createButton]="{label: 'Add Newsletter Email', url: [createUrl]}"
+    [urlPrefix]="routeUrl"
+    [title]="'Newsletter Emails'"
+    [entity]="entity"
+    (reloadData)="getList()"
+    (rowActionEmitter)="onTableRowAction($event)"
+  >
+    <ng-container *appTableActions="let row">
+      <app-authorization
+        [entity]="entity"
+        [action]="policyActions.Send"
+        [resource]="row"
+      >
+        <div class="send">
+          <a (click)="sendEmails(row)">
+            <svg-icon [src]="'app/theme/admin/assets/icons/send.svg' | assetsUrl"></svg-icon>
+          </a>
+        </div>
+      </app-authorization>
+    </ng-container>
+  </app-table>
+</div>

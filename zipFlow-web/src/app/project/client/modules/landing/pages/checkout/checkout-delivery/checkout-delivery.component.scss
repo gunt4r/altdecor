@@ -1,0 +1,95 @@
+@import '../../../../../../../../assets/styles/components';
+
+.checkout-delivery {
+  display: flex;
+  width: 100%;
+  gap: 30px;
+
+  &__left {
+    margin-top: 40px;
+    width: 100%;
+  }
+
+  &__content {
+    margin-top: 50px;
+
+    .title {
+      font-size: 30px;
+      line-height: 35px;
+      font-weight: 700;
+      color: #1D1F22;
+    }
+  }
+
+  &__form {
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+
+    .form {
+
+      &--row {
+        display: flex;
+        align-items: flex-start;
+        gap: 30px;
+      }
+
+      &--col {
+        width: 100%;
+      }
+
+      &--radio {
+        .title {
+          color: #1D1F22;
+          font-weight: 600;
+          font-size: 26px;
+          line-height: 42px;
+        }
+
+        .content {
+          margin-top: 40px;
+        }
+      }
+
+      &--buttons {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        justify-content: space-between;
+      }
+
+      &--submit {
+        width: 100%;
+      }
+    }
+  }
+
+  a {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 25px;
+    color: #1D1F22;
+    letter-spacing: 0.1px;
+  }
+}
+
+@media only screen and (max-width: 992px) {
+  .checkout-delivery {
+    flex-direction: column-reverse;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .checkout-delivery {
+    &__left {
+      margin-top: 0;
+    }
+    &__content {
+      margin-top: 30px;
+    }
+    &__form {
+      margin-top: 30px;
+    }
+  }
+}

@@ -1,0 +1,11 @@
+.errors {
+  margin-top: 7px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  .error {
+    font-size: 14px;
+    color: #BF262F;
+  }
+}

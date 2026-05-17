@@ -1,0 +1,25 @@
+@import '../../../assets/scss/variables';
+
+.admin-container {
+  padding: ($navbar-height + 1.5rem) $container-margin $container-margin 0;
+  width: 100vw;
+  font-family: "DM Sans", sans-serif;
+}
+
+.main-panel {
+  width: calc(100vw - ($mobile-min + ($container-margin * 2)));
+  margin-left: auto;
+  margin-right: $container-margin;
+  height: calc(100vh - ($navbar-height + 3rem));
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: absolute;
+  left: ($mobile-min + $container-margin);
+
+  .content {
+    font-family: "DM Sans", sans-serif;
+  }
+}
+
+

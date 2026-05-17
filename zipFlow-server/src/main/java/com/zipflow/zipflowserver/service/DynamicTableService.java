@@ -112,7 +112,7 @@ public class DynamicTableService {
                         orSql.append("}') = '").append(searchParts[1]).append("')");
                     }
                 } else {
-                    orSql.append("}') LIKE '%").append(searchParts[1]).append("%')");
+                    orSql.append("}') ILIKE '%").append(searchParts[1]).append("%')");
                 }
                 andSql.append(orSql);
             }
@@ -164,6 +164,17 @@ public class DynamicTableService {
         if (sortBy == null || sortBy.isEmpty()) return sortClause;
         if ("created_at".equals(sortBy) || "updated_at".equals(sortBy)) {
             sortClause.append(" ORDER BY ").append(sortBy).append(" ").append(sortOrder).append(" ");
+        } else if (sortBy.matches("^[a-zA-Z_][a-zA-Z0-9_]*$")) {
+            // Single-key sort against a JSONB array of {key: value} objects stored in the data column.
+            // Use jsonb_path_query_first to find the first matching key. Numeric-looking values
+            // are cast to int so they sort numerically; NULLs (key absent) sort last; id ASC is a
+            // stable tiebreaker so categories without the key keep their insertion order.
+            String order = (sortOrder != null && !sortOrder.isEmpty()) ? sortOrder : "ASC";
+            sortClause.append(" ORDER BY NULLIF(jsonb_path_query_first(data, '$[*].")
+                    .append(sortBy)
+                    .append("')::text, 'null')::int ")
+                    .append(order)
+                    .append(" NULLS LAST, id ASC");
         } else {
             String[] keys = sortBy.split("\\.");
             sortClause.append(" ORDER BY jsonb_extract_path_text(");

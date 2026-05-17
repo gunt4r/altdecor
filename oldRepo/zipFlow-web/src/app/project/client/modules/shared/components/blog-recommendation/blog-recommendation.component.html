@@ -1,0 +1,14 @@
+<div class="recommendation-container">
+  <div class="recommendation-header">
+    <ng-content select="[title]"></ng-content>
+  </div>
+  <ng-container *ngFor="let article of recommendedArticles">
+    <a [routerLink]="['/blog', article.id]" class="article-data">
+      <div class="article-img" [ngStyle]="{ backgroundImage: 'url(' + article.img + ')' }"></div>
+      <div class="article-details">
+        <div class="article-title">{{article.title | translate | uppercase}}</div>
+        <div class="article-short-info" [innerHTML]="article.truncatedDescriptions | translate | safeHtml"></div>
+      </div>
+    </a>
+  </ng-container>
+</div>

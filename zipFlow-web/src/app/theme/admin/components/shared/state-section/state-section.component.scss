@@ -1,0 +1,52 @@
+@import '../../../assets/scss/variables';
+
+.state-card {
+  height: calc(100vh - 12rem);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+
+  .content {
+    margin: auto;
+    max-width: $mobile-min + $container-margin;
+
+    .icon {
+      margin: auto;
+      display: flex;
+      justify-content: center;
+    }
+
+    .state {
+      font-family: $font-family-bd;
+      font-size: 1.5rem;
+      font-weight: normal;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: 1.17;
+      letter-spacing: normal;
+      text-align: center;
+      color: $gray-400;
+      margin-top: 1.5rem;
+    }
+
+    .description {
+      font-family: $font-family-base;
+      font-size: $font-size-base;
+      font-weight: normal;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: 1.19;
+      letter-spacing: normal;
+      text-align: center;
+      color: $gray-400;
+      margin-top: $font-size-base;
+    }
+
+    button {
+      margin: 2rem auto 0;
+      display: flex;
+    }
+  }
+}

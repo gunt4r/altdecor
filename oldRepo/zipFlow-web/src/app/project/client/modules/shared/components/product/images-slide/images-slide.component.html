@@ -1,0 +1,27 @@
+<div class="images">
+  <div class="images__left">
+    <ng-container *ngFor="let image of images; let i = index">
+      <div class="background-image">
+        <div class="images__item" (click)="changeImage(i)" [ngClass]="{ active: imageIndex === i }" [ngStyle]="{ backgroundImage: 'url(' + image.path +')' }"></div>
+      </div>
+    </ng-container>
+  </div>
+  <div class="images__right">
+    <div class="badges">
+      <app-badge class="sale" *ngIf="sale" [badge]="badge.Error"
+                 [label]="('Products.Badge.Sale' | translate) || ''" [radius]="'0 5px 5px 0'"></app-badge>
+      <app-badge class="sale" *ngIf="outOfStock" [badge]="badge.Error"
+                 [label]="('Products.Badge.OutOfStock' | translate) || ''" [radius]="'0 5px 5px 0'"></app-badge>
+      <app-badge class="sale" *ngIf="comingSoon" [badge]="badge.Green"
+                 [label]="('Products.Badge.ComingSoon' | translate) || ''" [radius]="'0 5px 5px 0'"></app-badge>
+      <app-badge class="sale" *ngIf="isNew" [badge]="badge.Dark"
+                 [label]="('Products.Badge.New' | translate) || ''" [radius]="'0 5px 5px 0'"></app-badge>
+    </div>
+
+
+    <div class="background-image" (click)="showImages(imageIndex)">
+<!--      <div class="images__show" [ngStyle]="{ backgroundImage: 'url(' + images[imageIndex].path +')' }" [ngClass]="{ easeInOut: startAnimation }"></div>-->
+      <div class="images__show" [ngStyle]="{ backgroundImage: 'url(' + images[imageIndex].path +')' }"></div>
+    </div>
+  </div>
+</div>

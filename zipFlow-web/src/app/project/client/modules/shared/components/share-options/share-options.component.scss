@@ -1,0 +1,10 @@
+@import '../../../../../../../assets/styles/variables';
+
+.blog-share {
+  color: $base-color;
+  font-size: 15px;
+  font-weight: 700;
+  a img {
+    padding: 0 8px;
+  }
+}

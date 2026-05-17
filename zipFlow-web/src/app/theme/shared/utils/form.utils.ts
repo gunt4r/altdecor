@@ -1,30 +1,10 @@
-export function findObjectByKey(source: any, key: string): any {
-  if (!source) {
-    return null;
-  }
+export function findObjectByKey(array: any[], key: string) {
+  return array.find(el => Object.keys(el).find(elKey => elKey === key))?.[key];
+}
 
-  if (Array.isArray(source)) {
-    for (const item of source) {
-      const found = findObjectByKey(item, key);
-      if (found !== null && found !== undefined) {
-        return found;
-      }
-    }
-    return null;
-  }
-
-  if (typeof source === 'object') {
-    if (Object.prototype.hasOwnProperty.call(source, key)) {
-      return source[key];
-    }
-
-    for (const value of Object.values(source)) {
-      const found = findObjectByKey(value, key);
-      if (found !== null && found !== undefined) {
-        return found;
-      }
-    }
-  }
-
-  return null;
+export function getLocalized(value: any, lang?: string | null): string | undefined {
+  if (value == null) return undefined;
+  if (typeof value === 'string') return value;
+  const preferred = lang || (typeof localStorage !== 'undefined' ? localStorage.getItem('language') : null) || 'ro';
+  return value[preferred] ?? value['ro'] ?? value['ru'] ?? value['en'] ?? undefined;
 }

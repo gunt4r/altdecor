@@ -1,0 +1,16 @@
+<div class="card">
+  <app-table
+      [rows]="list"
+      [columns]="columns"
+      [pendingRequest]="isLoading"
+      [totalCount]="totalRows"
+      [selectedPage]="pageNr"
+      [perPage]="rowsPerPage"
+      [createButton]="{label: 'Add entity', url: [createUrl]}"
+      [urlPrefix]="routeUrl"
+      [title]="'Entities'"
+      [entity]="entity"
+      (reloadData)="getList()"
+      (rowActionEmitter)="onTableRowAction($event)"
+  ></app-table>
+</div>

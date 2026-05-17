@@ -253,7 +253,6 @@
   min-width: 0;
 }
 
-// Promo banners below hero
 .promo-banners {
   max-width: 1440px;
   margin: 0 auto;
@@ -899,16 +898,6 @@
   }
 }
 
-@keyframes hero-shimmer {
-  0% {
-    background-position: 200% 0;
-  }
-
-  100% {
-    background-position: -200% 0;
-  }
-}
-
 @keyframes hero-pan {
   0% {
     transform: scale(1.02) translate3d(0, 0, 0);
@@ -929,6 +918,16 @@
   50% {
     transform: translateX(-50%) translateY(7px);
     opacity: 0.35;
+  }
+}
+
+@keyframes hero-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
   }
 }
 
@@ -975,8 +974,8 @@
     align-self: center;
 
     h1 {
-        font-size: clamp(1.7rem, 7.8vw, 3rem);
-        max-width: 80%;
+      font-size: clamp(1.7rem, 7.8vw, 3rem);
+      max-width: 80%;
     }
   }
 
@@ -1107,7 +1106,6 @@
   }
 }
 
-// Interactive hover animations
 .category-card {
   .category-card__title {
     transition: color 0.25s ease;

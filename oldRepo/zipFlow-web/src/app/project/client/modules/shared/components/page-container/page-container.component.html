@@ -1,0 +1,20 @@
+<div class="page-container">
+  <div class="page-container__header" *ngIf="pages">
+    <div class="page-container__link" *ngFor="let page of pages">
+      <ng-container *ngIf="page.modal; else showPage">
+        <a [routerLink]="['', { outlets: { 'd': [page.link] } }]" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+          {{ page.label | translate }}
+        </a>
+      </ng-container>
+
+      <ng-template #showPage>
+        <a [routerLink]="'/' + page.link" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+          {{ page.label | translate }}
+        </a>
+      </ng-template>
+      <span class="page-container__spacer">|</span>
+    </div>
+  </div>
+
+  <ng-content></ng-content>
+</div>

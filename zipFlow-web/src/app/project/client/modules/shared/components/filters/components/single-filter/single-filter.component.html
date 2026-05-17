@@ -1,0 +1,3 @@
+<div class="single-filter" *ngIf="filter" [ngClass]="{active: isActive}" (click)="setValue()">
+  {{ filter.label | translate }}
+</div>

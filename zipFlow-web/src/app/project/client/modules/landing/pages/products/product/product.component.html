@@ -1,0 +1,39 @@
+<div class="product" [routerLink]="[product.id]">
+  <div class="product__image" (click)="showImage(product.image); $event.stopPropagation()" [ngStyle]="{ backgroundImage: 'url(' + product.image + ')' }">
+    <div class="badges">
+      <app-badge class="product__new" *ngIf="product.isNew" [badge]="badge.Dark"
+                 [label]="('Products.Badge.New' | translate) || ''" [radius]="'0 5px 5px 0'"></app-badge>
+      <app-badge class="product__sale" *ngIf="product.isSale" [badge]="badge.Error"
+                 [label]="('Products.Badge.Sale' | translate) || ''" [radius]="'0 5px 5px 0'"></app-badge>
+      <app-badge class="product__sale" *ngIf="product.outOfStock" [badge]="badge.Error"
+                 [label]="('Products.Badge.OutOfStock' | translate) || ''" [radius]="'0 5px 5px 0'"></app-badge>
+      <app-badge class="product__sale" *ngIf="product.comingSoon" [badge]="badge.Green"
+                 [label]="('Products.Badge.ComingSoon' | translate) || ''" [radius]="'0 5px 5px 0'"></app-badge>
+    </div>
+  </div>
+
+  <div class="cart-container">
+    <div class="product__cart" (click)="addToCart(); $event.stopPropagation()">
+      <img src="assets/images/content/cart.svg" alt="cart">
+    </div>
+  </div>
+
+  <div class="product__content" [routerLink]="[product.id]">
+    <div class="product__title">
+      {{ product.title | translate }}
+    </div>
+
+    <div class="product__label">
+      {{ product.label | translate | uppercase }}
+    </div>
+
+    <div class="product__price">
+      <div class="price--new" [ngClass]="{ sale: product.isSale }">
+        {{ product.price.current | uppercase }}
+      </div>
+      <div class="price--old" *ngIf="product.price?.old">
+        {{ product.price.old | uppercase }}
+      </div>
+    </div>
+  </div>
+</div>

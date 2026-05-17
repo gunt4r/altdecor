@@ -1,191 +1,332 @@
-<section class="site-config-page">
-  <div class="site-config-page__head">
-    <div>
-      <p class="site-config-page__eyebrow">Admin content</p>
-      <h1>Site configuration</h1>
-      <p class="site-config-page__description">Desktop menu, drawer menu, homepage categories, hero banners, promo banners, catalog PDF, and designer contacts are editable from here.</p>
-    </div>
-    <button class="site-config-page__primary" type="button" (click)="startCreate()" [disabled]="loading || saving">
-      Add {{ getActiveTypeDef().label }}
+<div class="site-config">
+  <!-- Tab Navigation -->
+  <div class="config-tabs">
+    <button *ngFor="let t of configTypes"
+            class="config-tab"
+            [class.active]="activeTab === t.value"
+            (click)="selectTab(t.value)">
+      <span class="config-tab__icon" [ngSwitch]="t.iconId">
+        <svg *ngSwitchCase="'monitor'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        <svg *ngSwitchCase="'smartphone'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        <svg *ngSwitchCase="'grid'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <svg *ngSwitchCase="'phone'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        <svg *ngSwitchCase="'image'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <svg *ngSwitchCase="'link'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        <svg *ngSwitchCase="'file'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      </span>
+      <span class="config-tab__label">{{ t.label }}</span>
+      <span class="config-tab__count">{{ getEntryCount(t.value) }}</span>
     </button>
   </div>
 
-  <div class="site-config-tabs">
-    <button
-      *ngFor="let type of configTypes"
-      type="button"
-      class="site-config-tab"
-      [class.active]="activeTab === type.value"
-      (click)="selectTab(type.value)">
-      <span>{{ type.label }}</span>
-      <small>{{ getEntryCount(type.value) }}</small>
+  <!-- Active Type Header -->
+  <div class="config-header">
+    <div class="config-header__info">
+      <h2>{{ getActiveTypeDef().label }}</h2>
+      <p class="config-header__desc">{{ getActiveTypeDef().description }}</p>
+    </div>
+    <button class="btn btn-primary btn-add" (click)="startCreate()" *ngIf="!isCreating && !editingEntry">
+      + Add {{ getActiveTypeDef().label }}
     </button>
   </div>
 
-  <div class="site-config-toolbar">
-    <input
-      type="search"
-      class="site-config-toolbar__search"
-      placeholder="Search labels, links, tags..."
-      [ngModel]="entrySearch"
-      (ngModelChange)="onSearchChange($event)">
-    <div class="site-config-toolbar__meta">
-      <span>{{ getActiveTypeDef().description }}</span>
-    </div>
-  </div>
+  <!-- Loading -->
+  <div class="config-loading" *ngIf="loading">Loading entries...</div>
 
-  <div class="site-config-grid">
-    <div class="site-config-list">
-      <div class="site-config-empty" *ngIf="!loading && !filteredEntries.length">
-        No entries found for this section.
+  <!-- Entries List -->
+  <div class="config-entries" *ngIf="!loading">
+    <div class="config-entry" *ngFor="let entry of filteredEntries"
+         [class.editing]="editingEntry?.id === entry.id">
+      <div class="config-entry__row" *ngIf="editingEntry?.id !== entry.id">
+        <div class="config-entry__order">{{ getField(entry, 'order_index') || '–' }}</div>
+        <div class="config-entry__main">
+          <strong>{{ getLocalizedLabel(getField(entry, 'label')) }}</strong>
+          <span class="config-entry__link" *ngIf="getField(entry, 'link')">{{ getField(entry, 'link') | slice:0:60 }}{{ (getField(entry, 'link') || '').length > 60 ? '...' : '' }}</span>
+        </div>
+        <div class="config-entry__icon" *ngIf="getField(entry, 'icon')">
+          <span class="badge badge-secondary">{{ getField(entry, 'icon') }}</span>
+        </div>
+        <div class="config-entry__status">
+          <span class="badge" [class.badge-success]="getField(entry, 'is_active') !== false"
+                [class.badge-muted]="getField(entry, 'is_active') === false">
+            {{ getField(entry, 'is_active') !== false ? 'Active' : 'Inactive' }}
+          </span>
+        </div>
+        <div class="config-entry__actions">
+          <button class="btn btn-sm btn-outline-primary" (click)="startEdit(entry)" title="Edit">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button class="btn btn-sm btn-outline-secondary" (click)="cloneEntry(entry)" title="Clone">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+          <button class="btn btn-sm btn-outline-danger" (click)="deleteEntry(entry)" title="Delete">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          </button>
+        </div>
       </div>
 
-      <article class="site-config-card" *ngFor="let entry of filteredEntries">
-        <div class="site-config-card__content">
-          <p class="site-config-card__type">{{ getActiveTypeDef().label }}</p>
-          <h3>{{ getLocalizedLabel(getField(entry, 'label')) || 'Untitled entry' }}</h3>
-          <p *ngIf="getField(entry, 'link')" class="site-config-card__link">{{ getField(entry, 'link') }}</p>
-          <div class="site-config-card__meta">
-            <span>Order {{ getField(entry, 'order_index') || '—' }}</span>
-            <span [class.inactive]="getField(entry, 'is_active') === false">{{ getField(entry, 'is_active') === false ? 'Inactive' : 'Active' }}</span>
+      <!-- Inline Edit Form -->
+      <div class="config-form" *ngIf="editingEntry?.id === entry.id">
+        <ng-container *ngTemplateOutlet="formTemplate"></ng-container>
+      </div>
+    </div>
+
+    <div class="config-empty" *ngIf="filteredEntries.length === 0 && !isCreating">
+      No entries for "{{ getActiveTypeDef().label }}" yet. Click "Add" to create one.
+    </div>
+  </div>
+
+  <!-- Create Form -->
+  <div class="config-form config-form--create" *ngIf="isCreating">
+    <h3>Create New {{ getActiveTypeDef().label }}</h3>
+    <ng-container *ngTemplateOutlet="formTemplate"></ng-container>
+  </div>
+
+  <!-- Shared Form Template -->
+  <ng-template #formTemplate>
+    <div class="form-fields">
+      <ng-container *ngFor="let field of getActiveTypeDef().fields">
+        <!-- Translated Input -->
+        <div class="form-group" *ngIf="field.type === 'translated'">
+          <label class="form-label">
+            {{ field.label }}
+            <span class="required" *ngIf="field.required">*</span>
+          </label>
+          <p class="form-help" *ngIf="field.help">{{ field.help }}</p>
+          <div class="lang-tabs">
+            <button *ngFor="let lang of languages"
+                    class="lang-tab"
+                    [class.active]="activeLang === lang"
+                    (click)="activeLang = lang">{{ lang | uppercase }}</button>
           </div>
+          <input type="text"
+                 class="form-control"
+                 [placeholder]="field.placeholder || ''"
+                 [(ngModel)]="formData[field.key][activeLang]">
         </div>
-        <div class="site-config-card__actions">
-          <button type="button" (click)="startEdit(entry)">Edit</button>
-          <button type="button" (click)="cloneEntry(entry)">Clone</button>
-          <button type="button" class="danger" (click)="deleteEntry(entry)">Delete</button>
+
+        <!-- Text Input -->
+        <div class="form-group" *ngIf="field.type === 'text'">
+          <label class="form-label">
+            {{ field.label }}
+            <span class="required" *ngIf="field.required">*</span>
+          </label>
+          <p class="form-help" *ngIf="field.help">{{ field.help }}</p>
+          <input type="text" class="form-control"
+                 [placeholder]="field.placeholder || ''"
+                 [(ngModel)]="formData[field.key]">
         </div>
-      </article>
-    </div>
 
-    <div class="site-config-editor" *ngIf="isCreating || editingEntry">
-      <div class="site-config-editor__head">
-        <div>
-          <p>{{ isCreating ? 'Create entry' : 'Edit entry' }}</p>
-          <h2>{{ getActiveTypeDef().label }}</h2>
+        <!-- Number Input -->
+        <div class="form-group" *ngIf="field.type === 'number'">
+          <label class="form-label">{{ field.label }}</label>
+          <p class="form-help" *ngIf="field.help">{{ field.help }}</p>
+          <input type="number" class="form-control form-control--narrow"
+                 [placeholder]="field.placeholder || ''"
+                 [(ngModel)]="formData[field.key]">
         </div>
-        <button type="button" class="ghost" (click)="cancelEdit()">Close</button>
-      </div>
 
-      <div class="site-config-language-switch" *ngIf="getActiveTypeDef().fields.length">
-        <button
-          *ngFor="let lang of languages"
-          type="button"
-          [class.active]="activeLang === lang"
-          (click)="activeLang = lang">
-          {{ lang | uppercase }}
-        </button>
-      </div>
+        <!-- Dropdown -->
+        <div class="form-group" *ngIf="field.type === 'dropdown'">
+          <label class="form-label">{{ field.label }}</label>
+          <p class="form-help" *ngIf="field.help">{{ field.help }}</p>
+          <select class="form-control" [(ngModel)]="formData[field.key]">
+            <option value="">— Select —</option>
+            <option *ngFor="let opt of field.options" [value]="opt.value">{{ opt.label }}</option>
+          </select>
+        </div>
 
-      <div class="site-config-form">
-        <ng-container *ngFor="let field of getActiveTypeDef().fields">
-          <label class="site-config-field">
-            <span class="site-config-field__label">{{ field.label }}</span>
-            <small *ngIf="field.help" class="site-config-field__help">{{ field.help }}</small>
+        <!-- Toggle -->
+        <div class="form-group" *ngIf="field.type === 'toggle'">
+          <label class="form-label form-label--toggle">
+            <input type="checkbox" [(ngModel)]="formData[field.key]">
+            <span class="toggle-switch"></span>
+            {{ field.label }}
+          </label>
+          <p class="form-help" *ngIf="field.help">{{ field.help }}</p>
+        </div>
 
-            <ng-container [ngSwitch]="field.type">
-              <input
-                *ngSwitchCase="'text'"
-                [placeholder]="field.placeholder || ''"
-                [(ngModel)]="formData[field.key]"
-                type="text">
+        <!-- File Upload (images, PDF, icons) -->
+        <div class="form-group" *ngIf="field.type === 'file'">
+          <label class="form-label">{{ field.label }}</label>
+          <p class="form-help" *ngIf="field.help">{{ field.help }}</p>
 
-              <textarea
-                *ngSwitchCase="'textarea'"
-                [placeholder]="field.placeholder || ''"
-                [(ngModel)]="formData[field.key]"
-                rows="4"></textarea>
-
-              <input
-                *ngSwitchCase="'number'"
-                [placeholder]="field.placeholder || ''"
-                [(ngModel)]="formData[field.key]"
-                type="number">
-
-              <div *ngSwitchCase="'toggle'" class="site-config-toggle">
-                <button
-                  type="button"
-                  [class.active]="formData[field.key]"
-                  (click)="formData[field.key] = !formData[field.key]">
-                  {{ formData[field.key] ? 'Enabled' : 'Disabled' }}
-                </button>
+          <!-- Uploaded file state -->
+          <div class="file-uploaded" *ngIf="formData[field.key]">
+            <div class="file-uploaded__info">
+              <div class="image-preview" *ngIf="isImageUrl(formData[field.key])">
+                <img [src]="formData[field.key]" alt="Preview">
               </div>
+              <span class="file-uploaded__name" [title]="formData[field.key]">
+                {{ uploadedFileNames[field.key] || getFileName(formData[field.key]) }}
+              </span>
+            </div>
+            <button class="file-uploaded__remove" (click)="clearFileField(field.key)" title="Remove file" type="button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
 
-              <div *ngSwitchCase="'translated'" class="site-config-translated">
-                <input
-                  *ngFor="let lang of languages"
-                  [placeholder]="(field.placeholder || field.label) + ' (' + lang.toUpperCase() + ')'"
-                  [(ngModel)]="formData[field.key][lang]"
-                  [class.active]="activeLang === lang"
-                  type="text">
-              </div>
+          <!-- Empty state: upload or paste URL -->
+          <ng-container *ngIf="!formData[field.key]">
+            <div class="file-upload-area">
+              <label class="file-upload-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                {{ uploadingField === field.key ? 'Uploading...' : 'Upload File' }}
+                <input type="file" [accept]="field.accept || '*'" (change)="onFileSelected($event, field.key)">
+              </label>
+            </div>
+            <p class="file-or-url">— or paste URL —</p>
+            <input type="text" class="form-control"
+                   placeholder="https://..."
+                   [(ngModel)]="formData[field.key]">
+          </ng-container>
+        </div>
 
-              <div *ngSwitchCase="'dropdown'" class="site-config-dropdown">
-                <select [(ngModel)]="formData[field.key]">
-                  <option *ngFor="let option of field.options || []" [ngValue]="option.value">{{ option.label }}</option>
-                </select>
-              </div>
+        <!-- Icon Field (predefined / upload) -->
+        <div class="form-group" *ngIf="field.type === 'icon'">
+          <label class="form-label">{{ field.label }}</label>
+          <p class="form-help" *ngIf="field.help">{{ field.help }}</p>
 
-              <div *ngSwitchCase="'file'" class="site-config-upload">
-                <input [placeholder]="field.placeholder || ''" [(ngModel)]="formData[field.key]" type="text">
-                <div class="site-config-upload__actions">
-                  <input type="file" [accept]="field.accept || '*'" (change)="onFileSelected($event, field.key)">
-                  <button type="button" class="ghost" (click)="clearFileField(field.key)">Clear</button>
+          <div class="icon-mode-tabs">
+            <button class="icon-mode-tab" [class.active]="getIconMode(field.key) === 'file'"
+                    (click)="setIconMode(field.key, 'file')" type="button">Upload File</button>
+            <button class="icon-mode-tab" [class.active]="getIconMode(field.key) === 'url'"
+                    (click)="setIconMode(field.key, 'url')" type="button">Paste URL</button>
+            <button class="icon-mode-tab" [class.active]="getIconMode(field.key) === 'predefined'"
+                    (click)="setIconMode(field.key, 'predefined')" type="button">Predefined</button>
+          </div>
+
+          <!-- File upload mode -->
+          <div *ngIf="getIconMode(field.key) === 'file'">
+            <div class="file-uploaded" *ngIf="formData[field.key] && (formData[field.key].startsWith('http') || formData[field.key].startsWith('/'))">
+              <div class="file-uploaded__info">
+                <div class="image-preview" *ngIf="isImageUrl(formData[field.key])">
+                  <img [src]="formData[field.key]" alt="Icon preview">
                 </div>
-                <small *ngIf="uploadedFileNames[field.key]">Uploaded: {{ uploadedFileNames[field.key] }}</small>
+                <span class="file-uploaded__name" [title]="formData[field.key]">
+                  {{ uploadedFileNames[field.key] || getFileName(formData[field.key]) }}
+                </span>
               </div>
-
-              <div *ngSwitchCase="'icon'" class="site-config-icon">
-                <div class="site-config-icon__modes">
-                  <button type="button" [class.active]="getIconMode(field.key) === 'predefined'" (click)="setIconMode(field.key, 'predefined')">Preset</button>
-                  <button type="button" [class.active]="getIconMode(field.key) === 'url'" (click)="setIconMode(field.key, 'url')">URL</button>
-                  <button type="button" [class.active]="getIconMode(field.key) === 'file'" (click)="setIconMode(field.key, 'file')">Upload</button>
-                </div>
-
-                <select *ngIf="getIconMode(field.key) === 'predefined'" [(ngModel)]="formData[field.key]">
-                  <option *ngFor="let option of predefinedIcons" [ngValue]="option.value">{{ option.label }}</option>
-                </select>
-
-                <input *ngIf="getIconMode(field.key) === 'url'" [(ngModel)]="formData[field.key]" type="text" placeholder="https://...">
-
-                <div *ngIf="getIconMode(field.key) === 'file'" class="site-config-upload">
-                  <input [placeholder]="field.placeholder || ''" [(ngModel)]="formData[field.key]" type="text">
-                  <input type="file" accept="image/*" (change)="onIconFileSelected($event, field.key)">
-                </div>
-              </div>
-
-              <div *ngSwitchCase="'tags'" class="site-config-repeaters">
-                <div class="site-config-repeater" *ngFor="let tag of formData[field.key] || []; let i = index">
-                  <div class="site-config-translated">
-                    <input *ngFor="let lang of languages" [(ngModel)]="formData[field.key][i][lang]" [placeholder]="'Tag (' + lang.toUpperCase() + ')'" type="text">
-                  </div>
-                  <button type="button" class="danger ghost" (click)="removeTag(field.key, i)">Remove tag</button>
-                </div>
-                <button type="button" class="ghost" (click)="addTag(field.key)">Add tag</button>
-              </div>
-
-              <div *ngSwitchCase="'children'" class="site-config-repeaters">
-                <div class="site-config-repeater" *ngFor="let child of formData[field.key] || []; let i = index">
-                  <div class="site-config-translated">
-                    <input *ngFor="let lang of languages" [(ngModel)]="formData[field.key][i].label[lang]" [placeholder]="'Child label (' + lang.toUpperCase() + ')'" type="text">
-                  </div>
-                  <input [(ngModel)]="formData[field.key][i].link" type="text" placeholder="/products?...">
-                  <input [(ngModel)]="formData[field.key][i].icon" type="text" placeholder="Icon key (optional)">
-                  <button type="button" class="danger ghost" (click)="removeChild(i)">Remove sub-item</button>
-                </div>
-                <button type="button" class="ghost" (click)="addChild()">Add sub-item</button>
+              <button class="file-uploaded__remove" (click)="clearFileField(field.key)" title="Remove" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+            <ng-container *ngIf="!formData[field.key] || !(formData[field.key].startsWith?.('http') || formData[field.key].startsWith?.('/'))">
+              <div class="file-upload-area">
+                <label class="file-upload-btn">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  {{ uploadingField === field.key ? 'Uploading...' : 'Upload SVG/PNG' }}
+                  <input type="file" accept=".svg,.png,image/svg+xml,image/png" (change)="onIconFileSelected($event, field.key)">
+                </label>
               </div>
             </ng-container>
-          </label>
-        </ng-container>
-      </div>
+          </div>
 
-      <div class="site-config-editor__actions">
-        <button type="button" class="ghost" (click)="cancelEdit()">Cancel</button>
-        <button type="button" class="primary" (click)="save()" [disabled]="saving">
-          {{ saving ? 'Saving...' : 'Save entry' }}
-        </button>
-      </div>
+          <!-- URL paste mode -->
+          <div *ngIf="getIconMode(field.key) === 'url'">
+            <input type="text" class="form-control" placeholder="https://example.com/icon.svg" [(ngModel)]="formData[field.key]">
+          </div>
+
+          <!-- Predefined mode -->
+          <div *ngIf="getIconMode(field.key) === 'predefined'">
+            <select class="form-control" [(ngModel)]="formData[field.key]">
+              <option value="">— Select —</option>
+              <option *ngFor="let opt of predefinedIcons" [value]="opt.value">{{ opt.label }}</option>
+            </select>
+          </div>
+
+          <div class="icon-current" *ngIf="formData[field.key]">
+            <span class="icon-current__label">Current:</span>
+            <span class="icon-current__value">{{ formData[field.key] | slice:0:60 }}</span>
+          </div>
+        </div>
+
+        <!-- Children (sub-items) -->
+        <div class="form-group form-group--children" *ngIf="field.type === 'children'">
+          <label class="form-label">{{ field.label }}</label>
+          <p class="form-help" *ngIf="field.help">{{ field.help }}</p>
+
+          <div class="child-item" *ngFor="let child of formData['children']; let ci = index">
+            <div class="child-header">
+              <strong>Sub-item #{{ ci + 1 }}</strong>
+              <button class="btn btn-sm btn-outline-danger" (click)="removeChild(ci)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+            <div class="child-fields">
+              <div class="child-field">
+                <label>Label</label>
+                <div class="lang-tabs lang-tabs--small">
+                  <button *ngFor="let lang of languages"
+                          class="lang-tab"
+                          [class.active]="activeLang === lang"
+                          (click)="activeLang = lang">{{ lang | uppercase }}</button>
+                </div>
+                <input type="text" class="form-control"
+                       placeholder="Sub-category name"
+                       [(ngModel)]="child.label[activeLang]">
+              </div>
+              <div class="child-field">
+                <label>Link</label>
+                <input type="text" class="form-control"
+                       placeholder="/products?filter=..."
+                       [(ngModel)]="child.link">
+              </div>
+              <div class="child-field">
+                <label>Icon</label>
+                <select class="form-control" [(ngModel)]="child.icon">
+                  <option value="circle">Circle</option>
+                  <option value="pentagon">Pentagon</option>
+                  <option value="palette">Palette</option>
+                  <option value="box">Box</option>
+                  <option value="sticker">Sticker</option>
+                  <option value="leaf">Leaf</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-sm btn-outline-primary btn-add-child" (click)="addChild()">
+            + Add Sub-item
+          </button>
+        </div>
+
+        <!-- Tags (translatable string list) -->
+        <div class="form-group form-group--tags" *ngIf="field.type === 'tags'">
+          <label class="form-label">{{ field.label }}</label>
+          <p class="form-help" *ngIf="field.help">{{ field.help }}</p>
+
+          <div class="tag-items">
+            <div class="tag-item" *ngFor="let tag of formData[field.key]; let ti = index">
+              <div class="tag-item__inputs">
+                <div class="lang-tabs lang-tabs--small">
+                  <button *ngFor="let lang of languages"
+                          class="lang-tab"
+                          [class.active]="activeLang === lang"
+                          (click)="activeLang = lang">{{ lang | uppercase }}</button>
+                </div>
+                <input type="text" class="form-control"
+                       placeholder="Tag label"
+                       [(ngModel)]="formData[field.key][ti][activeLang]">
+              </div>
+              <button class="btn btn-sm btn-outline-danger tag-item__remove" (click)="removeTag(field.key, ti)" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <button class="btn btn-sm btn-outline-primary btn-add-child" (click)="addTag(field.key)" type="button">
+            + Add Tag
+          </button>
+        </div>
+      </ng-container>
     </div>
-  </div>
-</section>
+
+    <div class="form-actions">
+      <button class="btn btn-primary" [disabled]="saving" (click)="save()">
+        {{ saving ? 'Saving...' : (editingEntry ? 'Update' : 'Create') }}
+      </button>
+      <button class="btn btn-outline-secondary" (click)="cancelEdit()">Cancel</button>
+    </div>
+  </ng-template>
+</div>

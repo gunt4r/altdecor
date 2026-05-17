@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="16" viewBox="0 0 20 16">
+    <defs>
+        <style>
+            .cls-2-list-icon{fill:currentColor}
+        </style>
+    </defs>
+    <g id="list_1_" data-name="list (1)" transform="translate(0 -7.434)" style="isolation:isolate">
+        <path id="Path_17471" data-name="Path 17471" class="cls-2-list-icon" d="M28.292 48.014H14.918a1.063 1.063 0 0 1 0-2.121h13.374a1.063 1.063 0 0 1 0 2.121z" transform="translate(-9.289 -24.862)"/>
+        <path id="Path_17472" data-name="Path 17472" class="cls-2-list-icon" d="M28.292 29.183H14.918a1.063 1.063 0 0 1 0-2.121h13.374a1.063 1.063 0 0 1 0 2.121z" transform="translate(-9.289 -12.689)"/>
+        <path id="Path_17473" data-name="Path 17473" class="cls-2-list-icon" d="M28.292 10.352H14.918a1.063 1.063 0 0 1 0-2.121h13.374a1.063 1.063 0 0 1 0 2.121z" transform="translate(-9.289 -.515)"/>
+        <ellipse id="Ellipse_942" data-name="Ellipse 942" class="cls-2-list-icon" cx="1.34" cy="1.424" rx="1.34" ry="1.424" transform="translate(0 7.434)"/>
+        <ellipse id="Ellipse_943" data-name="Ellipse 943" class="cls-2-list-icon" cx="1.34" cy="1.424" rx="1.34" ry="1.424" transform="translate(0 14.01)"/>
+        <ellipse id="Ellipse_944" data-name="Ellipse 944" class="cls-2-list-icon" cx="1.34" cy="1.424" rx="1.34" ry="1.424" transform="translate(0 20.585)"/>
+    </g>
+</svg>

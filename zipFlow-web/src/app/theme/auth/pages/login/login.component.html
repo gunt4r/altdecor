@@ -1,0 +1,37 @@
+<div class="login">
+
+  <form [formGroup]="form" class="login__form">
+    <div class="form--title">{{ configs.title }}</div>
+    <div class="form--subtitle">{{ configs.subtitle }}</div>
+    <div class="form--fields">
+      <div class="form--field">
+        <label>{{ configs.control['email'] }}:</label>
+        <input name="email" formControlName="email" [placeholder]="configs.control['email']" />
+        <ng-container  *ngIf="form.get('email')?.invalid && (form.get('email')?.dirty || form.get('email')?.touched)">
+          <div class="errors">
+            <span *ngIf="form.controls.email.errors?.['required']">{{ validators['required'] }}</span>
+            <span *ngIf="form.controls.email.errors?.['email']">{{ validators['email'] }}</span>
+          </div>
+        </ng-container>
+      </div>
+
+      <div class="form--field">
+        <label>{{ configs.control['password'] }}:</label>
+        <input
+          formControlName="password"
+          type="password"
+          [placeholder]="configs.control['password']"
+        />
+        <ng-container *ngIf="form.get('password')?.invalid && (form.get('password')?.dirty || form.get('password')?.touched)">
+          <div class="errors">
+            <span *ngIf="form.controls.password.errors?.['required']">{{ validators['required'] }}</span>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="form--buttons">
+      <button class="button" (click)="login()">{{ configs.button }}</button>
+    </div>
+  </form>
+</div>

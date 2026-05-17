@@ -60,7 +60,7 @@ export class HomeComponent implements OnInit {
   loading = true;
   heroImageLoaded = false;
   promoBanners: Array<{image: string; link: string; title: string}> = [];
-  mapUrl = 'https://www.google.com/maps/place/Gheorghe+Madan+Strada,+Chi%C8%99in%C4%83u,+Moldova/@47.0607145,28.8417865,17z/data=!3m1!4b1!4m6!3m5!1s0x40c97d104d43b385:0x33b52c5d28105ac3!8m2!3d47.0607145!4d28.8443614!16s%2Fg%2F11cly7c_gh?entry=ttu';
+  mapUrl = 'https://www.google.com/maps/place/Gheorghe+Madan+Strada,+Chi%C8%99in%C4%83u,+Moldova/@47.0607145,28.8417865,17z';
   currentLanguage = 'ro';
 
   readonly uiByLanguage: Record<string, any> = {
@@ -72,9 +72,9 @@ export class HomeComponent implements OnInit {
       offersAll: 'Vezi toate ofertele',
       contactsTitle: 'Contacte',
       allAddresses: 'TOATE ADRESELE',
-      mapButton: 'INTERACTIVE MAP MODULE',
+      mapButton: 'HARTĂ INTERACTIVĂ',
       designerTitle: 'Pentru Designeri',
-      designerNote: 'Număr de contact  — în curând disponibil',
+      designerNote: 'Număr de contact — în curând disponibil',
       addToCart: 'Adaugă',
       heroStats: [
         {title: 'Cel Mai Mare Magazin', subtitle: 'O gamă vastă de expuneri vizuale'},
@@ -92,7 +92,7 @@ export class HomeComponent implements OnInit {
       allAddresses: 'ВСЕ АДРЕСА',
       mapButton: 'ИНТЕРАКТИВНАЯ КАРТА',
       designerTitle: 'Для Дизайнеров',
-      designerNote: 'Контактный номер  — скоро будет доступен',
+      designerNote: 'Контактный номер — скоро будет доступен',
       addToCart: 'Добавить',
       heroStats: [
         {title: 'Самый Большой Магазин', subtitle: 'Широкий выбор визуальных экспозиций'},
@@ -108,7 +108,7 @@ export class HomeComponent implements OnInit {
       offersAll: 'View all offers',
       contactsTitle: 'Contacts',
       allAddresses: 'ALL ADDRESSES',
-      mapButton: 'INTERACTIVE MAP MODULE',
+      mapButton: 'INTERACTIVE MAP',
       designerTitle: 'For Designers',
       designerNote: 'Contact number — coming soon',
       addToCart: 'Add',
@@ -154,34 +154,37 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  navigateToProducts(filter?: string) {
+  navigateToProducts(filterParam?: string) {
     const queryParams: any = {
       sortBy: 'created_at',
       sortOrder: 'DESC',
       page: 1,
       rowsPerPage: 12,
     };
-
-    if (filter) {
-      queryParams.filter = filter;
+    if (filterParam) {
+      queryParams.filter = filterParam;
     }
-
     this.router.navigate([`/${this.getLanguage()}/products`], {queryParams});
   }
 
   navigateToCategory(card: CategoryCard) {
     if (card.link) {
-      const lang = this.getLanguage();
-      if (card.link.includes('?')) {
-        const [path, qs] = card.link.split('?');
-        const queryParams: any = {};
-        qs.split('&').forEach(pair => {
-          const [k, v] = pair.split('=');
-          if (k && v) queryParams[decodeURIComponent(k)] = decodeURIComponent(v);
-        });
-        this.router.navigate([`/${lang}${path}`], {queryParams});
-      } else {
-        this.router.navigate([`/${lang}${card.link}`]);
+      try {
+        const url = new URL(card.link);
+        this.router.navigateByUrl(url.pathname + url.search);
+      } catch {
+        const lang = this.getLanguage();
+        if (card.link.includes('?')) {
+          const [path, qs] = card.link.split('?');
+          const queryParams: any = {};
+          qs.split('&').forEach(pair => {
+            const [k, v] = pair.split('=');
+            if (k && v) queryParams[decodeURIComponent(k)] = decodeURIComponent(v);
+          });
+          this.router.navigate([`/${lang}${path}`], {queryParams});
+        } else {
+          this.router.navigate([`/${lang}${card.link}`]);
+        }
       }
       return;
     }
@@ -217,283 +220,147 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  onHeroImageLoad(event: Event) {
-    const img = event.target as HTMLImageElement;
-    // Only fade in if this is the current hero image (not a stale load)
-    if (img.src && img.src.includes(this.heroImageUrl)) {
-      this.heroImageLoaded = true;
-      this.cdr.detectChanges();
-    }
+  onHeroImageLoad() {
+    this.heroImageLoaded = true;
+    this.cdr.detectChanges();
   }
 
   navigateToLink(link: string) {
-    if (link.startsWith('http')) {
-      window.open(link, '_blank');
-    } else {
+    if (!link) return;
+    try {
+      const url = new URL(link);
+      this.router.navigateByUrl(url.pathname + url.search);
+    } catch {
       this.router.navigateByUrl(link);
     }
   }
 
   private loadHomepageData() {
     this.loading = true;
-    this.heroImageLoaded = false;
+
     forkJoin([
-      this.publicService.getCategoriesBanner().pipe(catchError(() => of({data: []}))),
       this.publicService.getProductCategories({filter: 'main_contains_true'}).pipe(catchError(() => of({data: []}))),
-      this.publicService.getProductTypes({page: 1, rowsPerPage: 1000}).pipe(catchError(() => of({data: []}))),
       this.publicService.getProducts({page: 1, rowsPerPage: 4, filter: 'has_sale_contains_true', sortBy: 'updated_at', sortOrder: 'DESC'}).pipe(catchError(() => of({data: []}))),
       this.publicService.getGeneralDetails().pipe(catchError(() => of({data: []}))),
       this.publicService.getSiteConfig({page: 1, rowsPerPage: 100}).pipe(catchError(() => of({data: []}))),
       this.publicService.getAddresses({page: 1, rowsPerPage: 100, sortBy: 'created_at', sortOrder: 'ASC'}).pipe(catchError(() => of({data: []})))
-    ]).pipe(takeUntilDestroyed(this.destroy)).subscribe({
-      next: ([bannerResponse, categoriesResponse, productTypesResponse, productsResponse, detailsResponse, siteConfigResponse, addressResponse]) => {
-        const banners = bannerResponse?.data || [];
-        const allProductTypes = productTypesResponse?.data || [];
-        const siteConfigItems = siteConfigResponse?.data || [];
-
-        // Build categories from site_config homepage_category items
-        const homepageCategoryConfigs = siteConfigItems
-          .filter((item: any) => findObjectByKey(item.data, 'config_type') === 'homepage_category')
-          .filter((item: any) => findObjectByKey(item.data, 'is_active') !== false)
-          .sort((a: any, b: any) => (findObjectByKey(a.data, 'order_index') || 0) - (findObjectByKey(b.data, 'order_index') || 0));
-
-        if (homepageCategoryConfigs.length) {
-          this.categoryCards = homepageCategoryConfigs.map((item: any) => {
-            const label = this.resolveLocalizedText(findObjectByKey(item.data, 'label'));
-            const link = findObjectByKey(item.data, 'link') || '';
-            const imageVal = findObjectByKey(item.data, 'image');
-            const image = typeof imageVal === 'string' && imageVal
-              ? imageVal
-              : (Array.isArray(imageVal) && imageVal.length) ? (imageVal[0]?.file_url || imageVal[0]) : '';
-
-            // Find matching banner for fallback image
-            const matchedBanner = banners.find((banner: any) => {
-              const bannerTitle = this.resolveLocalizedText(findObjectByKey(banner.data, 'title'));
-              return this.normalizeText(bannerTitle).includes(this.normalizeText(label))
-                || this.normalizeText(label).includes(this.normalizeText(bannerTitle));
-            });
-            const fallbackImage = findObjectByKey(matchedBanner?.data, 'bg_img')?.[0]?.['file_url'] || 'assets/images/content/panels.png';
-
-            const adminTags = findObjectByKey(item.data, 'tags');
-            const tags = (Array.isArray(adminTags) && adminTags.length)
-              ? adminTags.map((t: any) => this.resolveLocalizedText(t)).filter(Boolean)
-              : this.buildCategoryTagsFromData(label, allProductTypes);
-
-            return {
-              title: label,
-              tags,
-              image: image || fallbackImage,
-              filter: label,
-              filterType: 'category' as const,
-              categoryId: item.id,
-              action: this.ui.catalogCta,
-              link
-            };
-          });
-        } else {
-          // Fallback: use product categories from DB
-          const mainCategories = (categoriesResponse?.data || []).slice(0, 6);
-          if (mainCategories.length) {
-            this.categoryCards = mainCategories.map((category: any, index: number) => {
-              const localizedLabel = this.resolveLocalizedText(findObjectByKey(category.data, 'label'));
-              const matchedBanner = banners.find((banner: any) => {
-                const bannerTitle = this.resolveLocalizedText(findObjectByKey(banner.data, 'title'));
-                return this.normalizeText(bannerTitle).includes(this.normalizeText(localizedLabel))
-                  || this.normalizeText(localizedLabel).includes(this.normalizeText(bannerTitle));
-              }) || banners[index];
-              const tags = this.buildCategoryTagsFromData(localizedLabel, allProductTypes);
-
-              return {
-                title: localizedLabel,
-                tags,
-                image: findObjectByKey(matchedBanner?.data, 'bg_img')?.[0]?.['file_url'] || 'assets/images/content/panels.png',
-                filter: localizedLabel,
-                filterType: 'category' as const,
-                categoryId: category.id || index,
-                action: this.ui.catalogCta
-              };
-            });
-          }
-        }
-
-        // Offers: max 4 has_sale products sorted by updated_at
-        this.offerCards = (productsResponse?.data || []).slice(0, 4).map((product: any) => {
-          const configurations = findObjectByKey(product.data, 'configurations') || [];
-          const mainConfiguration = configurations?.[0]?.configuration?.[0] || {};
-          const currentPrice = mainConfiguration?.price?.[0];
-          const oldPrice = mainConfiguration?.old_price?.[0];
-          const rawCurrentPrice = currentPrice?.value || '';
-          const rawOldPrice = oldPrice?.value || '';
-
-          return {
-            id: product.id,
-            title: this.resolveLocalizedText(findObjectByKey(product.data, 'title')) || 'Produs',
-            oldPrice: oldPrice ? `${oldPrice.value} ${oldPrice.currency}` : '',
-            price: currentPrice ? `${currentPrice.value} ${currentPrice.currency}` : '',
-            discount: this.getDiscountLabel(rawOldPrice, rawCurrentPrice),
-            image: findObjectByKey(product.data, 'images')?.[0]?.file_url || 'assets/images/content/product.png',
-            model: this.resolveLocalizedText(findObjectByKey(product.data, 'model')),
-            size: 'STANDARD',
-            sku: this.resolveLocalizedText(findObjectByKey(product.data, 'sku')),
-            characteristic: this.resolveLocalizedText(findObjectByKey(product.data, 'characteristic')),
-            rawPrice: rawCurrentPrice,
-            rawOldPrice: rawOldPrice
-          };
-        });
-
-        // Load addresses from address entity
-        const addressItems = addressResponse?.data || [];
-        this.addresses = addressItems
-          .filter((addr: any) => findObjectByKey(addr.data, 'is_active') !== false)
-          .sort((a: any, b: any) => (findObjectByKey(a.data, 'order_index') || 0) - (findObjectByKey(b.data, 'order_index') || 0))
-          .map((addr: any) => {
-            const scheduleRaw = this.resolveLocalizedText(findObjectByKey(addr.data, 'schedule'));
-            return {
-              name: this.resolveLocalizedText(findObjectByKey(addr.data, 'name')),
-              street: this.resolveLocalizedText(findObjectByKey(addr.data, 'street')),
-              phone: findObjectByKey(addr.data, 'phone') || '',
-              email: findObjectByKey(addr.data, 'email') || '',
-              schedule: scheduleRaw ? scheduleRaw.split('|').map((s: string) => s.trim()).filter(Boolean) : [],
-              mapUrl: findObjectByKey(addr.data, 'map_url') || ''
-            };
-          });
-
-        // Build Google Maps embed URL from first address (priority by order_index)
-        const firstWithMap = this.addresses.find(a => a.mapUrl) || this.addresses[0];
-        if (firstWithMap) {
-          let query = firstWithMap.street || '';
-          if (firstWithMap.mapUrl) {
-            const placeMatch = firstWithMap.mapUrl.match(/place\/([^/]+)/);
-            const qMatch = firstWithMap.mapUrl.match(/[?&]q=([^&]+)/);
-            if (placeMatch) {
-              query = decodeURIComponent(placeMatch[1].replace(/\+/g, ' '));
-            } else if (qMatch) {
-              query = decodeURIComponent(qMatch[1].replace(/\+/g, ' '));
-            }
-          }
-          if (query) {
-            this.mapEmbedUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
-              `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(query)}`
-            );
-          }
-        }
-
-        // Load designer phones from site_config
-        const designerPhoneConfigs = siteConfigItems
-          .filter((item: any) => findObjectByKey(item.data, 'config_type') === 'designer_phones')
-          .filter((item: any) => findObjectByKey(item.data, 'is_active') !== false)
-          .sort((a: any, b: any) => (findObjectByKey(a.data, 'order_index') || 0) - (findObjectByKey(b.data, 'order_index') || 0));
-        this.designerPhones = designerPhoneConfigs
-          .map((item: any) => ({
-            name: this.resolveLocalizedText(findObjectByKey(item.data, 'label')) || '',
-            phone: findObjectByKey(item.data, 'link') || ''
-          }))
-          .filter((d: any) => d.phone);
-
-        // Load hero banner from site_config (priority)
-        const heroBannerConfigs = siteConfigItems
-          .filter((item: any) => findObjectByKey(item.data, 'config_type') === 'hero_banner')
-          .filter((item: any) => findObjectByKey(item.data, 'is_active') !== false)
-          .sort((a: any, b: any) => (findObjectByKey(a.data, 'order_index') || 0) - (findObjectByKey(b.data, 'order_index') || 0));
-
-        if (heroBannerConfigs.length) {
-          const heroConfig = heroBannerConfigs[0]; // First active = hero
-          const heroLabel = findObjectByKey(heroConfig.data, 'label');
-          if (heroLabel) {
-            const resolvedTitle = this.resolveLocalizedText(heroLabel);
-            if (resolvedTitle) {
-              this.heroTitle = resolvedTitle;
-            }
-          }
-          const heroLink = findObjectByKey(heroConfig.data, 'link');
-          if (heroLink) {
-            this.heroButtonLink = heroLink;
-          }
-          const heroImage = findObjectByKey(heroConfig.data, 'image');
-          if (typeof heroImage === 'string' && heroImage) {
-            this.heroImageUrl = heroImage;
-          } else if (!this.heroImageUrl) {
-            this.heroImageUrl = 'assets/images/content/hero.png';
-          }
-
-          // Additional banners (2nd, 3rd, etc.) become promo banners below hero
-          this.promoBanners = heroBannerConfigs.slice(1).map((cfg: any) => ({
-            image: findObjectByKey(cfg.data, 'image') || '',
-            link: findObjectByKey(cfg.data, 'link') || '',
-            title: this.resolveLocalizedText(findObjectByKey(cfg.data, 'label')) || ''
-          })).filter((b: any) => b.image);
-        } else {
-          // Fallback: Hero image from general_details
-          const detailsData = detailsResponse?.data?.[0]?.data;
-          if (detailsData) {
-            const heroImg = findObjectByKey(detailsData, 'hero_image');
-            if (heroImg?.[0]?.file_url) {
-              this.heroImageUrl = heroImg[0].file_url;
-            }
-          }
-          if (!this.heroImageUrl) {
-            this.heroImageUrl = 'assets/images/content/hero.png';
-          }
-        }
-
-        this.loading = false;
-        this.cdr.detectChanges();
-      }
+    ]).pipe(
+      takeUntilDestroyed(this.destroy)
+    ).subscribe(([categories, offers, general, siteConfig, addresses]) => {
+      this.buildCategoryCards(categories?.data || []);
+      this.buildOfferCards(offers?.data || []);
+      this.buildAddresses(addresses?.data || []);
+      this.buildDesignerPhones(general?.data || []);
+      this.buildHeroAndBanners(siteConfig?.data || []);
+      this.loading = false;
+      this.cdr.detectChanges();
     });
   }
 
-  private buildCategoryTagsFromData(categoryLabel: string, allProductTypes: any[]): string[] {
-    const normalized = this.normalizeText(categoryLabel);
+  private buildCategoryCards(categories: any[]) {
+    this.categoryCards = categories.map((cat: any) => {
+      const label = findObjectByKey(cat.data, 'label');
+      const image = findObjectByKey(cat.data, 'image');
+      const slug = findObjectByKey(cat.data, 'slug');
+      const link = findObjectByKey(cat.data, 'link');
+      return {
+        title: typeof label === 'object' ? (label?.[this.currentLanguage] || label?.['ro'] || '') : (label || ''),
+        tags: [],
+        image: Array.isArray(image) ? image[0]?.file_url : (image || 'assets/images/placeholder.png'),
+        filter: typeof slug === 'object' ? (slug?.['ro'] || slug?.[this.currentLanguage] || String(cat.id)) : (slug || String(cat.id)),
+        filterType: 'category' as const,
+        categoryId: cat.id,
+        action: this.ui.offersAll,
+        link: link || ''
+      };
+    });
+  }
 
-    for (const type of allProductTypes) {
-      const typeLabel = this.normalizeText(this.resolveLocalizedText(findObjectByKey(type.data, 'label')));
-      if (typeLabel.includes(normalized) || normalized.includes(typeLabel)) {
-        const subcategories = findObjectByKey(type.data, 'categories') || [];
-        const tags = subcategories.slice(0, 4).map((cat: any) =>
-          this.resolveLocalizedText(cat?.value?.label || cat?.label)
-        ).filter(Boolean);
+  private buildOfferCards(products: any[]) {
+    this.offerCards = (products || []).map((prod: any) => {
+      const title = findObjectByKey(prod.data, 'title');
+      const images = findObjectByKey(prod.data, 'images');
+      const configs = findObjectByKey(prod.data, 'configurations');
+      const config = configs?.[0]?.configuration?.[0];
+      const price = parseFloat(config?.price?.[0]?.value) || 0;
+      const oldPrice = parseFloat(config?.old_price?.[0]?.value) || price;
+      const discount = oldPrice > price ? `-${Math.round(((oldPrice - price) / oldPrice) * 100)}%` : '';
 
-        if (tags.length) {
-          return tags;
-        }
-      }
+      return {
+        id: prod.id,
+        title: typeof title === 'object' ? (title?.[this.currentLanguage] || title?.['ro'] || '') : (title || ''),
+        oldPrice: oldPrice !== price ? `${oldPrice} ${config?.price?.[0]?.currency || 'lei'}` : '',
+        price: `${price} ${config?.price?.[0]?.currency || 'lei'}`,
+        discount,
+        image: Array.isArray(images) ? images[0]?.file_url : 'assets/images/placeholder.png',
+        model: findObjectByKey(prod.data, 'model') || '',
+        size: config?.size || '',
+        sku: findObjectByKey(prod.data, 'sku') || '',
+        characteristic: '',
+        rawPrice: price,
+        rawOldPrice: oldPrice
+      };
+    });
+  }
+
+  private buildAddresses(addresses: any[]) {
+    this.addresses = (addresses || []).map((addr: any) => {
+      const name = findObjectByKey(addr.data, 'name') || findObjectByKey(addr.data, 'label');
+      const street = findObjectByKey(addr.data, 'street') || findObjectByKey(addr.data, 'address');
+      const phone = findObjectByKey(addr.data, 'phone') || findObjectByKey(addr.data, 'main_phone');
+      const email = findObjectByKey(addr.data, 'email') || findObjectByKey(addr.data, 'main_email');
+      const mapUrl = findObjectByKey(addr.data, 'map_url') || findObjectByKey(addr.data, 'map');
+      return {
+        name: typeof name === 'object' ? (name?.[this.currentLanguage] || name?.['ro'] || '') : (name || ''),
+        street: typeof street === 'object' ? (street?.[this.currentLanguage] || street?.['ro'] || '') : (street || ''),
+        phone: phone || '',
+        email: email || '',
+        schedule: [],
+        mapUrl: mapUrl || ''
+      };
+    });
+  }
+
+  private buildDesignerPhones(generalData: any[]) {
+    const designers = findObjectByKey(generalData?.[0]?.data, 'designer_phones');
+    if (Array.isArray(designers)) {
+      this.designerPhones = designers.map((d: any) => ({
+        name: typeof d.label === 'object' ? (d.label?.[this.currentLanguage] || d.label?.['ro'] || '') : (d.label || ''),
+        phone: d.link || d.phone || ''
+      }));
+    }
+  }
+
+  private buildHeroAndBanners(siteConfig: any[]) {
+    const heroItems = (siteConfig || []).filter((item: any) => findObjectByKey(item.data, 'config_type') === 'hero_banner');
+    const sorted = heroItems.sort((a: any, b: any) => {
+      const orderA = Number(findObjectByKey(a.data, 'order_index') || 999);
+      const orderB = Number(findObjectByKey(b.data, 'order_index') || 999);
+      return orderA - orderB;
+    });
+
+    if (sorted.length > 0) {
+      const hero = sorted[0];
+      const heroLabel = findObjectByKey(hero.data, 'label');
+      this.heroTitle = typeof heroLabel === 'object' ? (heroLabel?.[this.currentLanguage] || heroLabel?.['ro'] || '') : (heroLabel || '');
+      const heroImage = findObjectByKey(hero.data, 'image');
+      this.heroImageUrl = Array.isArray(heroImage) ? heroImage[0]?.file_url : (heroImage || '');
+      this.heroButtonLink = findObjectByKey(hero.data, 'link') || '';
     }
 
-    return this.buildCategoryTags(categoryLabel);
-  }
-
-  private buildCategoryTags(title: string): string[] {
-    const normalized = title.toLowerCase();
-    if (normalized.includes('perete')) return ['Panouri PVC', 'Panouri SPC', 'Panouri Poliuretan', 'Autocolante'];
-    if (normalized.includes('podea')) return ['Autocolante', 'Panouri SPC', 'Panouri Poliuretan'];
-    if (normalized.includes('tavan')) return ['Panouri Bambus 5mm'];
-    if (normalized.includes('plinte')) return ['Plinte pentru podea', 'Plinte pentru tavan', 'Plinte ascunse', 'Plinte flexibile'];
-    if (normalized.includes('adeziv')) return ['Interior', 'Exterior', 'Fixare rapidă'];
-    if (normalized.includes('profile')) return ['Profile pentru pardoseală', 'Profile pentru pereți', 'Profile pentru grăsie', 'Profile pentru LED'];
-    return ['Categorie'];
-  }
-
-  private resolveLocalizedText(value: any): string {
-    if (!value) return '';
-    if (typeof value === 'string') return value;
-    const language = this.getLanguage();
-    return value[language] || value['ro'] || (Object.values(value)[0] as string) || '';
-  }
-
-  private getDiscountLabel(oldPrice: string | number, currentPrice: string | number): string {
-    const oldValue = Number(oldPrice);
-    const currentValue = Number(currentPrice);
-    if (!oldValue || !currentValue || currentValue >= oldValue) return '-20%';
-    const discount = Math.round(((oldValue - currentValue) / oldValue) * 100);
-    return `-${discount}%`;
+    this.promoBanners = sorted.slice(1).map((item: any) => {
+      const label = findObjectByKey(item.data, 'label');
+      const image = findObjectByKey(item.data, 'image');
+      return {
+        title: typeof label === 'object' ? (label?.[this.currentLanguage] || label?.['ro'] || '') : (label || ''),
+        image: Array.isArray(image) ? image[0]?.file_url : (image || 'assets/images/placeholder.png'),
+        link: findObjectByKey(item.data, 'link') || ''
+      };
+    });
   }
 
   private getLanguage(): string {
     if (typeof localStorage === 'undefined') return 'ro';
     return (localStorage.getItem('language') || 'ro').toLowerCase();
-  }
-
-  private normalizeText(value: string): string {
-    return (value || '').normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().trim();
   }
 }

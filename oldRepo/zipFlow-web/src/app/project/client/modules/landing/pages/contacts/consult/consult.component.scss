@@ -1,0 +1,78 @@
+@import '../../../../../../../../assets/styles/components';
+@import '../../../../../../../../assets/styles/variables';
+
+.consult {
+  max-width: 950px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+
+  &__title {
+    font-size: 25px;
+    line-height: 35px;
+    color: $base-color;
+    font-weight: 400;
+    text-align: center;
+  }
+
+  &__field {
+    max-width: 620px;
+    width: 100%;
+
+    input {
+      background: #F1F1F1;
+      border: none;
+      outline: none;
+      padding: 27px 31px;
+      border-radius: 10px;
+      width: 100%;
+    }
+
+    .field-error {
+      display: none;
+    }
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    button {
+      width: 157px;
+      margin-top: 30px;
+    }
+
+    &.error {
+      input {
+        border: 2px solid #BF262F;
+      }
+
+      .field-error {
+        display: block;
+      }
+    }
+  }
+
+  &__field, &__field::placeholder {
+    color: $base-color;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 21px;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .consult {
+    &__title {
+      font-size: 20px;
+      line-height: 30px;
+    }
+    &__form {
+      button {
+        font-size: 16px;
+        line-height: 25px;
+      }
+    }
+  }
+}

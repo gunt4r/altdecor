@@ -1,4 +1,4 @@
-import {UrlSegment} from "@angular/router";
+import {UrlSegment, UrlSegmentGroup} from "@angular/router";
 
 const supportedLanguages = ['ro', 'ru', 'en'];
 const defaultLanguage = 'ro';

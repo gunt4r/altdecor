@@ -1,0 +1,34 @@
+@import '../../../../../../../assets/styles/components';
+
+.checkout {
+  margin: 25px 100px 50px 100px;
+
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+
+    .description {
+      font-size: 18px;
+      line-height: 21px;
+      font-weight: bold;
+      color: $base-color;
+    }
+
+    button {
+      width: fit-content;
+    }
+  }
+}
+
+@media only screen and (max-width: 992px) {
+  .checkout {
+    margin: 25px 50px 50px 50px;
+  }
+}
+
+@media only screen and (max-width: 576px) {
+  .checkout {
+    margin: 30px 20px;
+  }
+}

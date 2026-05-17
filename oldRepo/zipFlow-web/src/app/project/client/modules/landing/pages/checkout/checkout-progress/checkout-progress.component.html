@@ -1,0 +1,12 @@
+<div class="checkout-progresses">
+  <div class="checkout-progress" [ngStyle]="{ width: (100 / progressesList.length) + '%' }" *ngFor="let progress of progressesList; let i = index">
+    <div [ngClass]="{ active: i === stage, previous: i < stage }">
+      {{ progress | translate }}
+    </div>
+  </div>
+
+  <div class="progress">
+    <div class="progress__line" [ngStyle]="{ width: (100 / progressesList.length) * (stage + .5) + '%' }"></div>
+    <div class="progress__mark"></div>
+  </div>
+</div>

@@ -1,0 +1,42 @@
+@import '../../../../../../../assets/styles/variables';
+
+.recommendation-container {
+  width: 100%;
+
+  .recommendation-header {
+    color: $base-color;
+    font-size: 30px;
+    font-weight: 700;
+  }
+
+  .article-data {
+    display: flex;
+    padding: 15px 0;
+    border-bottom: 1px solid #F1F2F3;
+    text-decoration: none;
+
+    .article-img {
+      background-size: cover;
+      background-position: center;
+      border-radius: 4px;
+      max-width: 124px;
+      width: 100%;
+      height: 97px;
+    }
+
+    .article-details {
+      display: flex;
+      flex-direction: column;
+      margin-left: 15px;
+      color: $base-color;
+
+      .article-title {
+        text-transform: uppercase;
+        font-size: 12px;
+      }
+      .article-short-info {
+        font-size: 19px;
+      }
+    }
+  }
+}

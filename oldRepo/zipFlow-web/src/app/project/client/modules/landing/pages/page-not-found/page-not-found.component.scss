@@ -1,0 +1,59 @@
+@import '../../../../../../../assets/styles/components';
+
+.not-found {
+  width: 100vw;
+  padding: 70px 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 40px;
+
+  img {
+    width: 200px;
+  }
+
+  &__content {
+    color: #1D1F22;
+
+    .title {
+      font-weight: 700;
+      font-size: 50px;
+      line-height: 60px;
+    }
+
+    .subtitle {
+      font-weight: 700;
+      font-size: 30px;
+      line-height: 35px;
+      margin-top: 10px;
+    }
+  }
+
+  &__button {
+    width: 384px !important;
+  }
+}
+
+@media only screen and (max-width: 576px) {
+  .not-found {
+    padding: 30px 50px;
+    img {
+      width: 100px;
+    }
+    &__content {
+      .title {
+        font-size: 30px;
+        line-height: normal;
+      }
+      .subtitle {
+        font-size: 18px;
+        line-height: normal;
+      }
+    }
+    &__button {
+      width: auto !important;
+    }
+  }
+}

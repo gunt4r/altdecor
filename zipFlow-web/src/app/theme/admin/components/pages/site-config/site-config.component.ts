@@ -46,7 +46,6 @@ export class SiteConfigComponent implements OnInit {
   isCreating = false;
   loading = true;
   saving = false;
-  entrySearch = '';
   languages = ['ro', 'ru', 'en'];
   activeLang = 'ro';
 
@@ -180,20 +179,11 @@ export class SiteConfigComponent implements OnInit {
       const ob = this.getField(b, 'order_index') || 999;
       return Number(oa) - Number(ob);
     });
-    const search = this.entrySearch.trim().toLowerCase();
-    if (search) {
-      this.filteredEntries = this.filteredEntries.filter((entry) => JSON.stringify(entry.data || []).toLowerCase().includes(search));
-    }
   }
 
   selectTab(tab: string) {
     this.activeTab = tab;
     this.cancelEdit();
-    this.filterEntries();
-  }
-
-  onSearchChange(value: string) {
-    this.entrySearch = value;
     this.filterEntries();
   }
 

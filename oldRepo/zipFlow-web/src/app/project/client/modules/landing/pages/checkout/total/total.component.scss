@@ -1,0 +1,61 @@
+.total {
+  &__payment {
+    margin-top: 70px;
+
+    .spacer {
+      width: 100%;
+      height: 1px;
+      background-color: #fff;
+      margin-bottom: 15px;
+    }
+  }
+
+  &__label {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 25px;
+    margin-bottom: 15px;
+  }
+
+  &__discount {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+
+    input {
+      padding: 8px;
+      outline: none;
+      border: none;
+      background-color: #fff;
+      font-weight: 700;
+      font-size: 12px;
+      line-height: 20px;
+      color: #43464E;
+      width: 100%;
+
+      &::placeholder {
+        font-weight: 700;
+        font-size: 12px;
+        line-height: 20px;
+        color: #43464E;
+      }
+    }
+
+    .discount-checked {
+      background: #FFE0B1;
+      padding: 9px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: fit-content;
+      height: fit-content;
+      cursor: pointer;
+    }
+  }
+}

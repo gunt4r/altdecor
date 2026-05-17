@@ -1,0 +1,10 @@
+<svg id="bin_2_" data-name="bin (2)" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+    <defs>
+        <style>
+            .cls-1-remove-icon{fill:#606669}
+        </style>
+    </defs>
+    <path id="Rectangle_10112" data-name="Rectangle 10112" class="cls-1-remove-icon" transform="translate(5 7)" d="M0 0h2v6H0z"/>
+    <path id="Rectangle_10113" data-name="Rectangle 10113" class="cls-1-remove-icon" transform="translate(9 7)" d="M0 0h2v6H0z"/>
+    <path id="Path_15492" data-name="Path 15492" class="cls-1-remove-icon" d="M12 1a.945.945 0 0 0-1-1H5a.945.945 0 0 0-1 1v2H0v2h1v10a.945.945 0 0 0 1 1h12a.945.945 0 0 0 1-1V5h1V3h-4zM6 2h4v1H6zm7 3v9H3V5z"/>
+</svg>

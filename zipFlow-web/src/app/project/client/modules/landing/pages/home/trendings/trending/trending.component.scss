@@ -1,0 +1,124 @@
+@import '../../../../../../../../../assets/styles/variables';
+
+:host {
+  height: -webkit-fill-available;
+}
+
+.trending {
+  display: flex;
+  align-items: stretch;
+  gap: 20px;
+  height: 100%;
+
+  &__left {
+    width: 50%;
+  }
+
+  &__left-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+  }
+
+  a {
+    text-decoration: none;
+  }
+  &__right {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-bottom: 30px;
+  }
+
+  &__tags {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+
+  &__tag {
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 24px;
+    color: $base-color;
+    padding: 5px 10px;
+    background: $tag-color;
+    border-radius: 4px;
+  }
+
+  &__title {
+    color: $base-color;
+    font-weight: 700;
+    line-height: normal;
+    margin-top: 50px;
+  }
+
+  &__description {
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 21px;
+    color: $gray-light;
+    margin-bottom: 20px;
+    margin-top: 30px;
+  }
+
+  &__footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    color: $gray-light;
+    font-weight: 700;
+    font-size: 11px;
+    line-height: 15px;
+    margin-top: 10px;
+  }
+
+  .spacer {
+    margin-left: 20px;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .trending {
+    flex-direction: column;
+    &__left {
+      width: 100%;
+      height: 250px;
+    }
+    &__right {
+      width: 100%;
+    }
+    &__tag {
+      font-size: 15px;
+    }
+    &__title {
+      font-size: 26px !important;
+      margin-top: 30px;
+    }
+    &__description {
+      font-size: 18px;
+    }
+    &__footer {
+      font-size: 15px;
+    }
+  }
+}
+
+@media only screen and (max-width: 576px) {
+  .trending__title {
+    font-size: 18px !important;
+    margin-top: 15px;
+  }
+  .trending__right {
+    padding: 0 !important;
+  }
+  .trending__description {
+    font-size: 16px;
+    margin: 15px 0;
+  }
+}

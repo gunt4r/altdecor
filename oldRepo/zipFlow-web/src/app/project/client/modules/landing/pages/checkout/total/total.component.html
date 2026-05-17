@@ -1,0 +1,30 @@
+<app-order-container>
+  <ng-container title>{{ 'Checkout.Total.Title' | translate }}</ng-container>
+
+  <div class="total__payment">
+    <div class="total__label" *ngFor="let label of labels">
+      <span class="label">{{ label.label | translate }}:</span>
+      <span class="value">{{ label.value }}</span>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="total__label">
+      <span class="label">{{ total.label | translate }}:</span>
+      <span class="value">{{ total.value }}</span>
+    </div>
+  </div>
+
+
+<!--  <div class="total__discount">-->
+<!--    <input type="text" [placeholder]="'Checkout.Total.Discount' | translate">-->
+
+<!--    <div class="discount-checked">-->
+<!--      <svg width="12" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg">-->
+<!--        <path-->
+<!--          d="M13.5379 2.09102L6.17983 10.7516L5.61754 11.4149C5.29623 11.7939 4.79795 11.7939 4.47664 11.4149L1.08717 7.41652C0.765865 7.03749 0.765865 6.4497 1.08717 6.07068C1.40848 5.69165 1.90676 5.69165 2.22807 6.07068L4.47722 8.74318C4.79853 9.12221 5.29681 9.12221 5.61812 8.74318L12.4139 0.745939C12.7352 0.366914 13.2335 0.366914 13.5548 0.745939C13.8435 1.12496 13.8435 1.71202 13.5379 2.09104L13.5379 2.09102Z"-->
+<!--          fill="white"/>-->
+<!--      </svg>-->
+<!--    </div>-->
+<!--  </div>-->
+</app-order-container>

@@ -1,0 +1,59 @@
+@import '../../../../../../../../assets/styles/variables';
+
+.products-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  &__title {
+    color: $base-color;
+    font-size: 30px;
+    line-height: 35px;
+    font-weight: 700;
+    width: 30%;
+  }
+
+  &__products {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: center;
+    width: 100%;
+  }
+
+  &__sort, &__amount {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .amount {
+    color: $base-color;
+    font-size: 20px;
+    line-height: 21px;
+    font-weight: 400;
+
+    &--value {
+      font-weight: 700;
+    }
+  }
+
+  &__label {
+    color: $base-color;
+    font-size: 15px;
+    line-height: 21px;
+    font-weight: 400;
+  }
+}
+
+@media only screen and (max-width: 992px) {
+  .products-header {
+    flex-direction: column;
+    &__title {
+      width: 100%;
+    }
+    &__products {
+      flex-wrap: wrap;
+    }
+  }
+}

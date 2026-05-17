@@ -1,0 +1,45 @@
+.array-action {
+  justify-content: center;
+  position: relative;
+  height: 40px;
+  display: flex;
+
+  svg-icon {
+    margin: auto;
+    cursor: pointer;
+  }
+}
+
+.entity-row {
+  border-radius: 10px;
+  margin-top: 8px;
+  width: 100%;
+  margin-right: 0;
+  margin-left: 0;
+
+  &.array {
+    border-right: 1px solid black;
+    padding-right: 8px;
+    padding-bottom: 12px;
+  }
+
+  & *{
+    padding-left: 0px;
+    padding-right: 8px;
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+.hide-actions {
+  .entity-row {
+    &.array {
+      border: none;
+    }
+  }
+}
+
+.p-0 {
+  padding: 0;
+}
+

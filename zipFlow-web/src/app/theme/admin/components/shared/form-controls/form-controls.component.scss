@@ -1,0 +1,76 @@
+@import '../../../assets/scss/variables';
+
+.preview {
+  padding: 0 !important;
+
+  img {
+    max-width: 33%;
+    border: solid 1px #c0c3c5;
+    border-radius: $border-radius;
+    padding: $border-radius;
+    max-height: 12.5rem;
+  }
+}
+
+.NgxEditor__Wrapper {
+  width: 100%;
+  overflow-x: auto;
+  height: 300px;
+  position: relative;
+}
+
+.image-input {
+  display: none;
+}
+
+.img-preview-container {
+  background-color: #f7f7f7;
+  position: relative;
+  margin-top: 30px;
+  padding: 20px;
+  width: fit-content;
+  display: flex;
+  border-radius: 5px;
+  gap: 20px;
+  flex-wrap: wrap;
+
+  .img-preview {
+    background: center center no-repeat;
+    background-size: contain;
+    height: 120px;
+    width: 120px;
+    cursor: pointer;
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+
+
+  .file-preview {
+    display: flex;
+    gap: 15px;
+    width: fit-content;
+    height: auto;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: normal;
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+
+}
+
+.img-loading-overlay {
+  background-color: black;
+  bottom: 0;
+  left: 0;
+  opacity: .2;
+  position: absolute;
+  right: 0;
+  top: 20px;
+}

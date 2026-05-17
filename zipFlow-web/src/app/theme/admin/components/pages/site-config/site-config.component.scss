@@ -175,7 +175,6 @@ $admin-font: 'DM Sans', sans-serif;
     align-items: center;
     padding: 12px 16px;
     gap: 16px;
-    overflow: hidden;
   }
 
   &__order {
@@ -190,7 +189,6 @@ $admin-font: 'DM Sans', sans-serif;
   &__main {
     flex: 1;
     min-width: 0;
-    overflow: hidden;
 
     strong {
       display: block;
@@ -205,7 +203,6 @@ $admin-font: 'DM Sans', sans-serif;
     font-size: 11px;
     color: $admin-text-light;
     margin-top: 2px;
-    max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -213,14 +210,6 @@ $admin-font: 'DM Sans', sans-serif;
 
   &__icon {
     flex-shrink: 0;
-
-    .badge {
-      max-width: 140px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      display: inline-block;
-    }
   }
 
   &__status {
@@ -231,7 +220,6 @@ $admin-font: 'DM Sans', sans-serif;
     display: flex;
     gap: 4px;
     flex-shrink: 0;
-    white-space: nowrap;
   }
 }
 
@@ -633,34 +621,6 @@ select.form-control {
 
 .btn-add-child {
   margin-top: 8px;
-}
-
-// === Tags ===
-.tag-items {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.tag-item {
-  display: flex;
-  align-items: flex-end;
-  gap: 8px;
-  background: $admin-card;
-  border: 1px solid $admin-border;
-  border-radius: 6px;
-  padding: 10px 12px;
-
-  &__inputs {
-    flex: 1;
-  }
-
-  &__remove {
-    flex-shrink: 0;
-    padding: 11px 10px;
-    font-size: 13px;
-    margin-bottom: 0;
-  }
 }
 
 // === Form Actions ===

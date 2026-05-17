@@ -1,0 +1,16 @@
+<ng-container *ngIf="!loading">
+  <app-page-container [pages]="pages">
+    <app-product-info cart [product]="product"></app-product-info>
+    <app-product-summary [productTabs]="product.tabs"
+                         [product]="product"
+                         *ngIf="product?.tabs"></app-product-summary>
+  </app-page-container>
+
+  <app-masterpieces></app-masterpieces>
+
+  <app-specifications></app-specifications>
+
+  <app-recommendations></app-recommendations>
+</ng-container>
+
+<app-loader class="loader" *ngIf="loading"></app-loader>

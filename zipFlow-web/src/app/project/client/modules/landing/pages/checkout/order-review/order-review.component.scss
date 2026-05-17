@@ -1,0 +1,32 @@
+.review {
+  &__sections {
+    margin-top: 50px;
+    margin-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .section {
+      &--title {
+        font-weight: 700;
+        font-size: 15px;
+        line-height: 21px;
+        color: #1D1F22;
+      }
+
+      &--content {
+        margin-top: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      &--row {
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 20px;
+        color: #43464E;
+      }
+    }
+  }
+}

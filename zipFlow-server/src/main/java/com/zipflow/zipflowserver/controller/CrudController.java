@@ -18,10 +18,25 @@ public class CrudController {
                                                @RequestParam(defaultValue = "1") int page,
                                                @RequestParam(defaultValue = "10") int rowsPerPage,
                                                @RequestParam(required = false) String search,
+                                               @RequestParam(required = false) String query,
                                                @RequestParam(required = false) String filter,
                                                @RequestParam(required = false) String sortBy,
                                                @RequestParam(required = false) String sortOrder) {
-        return dynamicTableService.getData(slug, page, rowsPerPage, search, filter, sortBy, sortOrder);
+        String rawQuery = (search != null && !search.isEmpty()) ? search
+                        : (query != null && !query.isEmpty()) ? query : null;
+        String effectiveSearch = null;
+        if (rawQuery != null) {
+            if (rawQuery.contains("_contains_") || rawQuery.contains("_equals_")) {
+                effectiveSearch = rawQuery;
+            } else {
+                effectiveSearch = "title_contains_" + rawQuery
+                        + "_or_label_contains_" + rawQuery
+                        + "_or_name_contains_" + rawQuery
+                        + "_or_sku_contains_" + rawQuery
+                        + "_or_model_contains_" + rawQuery;
+            }
+        }
+        return dynamicTableService.getData(slug, page, rowsPerPage, effectiveSearch, filter, sortBy, sortOrder);
     }
 
     @PostMapping("/{slug}")

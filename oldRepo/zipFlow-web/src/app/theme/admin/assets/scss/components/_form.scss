@@ -1,0 +1,228 @@
+@import "../variables";
+
+.f-group {
+  &.grid-group {
+    display: grid;
+    padding-top: 8px;
+  }
+
+  label {
+    font-size: $font-size-xs;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.2;
+    letter-spacing: 0.24px;
+    text-align: left;
+    color: $gray-400;
+    font-family: $font-family-bd;
+  }
+
+  input, select, textarea {
+    &.f-control {
+      background: #fff;
+      border-radius: $border-radius;
+      border: solid 1px $gray-400;
+      font-size: $font-size-base;
+      font-weight: normal;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: 1.25;
+      letter-spacing: normal;
+      text-align: left;
+      color: $gray-800;
+      font-family: $font-family-base;
+      padding: ($table-margin * .84) $table-margin;
+
+      &::placeholder {
+        color: $gray-600;
+      }
+
+      &:hover {
+        border: solid 1px $yellow;
+        color: $gray-800;
+      }
+
+      &:focus {
+        border: solid 1px $gray-800;
+      }
+
+      &.disabled, &[disabled] {
+        border: solid 1px $gray-400;
+        background-color: $gray-300;
+        color: $black;
+        cursor: not-allowed;
+      }
+    }
+
+    &.f-control.search {
+      font-size: 14px;
+      border-radius: $border-radius * 2;
+      padding: ($table-margin * .67) $table-margin;
+    }
+  }
+
+  select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: transparent;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='8' viewBox='0 0 10 8'%3E%3Cpath data-name='Path 17480' d='m.22 27.215 3.723 5.745a1.154 1.154 0 0 0 .47.419 1.293 1.293 0 0 0 1.647-.419l3.778-5.828a.989.989 0 0 0 .162-.54 1.151 1.151 0 0 0-1.213-1.077H1.198A1.149 1.149 0 0 0 0 26.593a.961.961 0 0 0 .22.622z' transform='translate(0 -25.515)' style='fill:%23404446'/%3E%3C/svg%3E%0A") !important;
+    background-repeat: no-repeat !important;
+    background-position: calc(100% - 12px) !important;
+    padding-left: $table-margin;
+    padding-right: $table-margin;
+    text-align: start;
+    min-width: 60px;
+  }
+
+  &.error {
+    label {
+      color: $red;
+    }
+
+    input, select {
+      &.f-control {
+        border: solid 1px $red;
+      }
+    }
+
+    .NgxEditor__Wrapper {
+      border: solid 1px $red;
+    }
+  }
+
+  &.search-group {
+    position: relative;
+
+    &::after {
+      content: " ";
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M6.789.879a6.813 6.813 0 1 0 6.789 6.813A6.8 6.8 0 0 0 6.789.879zm8.931 15.707a.978.978 0 0 1-1.384.012l-2.714-2.676a7.931 7.931 0 0 0 1.383-1.39l2.7 2.665a.986.986 0 0 1 .015 1.389zM6.789 2.776a4.916 4.916 0 1 1-4.9 4.916 4.907 4.907 0 0 1 4.9-4.916z' transform='translate(0 -.879)' style='fill:%23404446;fill-rule:evenodd'/%3E%3C/svg%3E%0A");
+      background-repeat: no-repeat;
+      background-size: $size-1 $size-1;
+      background-position: center;
+      cursor: pointer;
+      width: $size-1;
+      height: $size-1;
+      z-index: 100;
+      position: absolute;
+      top: 50%;
+      left: calc(100% - 28px);
+      transform: translate(0, -50%);
+    }
+  }
+}
+
+.error-message {
+  font-size: $font-size-xs;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.2;
+  letter-spacing: 0.24px;
+  text-align: left;
+  color: $red;
+  padding: ($table-margin * .5) $table-margin;
+}
+
+.message {
+  font-size: $font-size-xs;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.2;
+  letter-spacing: 0.24px;
+  text-align: left;
+  color: $gray-400;
+  padding: ($table-margin * .5) $table-margin;
+}
+
+label.required {
+  &:after {
+    content: '*';
+    padding-left: $table-margin * .5;
+    color: $red;
+  }
+}
+
+// toggle
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 24px;
+  margin: 0;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: transparent;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.switch {
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 2px;
+    bottom: 1px;
+    background-color: $gray-600;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+
+  .slider {
+    border: 2px solid $gray-600;
+  }
+}
+
+input:checked + .slider {
+  border: 2px solid $yellow;
+  background: transparent;
+}
+
+input:checked + .slider:before {
+  background: $yellow;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(14px);
+  -ms-transform: translateX(14px);
+  transform: translateX(14px);
+}
+
+.slider.round {
+  border-radius: $border-radius * 4;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.helper-text {
+  color: $gray-600;
+  font-family: $font-family-base;
+  padding-top: $table-margin * .5;
+  font-size: $font-size-xs;
+}
+
+.NgxEditor__Wrapper {
+  .NgxEditor__MenuBar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+}

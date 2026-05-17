@@ -1,0 +1,27 @@
+<div class="blogs-list">
+  <ng-container *ngIf="articles && articles.length > 0; else noArticles">
+    <div *ngFor="let article of articles">
+      <a [routerLink]="['/blog', article.id]">
+        <div class="article">
+          <div class="article-img" [ngStyle]="{ backgroundImage: 'url(' + article.img + ')' }"></div>
+          <div class="article-card">
+            <div class="article-title">
+              {{ article.title | translate}}
+            </div>
+            <div class="article-description" [innerHTML]="article.truncatedDescriptions | translate | safeHtml" *ngIf="article.truncatedDescriptions"></div>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="show-more-button" *ngIf="articles?.length !== total">
+      <app-loader class="loader" *ngIf="loading"></app-loader>
+      <button class="dark" [ngClass]="{disabled: loading}" (click)="loadNextPage.emit()">{{ 'Products.Button.More' | translate }}</button>
+    </div>
+  </ng-container>
+
+  <ng-template #noArticles>
+    <div class="blogs-list-empty">
+      {{ 'Blog.NoArticles' | translate }}
+    </div>
+  </ng-template>
+</div>

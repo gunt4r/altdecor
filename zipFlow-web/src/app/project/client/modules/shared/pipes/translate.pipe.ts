@@ -1,19 +1,31 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import {Pipe, PipeTransform} from '@angular/core';
+import {TranslateService} from "../services/translate.service";
+import * as _ from "lodash";
 
 @Pipe({
-  name: 'translate'
+  name: 'translate',
+  pure: false
 })
 export class TranslatePipe implements PipeTransform {
-  transform(value: string | null | undefined): string {
-    if (!value) {
-      return '';
-    }
 
-    if (!value.includes('.')) {
-      return value;
-    }
+  constructor(private translateService: TranslateService) {}
 
-    const lastSegment = value.split('.').pop() || value;
-    return lastSegment.replace(/([a-z])([A-Z])/g, '$1 $2');
+  transform(data: string | any, configs?: { [fieldKey: string]: unknown }): string {
+    if(typeof data === 'string') {
+      let translatedString = _.get(this.translateService.data, data) || data;
+
+      if (configs) Object.keys(configs).forEach((variableKey) => {
+        const variableValue = String(configs[variableKey]);
+        const variablePlaceholder = `{{\\s*${variableKey}\\s*}}`;
+        const regex = new RegExp(variablePlaceholder, 'g');
+        translatedString = translatedString.replace(regex, variableValue);
+      });
+
+      return translatedString;
+    } else {
+      const language = localStorage.getItem('language') || 'ro';
+
+      return data?.[language] || data?.['ro'] || data?.['ru'] || data?.['en'] || ''
+    }
   }
 }

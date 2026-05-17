@@ -1,0 +1,37 @@
+.radio {
+
+  &__label {
+    font-size: 20px;
+    line-height: 25px;
+    font-weight: 700;
+  }
+
+  &__options {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    .option {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+
+      &:before {
+        content: "";
+        padding: 5px;
+        border: 2px solid #EEECEC;
+        border-radius: 50px;
+      }
+
+      &.active {
+        font-weight: 700;
+
+        &:before {
+          background: #FFE0B1;
+        }
+      }
+    }
+  }
+}

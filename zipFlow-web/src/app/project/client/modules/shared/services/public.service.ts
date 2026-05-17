@@ -1,76 +1,121 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../../../../../../environments/environment';
+import {Injectable} from '@angular/core';
+import {HttpClient} from "@angular/common/http";
+import {AnalyticsInterface} from "../../../../../theme/admin/interfaces/analytics.interface";
+import {Observable} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class PublicService {
-  constructor(private http: HttpClient) {}
-
-  getProducts(params?: Record<string, any>): Observable<any> {
-    return this.get('api/public/crud/products', params);
+  constructor(private http: HttpClient) {
   }
 
-  getProductTypes(params?: Record<string, any>): Observable<any> {
-    return this.get('api/public/crud/product_type', params);
+  addPhoneNumber(phone_number: any) {
+    return this.http.post<any>('api/public/crud/phone', {data: [phone_number]});
   }
 
-  getProductCategories(params?: Record<string, any>): Observable<any> {
-    return this.get('api/public/crud/product_category', params);
+  addEmail(email: any) {
+    return this.http.post<any>('api/public/crud/email', {data: [email]});
   }
 
-  getCategoriesBanner(params?: Record<string, any>): Observable<any> {
-    return this.get('api/public/crud/categories_banner', params);
+  getLanguages() {
+    return this.http.get<any>('api/public/languages');
   }
 
-  getGeneralDetails(): Observable<any> {
-    return this.get('api/public/crud/general_details', { page: 1, rowsPerPage: 10 });
+  getAnalytics(): Observable<any> {
+    return this.http.get<any>('api/public/analytics');
   }
 
-  getLanguages(): Observable<any> {
-    return this.get('api/public/languages');
+  getAdvantages() {
+    return this.http.get<any>('api/public/crud/advantages');
   }
 
-  getProductsFilterLabels(): Observable<any> {
-    return this.get('api/public/crud/product_category/filter-labels', { labels: 'title,image,id' });
+  getProductTypes(params?: any) {
+    if(params) {
+      return this.http.get<any>('api/public/crud/product_type', { params });
+    } else {
+      return this.http.get<any>('api/public/crud/product_type');
+    }
   }
 
-  getNavigationConfig(): Observable<any> {
-    return this.getSiteConfig({ page: 1, rowsPerPage: 100 });
+  getBlogCategories() {
+    return this.http.get<any>('api/public/crud/blog_category');
   }
 
-  getSiteConfig(params?: Record<string, any>): Observable<any> {
-    return this.get('api/public/crud/site_config', params);
+  getBlogFilterLabels() {
+    return this.http.get<any>('api/public/crud/blogs/filter-labels?labels=blog_category');
   }
 
-  getAddresses(params?: Record<string, any>): Observable<any> {
-    return this.get('api/public/crud/addresses', params);
+  getProductCategories(params?: any) {
+    const merged = {sortBy: 'position', sortOrder: 'ASC', ...(params || {})};
+    return this.http.get<any>('api/public/crud/product_categories', {params: merged});
   }
 
-  getMeta(params?: Record<string, any>): Observable<any> {
-    return this.get('api/public/crud/meta', params);
+  getProductsSlider() {
+    return this.http.get<any>('api/public/crud/products_slider');
   }
 
-  private get(path: string, params?: Record<string, any>): Observable<any> {
-    return this.http.get(this.normalizeUrl(path), {
-      params: this.toHttpParams(params)
-    });
+  getCategoriesBanner() {
+    return this.http.get<any>('api/public/crud/categories_banner');
   }
 
-  private normalizeUrl(path: string): string {
-    return `${environment.apiUrl.replace(/\/$/, '')}/${path.replace(/^\//, '')}`;
+  getProducts(params: any) {
+    return this.http.get<any>('api/public/crud/product', {params});
   }
 
-  private toHttpParams(source?: Record<string, any>): HttpParams {
-    let params = new HttpParams();
-    Object.entries(source || {}).forEach(([key, value]) => {
-      if (value === undefined || value === null || value === '') {
-        return;
-      }
-      params = params.set(key, String(value));
-    });
-    return params;
+  getProductById(id: string | null) {
+    return this.http.get<any>(`api/public/crud/product/${id}`);
+  }
+
+  getProductsFilterLabels() {
+    return this.http.get<any>('api/public/crud/product/filter-labels?labels=product_type,product_category,configurations,material,characteristic');
+  }
+
+  getEntertainmentSlider() {
+    return this.http.get<any>('api/public/crud/entertainment_slider');
+  }
+
+  getFAQ() {
+    return this.http.get<any>('api/public/crud/faq');
+  }
+
+  getAboutUs() {
+    return this.http.get<any>('api/public/crud/about_us');
+  }
+
+  getPortfolio() {
+    return this.http.get<any>('api/public/crud/portfolio');
+  }
+
+  getGeneralDetails() {
+    return this.http.get<any>('api/public/crud/general_details');
+  }
+
+  downloadPdf(url: string) {
+    return this.http.get(url, { responseType: 'blob' });
+  }
+
+  getInteriorDiv() {
+    return this.http.get<any>('api/public/crud/interior_divisions');
+  }
+
+  getBlogs(params: any) {
+    return this.http.get<any>('api/public/crud/blogs', {params});
+  }
+
+  getBlogById(id: string | null) {
+    return this.http.get<any>(`api/public/crud/blogs/${id}`);
+  }
+
+  getMeta(params: any) {
+    return this.http.get<any>('api/public/crud/meta', {params});
+  }
+
+  getSiteConfig(params?: any) {
+    return this.http.get<any>('api/public/crud/site_config', {params});
+  }
+
+  getAddresses(params?: any) {
+    return this.http.get<any>('api/public/crud/address', {params});
   }
 }

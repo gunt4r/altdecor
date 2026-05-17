@@ -1,0 +1,30 @@
+<div class="custom-input" [ngClass]="{ error: control.invalid && (control.dirty || control.touched) }">
+  <ng-container [ngSwitch]="type">
+    <div class="custom-input__checkbox" *ngSwitchCase="inputType.Checkbox">
+      <input [checked]="value" [type]="inputType.Checkbox" [id]="label" (change)="getCheckboxValue($event)">
+      <label class="checkbox-label" [for]="label">{{ label }}
+        <ng-content select="[label]"></ng-content>
+      </label>
+    </div>
+
+    <ng-container *ngSwitchCase="inputType.Radio">
+      <div class="custom-input__radio" *ngFor="let option of radioOptions; let i=index">
+        <input [type]="inputType.Radio" (change)="getRadioValue(option.value)" [id]="'radio' + i" name="radioGroup"
+               [checked]="control.defaultValue === option.value || option.active">
+        <label [for]="'radio' + i">{{ option.label | translate }}</label>
+      </div>
+    </ng-container>
+
+    <ng-container *ngSwitchDefault>
+      <input [type]="type" [id]="label" (input)="getValue($event)" [value]="value" placeholder=" " class="custom-input__default"
+             autocomplete="new-password">
+      <label class="label" [for]="label">{{ label }}
+        <span class="required" *ngIf="control.invalid">*</span>
+      </label>
+    </ng-container>
+  </ng-container>
+
+  <ng-container *ngIf="control.invalid && (control.dirty || control.touched)">
+    <app-validation-errors [errors]="errors || control.errors"></app-validation-errors>
+  </ng-container>
+</div>

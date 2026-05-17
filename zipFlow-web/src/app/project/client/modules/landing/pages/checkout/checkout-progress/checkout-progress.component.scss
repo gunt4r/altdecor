@@ -1,0 +1,50 @@
+$color: #FFE0B1;
+
+.checkout-progresses {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #F1F2F3;
+  position: relative;
+
+  .progress {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    height: fit-content;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    background: transparent;
+
+    &__line {
+      background: $color;
+      height: 2px;
+    }
+
+    &__mark {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: $color;
+      margin-left: -2px;
+    }
+  }
+
+  .checkout-progress {
+    color: #72757E;
+    font-weight: 700;
+    font-size: 15px;
+    line-height: 21px;
+    text-align: center;
+
+    .active {
+      color: $color;
+    }
+
+    .previous {
+      color: #1B1B1B;
+    }
+  }
+}

@@ -1,0 +1,61 @@
+<app-authorization
+  [entity]="entities.CRUD"
+  [action]="[policyActions.VIEW, policyActions.UPDATE]"
+>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header card-padding-lr">
+          <div class="flex-between align-items-end">
+            <div class="card-title">{{config?.main_details?.label}} details</div>
+            <div class="actions">
+              <button class="btn action-btn btn-outlined-gray mr-2"
+                      [routerLink]="['/admin/crud/' + config?.main_details?.slug]">
+                Cancel
+              </button>
+              <app-authorization
+                [entity]="entities.CRUD"
+                [action]="modelId ? policyActions.UPDATE : policyActions.CREATE"
+                [class]="'d-table-cell'"
+              >
+                <button class="btn action-btn btn-primary ml-2"
+                        [disabled]="submitButtonDisabled"
+                        (click)="submitFormSubject.next()">
+                  {{modelId ? 'Update' : 'Create'}} {{config?.main_details?.label}}
+                </button>
+              </app-authorization>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-padding-lr required-fields-message">
+          * Required fields should be completed in all languages!
+        </div>
+
+        <div class="card-body card-padding-lr">
+          <div class="tab-labels" *ngIf="!config?.main_details?.avoid_translate">
+            <div class="tab-label"
+                 *ngFor="let language of languages"
+                 (click)="setActiveLanguage(language.key)"
+                 [ngClass]="{'active': formLanguage === language.key}">{{language.label}}</div>
+          </div>
+
+          <app-form
+            [modelId]="modelId"
+            [setFormConfig]="formData"
+            [service]="service"
+            [setModel]="currentModel"
+            [name]="'Crud'"
+            [entity]="entities.CRUD"
+            [urlSegment]="'crud'"
+            [submitForm]="submitFormSubject.asObservable()"
+            [language]="formLanguage"
+            (submitButtonState)="submitButtonDisabled = $event"
+            (addArrayItemEvent)="addArrayItem($event)"
+            (removeArrayItemEvent)="removeArrayItem($event)"
+          ></app-form>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-authorization>

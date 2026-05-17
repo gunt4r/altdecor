@@ -1,0 +1,11 @@
+<div class="division" [ngStyle]="{ backgroundImage: 'url(' + config.img +')' }">
+  <div class="division__content">
+    <div class="division__label">{{ config.category | translate | uppercase}}</div>
+    <div class="division__title">{{ config.title | translate | uppercase}}</div>
+    <div class="division__description" *ngIf="config.description">{{ config.description | translate }}</div>
+    <a [href]="config.button_link | translate">
+      <button class="division__button dark">{{ config.button_label | translate }}</button>
+    </a>
+  </div>
+  <div class="division__overlay"></div>
+</div>

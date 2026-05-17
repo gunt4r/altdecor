@@ -1,0 +1,57 @@
+<app-order-container>
+  <ng-container title>{{ 'Checkout.Finish.Review.Title' | translate }}</ng-container>
+
+  <div class="review__sections" *ngIf="checkout">
+    <div class="section">
+      <div class="section--title">{{ 'Checkout.Finish.Review.PersonalData' | translate }}</div>
+      <div class="section--content">
+        <div class="section--row" *ngIf="checkout.details.name || checkout.details.surname">
+          <span *ngIf="checkout.details.name">{{ checkout.details.name }}</span>
+          <span>&nbsp;</span>
+          <span *ngIf="checkout.details.surname">{{ checkout.details.surname }}</span>
+        </div>
+<!--        <div class="section&#45;&#45;row">-->
+<!--          <span-->
+<!--            *ngIf="checkout.delivery.street || checkout.delivery.companyName">{{ checkout.delivery.street || checkout.delivery.companyName }}-->
+<!--            ,</span>-->
+<!--          <span>&nbsp;</span>-->
+<!--          <span>{{ checkout.delivery.apartment || checkout.delivery.address }}</span>-->
+<!--        </div>-->
+<!--        <div class="section&#45;&#45;row">-->
+<!--          <span *ngIf="checkout.delivery.city">{{ checkout.delivery.city }},</span>-->
+<!--          <span>&nbsp;</span>-->
+<!--          <span>{{ checkout.delivery.country }}</span>-->
+<!--        </div>-->
+        <div class="section--row" *ngIf="checkout.details.email">{{ checkout.details.email }}</div>
+        <div class="section--row" *ngIf="checkout.details.phone">{{ checkout.details.phone }}</div>
+      </div>
+    </div>
+
+<!--    <div class="section">-->
+<!--      <div class="section&#45;&#45;title">{{ 'Checkout.Finish.Review.Delivery' | translate }}</div>-->
+<!--      <div class="section&#45;&#45;content">-->
+<!--        <div-->
+<!--          class="section&#45;&#45;row">{{ deliveryMethodsLabels[checkout.delivery.deliveryMethod] | translate }}</div>-->
+<!--        <div class="section&#45;&#45;row">-->
+<!--          <span-->
+<!--            *ngIf="checkout.delivery.street || checkout.delivery.companyName">{{ checkout.delivery.street || checkout.delivery.companyName }}-->
+<!--            ,</span>-->
+<!--          <span>&nbsp;</span>-->
+<!--          <span>{{ checkout.delivery.apartment || checkout.delivery.address }}</span>-->
+<!--        </div>-->
+<!--        <div class="section&#45;&#45;row">-->
+<!--          <span *ngIf="checkout.delivery.city">{{ checkout.delivery.city }},</span>-->
+<!--          <span>&nbsp;</span>-->
+<!--          <span>{{ checkout.delivery.country }}</span>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+
+<!--    <div class="section">-->
+<!--      <div class="section&#45;&#45;title">{{ 'Checkout.Finish.Review.Address.Title' | translate }}</div>-->
+<!--      <div class="section&#45;&#45;content">-->
+<!--        <div class="section&#45;&#45;row">{{ 'Checkout.Finish.Review.Address.Coincide' | translate }}</div>-->
+<!--      </div>-->
+<!--    </div>-->
+  </div>
+</app-order-container>

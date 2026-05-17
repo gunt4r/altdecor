@@ -1,0 +1,107 @@
+@import '../../../../../../../assets/styles/variables';
+
+.categories-banner {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 30px;
+
+  .category-body {
+    position: relative;
+    height: 362px;
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    align-items: center;
+
+    .background-image {
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      z-index: 1;
+
+      .images-item {
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        width: 100%;
+        height: 100%;
+        border-radius: 8px;
+      }
+    }
+
+    .category-info {
+      position: relative;
+      z-index: 10;
+      margin-left: -20px;
+      display: flex;
+      padding: 45px 25px 20px;
+      flex-direction: column;
+      background: linear-gradient(90deg, #F47920 43.73%, rgba(250, 246, 240, 0) 99.32%);
+      width: 40%;
+      height: fit-content;
+
+      .category-subtitle {
+        font-size: 10px;
+        font-weight: 700;
+        line-height: normal;
+        color: $base-color;
+      }
+
+      .category-title {
+        color: $base-color;
+        font-weight: 700;
+        line-height: normal;
+        font-size: 33px;
+        margin-top: 5px;
+        margin-bottom: 15px;
+      }
+
+      a.action-button {
+        text-decoration: none;
+        background: $base-color;
+        padding: 7px 15px;
+        font-size: 15px;
+        font-weight: 700;
+        color: #F47920;
+        border-radius: 15px;
+        width: fit-content;
+      }
+    }
+  }
+}
+
+@media (max-width: 991px) {
+  .categories-banner {
+    .category-body {
+      height: 262px;
+      .category-info {
+        width: 60%;
+        .category-title {
+          font-size: 28px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .categories-banner {
+    .category-body {
+      height: 172px;
+      .category-info {
+        width: 80%;
+        padding: 25px 15px 10px;
+        .category-title {
+          font-size: 20px;
+          margin-top: 2px;
+          margin-bottom: 8px;
+        }
+        a.action-button {
+          font-size: 10px;
+        }
+      }
+    }
+  }
+}

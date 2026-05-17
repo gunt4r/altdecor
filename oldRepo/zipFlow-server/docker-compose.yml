@@ -1,0 +1,16 @@
+services:
+  altdecor-server:
+    container_name: altdecor-server
+    image: altdecor-server
+    #build: .
+    #    ports:
+    #       - "8080:8080"
+    env_file:
+      - .env
+    networks:
+      - altdecor-network
+    restart: always
+
+networks:
+  altdecor-network:
+    external: true

@@ -1,0 +1,39 @@
+{
+  "main_details": {
+    "label": "Filter Type",
+    "slug": "filter_type",
+    "active": true,
+    "has_meta": "",
+    "public_entity_post": "",
+    "public_entity_get": "",
+    "avoid_translate": ""
+  },
+  "keys": [
+    {
+      "key": "label",
+      "type": "input",
+      "optional": "",
+      "avoid_translate": ""
+    },
+    {
+      "key": "keys_array",
+      "type": "array",
+      "optional": "",
+      "avoid_translate": "",
+      "array_keys": [
+        {
+          "object_keys": [
+            {
+              "key": "key",
+              "type": "input",
+              "optional": "",
+              "avoid_translate": ""
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "has_main_controls": "",
+  "has_filters": ""
+}

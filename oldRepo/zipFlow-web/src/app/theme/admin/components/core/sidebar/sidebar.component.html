@@ -1,0 +1,49 @@
+<div class="sidebar-wrapper">
+  <ul class="nav flex-column">
+    <ng-container *ngFor="let menuItem of menuItems; let index = index">
+      <app-authorization [entity]="menuItem.entity" [action]="menuItem.action">
+        <li
+          routerLinkActive="active"
+          class="{{ menuItem.class }} nav-item d-flex align-items-center"
+          [ngClass]="{'opened': openedItems[index]}"
+        >
+          <ng-container *ngIf="!menuItem.children?.length; else submenu">
+            <a class="sidebar-link d-flex align-items-center" [routerLink]="[menuItem.path]" routerLinkActive="active">
+              <span class="icon-container d-flex justify-content-center">
+                <svg-icon class="sidenav-icon" [src]="'app/theme/admin/assets/icons/' + menuItem.icon | assetsUrl"></svg-icon>
+              </span>
+              <span class="d-block sidenav-text">{{ menuItem.title }}</span>
+            </a>
+          </ng-container>
+          <ng-template #submenu>
+            <div class="sidebar-link d-flex align-items-center" (click)="showSubMenu(index)">
+              <span class="icon-container d-flex justify-content-center">
+                <svg-icon class="sidenav-icon" [src]="'app/theme/admin/assets/icons/' + menuItem.icon | assetsUrl"></svg-icon>
+              </span>
+              <span class="d-block sidenav-text">{{ menuItem.title }}</span>
+              <span class="icon-container d-flex justify-content-center">
+                <svg-icon class="sidenav-icon main-icon" [src]="'app/theme/admin/assets/icons/arrow-right.svg' | assetsUrl"></svg-icon>
+              </span>
+            </div>
+            <ul *ngIf="openedItems[index]" class="children-menu">
+              <ng-container *ngFor="let child of menuItem.children">
+                <li
+                  routerLinkActive="active"
+                  class="{{ menuItem.class }} nav-item d-flex align-items-center"
+                >
+                  <a class="sidebar-link d-flex align-items-center" [routerLink]="[menuItem.path, child.path]"
+                     routerLinkActive="active">
+                    <span class="icon-container d-flex justify-content-center" *ngIf="child.icon">
+                      <svg-icon class="sidenav-icon" [src]="'app/theme/admin/assets/icons/' + child.icon | assetsUrl"></svg-icon>
+                    </span>
+                    <span class="d-block sidenav-text">{{ child.title }}</span>
+                  </a>
+                </li>
+              </ng-container>
+            </ul>
+          </ng-template>
+        </li>
+      </app-authorization>
+    </ng-container>
+  </ul>
+</div>

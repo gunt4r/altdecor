@@ -1,0 +1,15 @@
+<div class="card">
+  <app-table
+      [rows]="list"
+      [columns]="columns"
+      [pendingRequest]="isLoading"
+      [totalCount]="totalRows"
+      [selectedPage]="pageNr"
+      [perPage]="rowsPerPage"
+      [urlPrefix]="routeUrl"
+      [title]="'Checkout'"
+      [entity]="entity"
+      (reloadData)="getList()"
+      (rowActionEmitter)="onTableRowAction($event)"
+  ></app-table>
+</div>

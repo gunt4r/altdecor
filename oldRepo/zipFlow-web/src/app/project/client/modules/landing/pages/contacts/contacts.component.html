@@ -1,0 +1,73 @@
+<div class="contacts">
+  <div class="contacts__title">{{ 'Contacts.Title' | translate }}</div>
+
+  <div class="general-details">
+    <div class="managers">
+      <ng-container *ngFor="let manager of generalDetails.managers">
+        <div class="manager-column">
+          <a class="manager-phone" [href]="'tel:' + manager.phone">{{manager.phone}}</a>
+          <div class="main-text">{{manager.name}}</div>
+          <div class="secondary-text">{{manager.role | translate}}</div>
+          <a class="secondary-text" [href]="'mailto:' + manager.email">{{manager.email}}</a>
+        </div>
+      </ng-container>
+    </div>
+    <div class="main-text">
+      {{generalDetails.address | translate}}
+    </div>
+    <div class="secondary-text" [innerHTML]="generalDetails.schedule | translate | safeHtml"></div>
+  </div>
+
+  <div class="contacts__content">
+    <div class="content--left">
+      <div class="logo">
+        <img src="assets/images/content/logo-white.png">
+      </div>
+
+      <div class="list">
+        <div class="contact">
+          <div class="contact-item">
+            <div class="contact--image">
+              <svg width="24" height="34" viewBox="0 0 24 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M3.95389 1.06509L5.74889 0.491757C7.42889 -0.0449101 9.22556 0.823423 9.94556 2.52009L11.3789 5.90009C12.0039 7.37176 11.6572 9.10342 10.5222 10.1801L7.36723 13.1768C7.56223 14.9701 8.16389 16.7351 9.17389 18.4718C10.1336 20.1521 11.4207 21.6227 12.9589 22.7968L16.7522 21.5301C18.1889 21.0518 19.7539 21.6034 20.6356 22.8984L22.6889 25.9151C23.7156 27.4218 23.5306 29.4984 22.2589 30.7751L20.8956 32.1434C19.5389 33.5051 17.6022 34.0001 15.8089 33.4401C11.5772 32.1201 7.68723 28.2018 4.13723 21.6851C0.582226 15.1584 -0.671108 9.61842 0.373892 5.07176C0.813892 3.15842 2.17723 1.63342 3.95723 1.06509"
+                  fill="#FFE0B1"/>
+              </svg>
+            </div>
+            <a class="contact--label" [href]="'tel:' + generalDetails.main_phone">{{generalDetails.main_phone}}</a>
+          </div>
+          <div class="contact-item">
+            <div class="contact--image">
+              <svg width="30" height="26" viewBox="0 0 30 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M5 0.5C3.67392 0.5 2.40215 1.02678 1.46447 1.96447C0.526784 2.90215 0 4.17392 0 5.5V6.0025L15 14.08L30 6.005V5.5C30 4.17392 29.4732 2.90215 28.5355 1.96447C27.5979 1.02678 26.3261 0.5 25 0.5H5ZM30 8.8425L15.5925 16.6C15.4104 16.698 15.2068 16.7493 15 16.7493C14.7932 16.7493 14.5896 16.698 14.4075 16.6L0 8.8425V20.5C0 21.8261 0.526784 23.0979 1.46447 24.0355C2.40215 24.9732 3.67392 25.5 5 25.5H25C26.3261 25.5 27.5979 24.9732 28.5355 24.0355C29.4732 23.0979 30 21.8261 30 20.5V8.8425Z"
+                  fill="#FFE0B1"/>
+              </svg>
+            </div>
+            <a class="contact--label" [href]="'mailto:' + generalDetails.main_email">{{generalDetails.main_email}}</a>
+          </div>
+          <div class="contact-item">
+            <div class="contact--image">
+              <svg width="24" height="34" viewBox="0 0 24 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M12.0007 16.1666C10.8956 16.1666 9.83577 15.7276 9.05437 14.9462C8.27297 14.1648 7.83398 13.105 7.83398 11.9999C7.83398 10.8948 8.27297 9.83504 9.05437 9.05364C9.83577 8.27224 10.8956 7.83325 12.0007 7.83325C13.1057 7.83325 14.1655 8.27224 14.9469 9.05364C15.7283 9.83504 16.1673 10.8948 16.1673 11.9999C16.1673 12.5471 16.0595 13.0889 15.8502 13.5944C15.6408 14.1 15.3338 14.5593 14.9469 14.9462C14.56 15.3331 14.1007 15.64 13.5952 15.8494C13.0896 16.0588 12.5478 16.1666 12.0007 16.1666ZM12.0007 0.333252C8.90646 0.333252 5.939 1.56241 3.75107 3.75034C1.56315 5.93826 0.333984 8.90573 0.333984 11.9999C0.333984 20.7499 12.0007 33.6666 12.0007 33.6666C12.0007 33.6666 23.6673 20.7499 23.6673 11.9999C23.6673 8.90573 22.4382 5.93826 20.2502 3.75034C18.0623 1.56241 15.0948 0.333252 12.0007 0.333252Z"
+                  fill="#FFE0B1"/>
+              </svg>
+            </div>
+            <a class="contact--label" [href]="mapUrl">{{generalDetails.address | translate}}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <a [href]="mapUrl" target="_blank" class="content--right">
+      <app-custom-map [coordinates]="coordinates"></app-custom-map>
+    </a>
+  </div>
+
+  <div class="contacts__consult">
+    <app-consult></app-consult>
+  </div>
+
+  <div class="contacts__bg"></div>
+</div>

@@ -1,0 +1,50 @@
+<ng-container *ngIf="!loading">
+  <app-page-container [pages]="pages">
+    <div class="blog-details-container" *ngIf="data">
+      <div class="blog-header">
+        <div class="blog-header-title">{{data.title | translate}}</div>
+        <div class="blog-header-img"
+             [ngStyle]="{ backgroundImage: 'url(' + data.img + ')', 'width': '100%', 'height': '80vh' }"></div>
+        <div class="blog-header-details">
+          <div class="blog-tags" *ngIf="data.tags?.length > 0">
+            <span><b>{{'Blog.Category' | translate}}</b></span>
+            <span *ngFor="let tag of data.tags; let last = last">
+            {{tag.tag | translate | uppercase}}
+              <span *ngIf="!last" class="divider">|</span>
+          </span>
+          </div>
+          <div class="blog-author">
+            <!--          <img src="{{data.author_img}}">-->
+            <!--          <span>{{'Blog.Author' | translate}} {{data.author | translate}}</span>-->
+            <!--          <span class="divider">|</span>-->
+            <span>{{'Blog.PublishedOn' | translate}} {{data.date | translate}}</span>
+            <span class="divider">|</span>
+            <span>{{data.reading | translate}}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="blog-content">
+        <div class="blog-description" [innerHTML]="data.description | translate | safeHtml"></div>
+        <div class="blog-widgets">
+          <app-blog-recommendation>
+            <div title>{{'Blog.RecommendationTitle' | translate}}</div>
+          </app-blog-recommendation>
+          <app-review-container>
+            <div title>{{'Blog.Review.ReviewTitle' | translate}}</div>
+            <div description>{{'Blog.Review.ReviewDescription' | translate}}</div>
+            <button (click)="buy()" action class="default blog-button">
+              {{'Blog.Review.ReviewButton' | translate}}
+            </button>
+          </app-review-container>
+          <app-share-options></app-share-options>
+        </div>
+      </div>
+    </div>
+  </app-page-container>
+
+  <app-specifications></app-specifications>
+  <app-recommendations></app-recommendations>
+</ng-container>
+
+<app-loader class="loader" *ngIf="loading"></app-loader>

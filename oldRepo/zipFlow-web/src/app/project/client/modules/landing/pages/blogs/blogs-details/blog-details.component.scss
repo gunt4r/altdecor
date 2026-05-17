@@ -1,0 +1,126 @@
+@import '../../../../../../../../assets/styles/variables';
+@import '../../../../../../../../assets/styles/components';
+
+.blog-details-container {
+  .blog-header {
+    .blog-header-title {
+      font-size: 52px;
+      color: $base-color;
+      font-weight: 700;
+      line-height: 59px;
+      margin: 30px 0;
+    }
+    .blog-header-img {
+      background-size: cover;
+      background-position: center;
+      border-radius: 6px;
+    }
+    .blog-header-details {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+      .blog-tags {
+        font-size: 20px;
+      }
+      .blog-author{
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        color: $base-color;
+
+        img {
+          width: 40px;
+          height: 40px;
+          border-radius: 4px;
+          margin-right: 10px;
+        }
+      }
+    }
+  }
+
+  .blog-content {
+    margin-top: 50px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+
+    .blog-description {
+      width: 65%;
+      font-size: 20px;
+    }
+
+    .blog-widgets {
+      width: 35%;
+      margin-left: 40px;
+    }
+  }
+
+  .blog-button {
+    width: 100%;
+  }
+}
+
+.divider {
+  margin: 0 5px;
+  color: $link-menu;
+  font-size: 20px;
+}
+
+@media only screen and (max-width: 1200px) {
+  .blog-details-container {
+    .blog-content {
+      flex-direction: column;
+      .blog-description {
+        width: 100%;
+      }
+      .blog-widgets {
+        width: 100%;
+        margin-left: 0;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 1024px) {
+  .blog-details-container {
+    .blog-header {
+      .blog-header-img {
+        height: 50vh !important;
+      }
+      .blog-header-details {
+        flex-direction: column;
+        gap: 15px;
+        .blog-tags {
+          font-size: 16px;
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 769px) {
+  .blog-details-container .blog-header .blog-header-img {
+    height: 40vh !important;
+  }
+}
+
+@media only screen and (max-width: 576px) {
+  .blog-details-container {
+    .blog-header {
+      .blog-header-title {
+        font-size: 30px;
+        line-height: normal;
+        margin: 10px 0;
+      }
+    }
+  }
+}
+
+.loader {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  margin: 30px auto;
+}

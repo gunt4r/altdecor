@@ -1,0 +1,44 @@
+@import '../../../../../../../assets/styles/variables';
+@import '../../../../../../../assets/styles/components';
+
+.contact {
+  width: 100%;
+  padding: 32px;
+  border-radius: 16px;
+  background-color: #FFE0B1;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+
+  &__content {
+    padding: 25px 0;
+  }
+
+  &__title {
+    font-size: 20px;
+    line-height: 25px;
+    font-weight: 700;
+    color: $base-color;
+  }
+
+  &__subtitle {
+    font-size: 18px;
+    line-height: 28px;
+    font-weight: 500;
+    color: $base-color;
+    margin-top: 10px;
+  }
+
+  button.default {
+    background: $base-color;
+    padding: 12px 20px;
+  }
+  &__button {
+    min-width: 180px;
+    a {
+      color: #FFE0B1;
+      text-decoration: none;
+    }
+  }
+}

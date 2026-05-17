@@ -1,0 +1,36 @@
+<div class="trending">
+  <a [routerLink]="['/blog', config.id]" class="trending__left">
+    <div class="trending__left-img" [ngStyle]="{ backgroundImage: 'url(' + config.img +')' }"></div>
+  </a>
+  <a [routerLink]="['/blog', config.id]" class="trending__right">
+    <div [ngStyle]="{ padding: (width / 100) * 30 + 'px' }">
+      <div class="trending__block">
+        <div class="trending__tags" *ngIf="config?.tags">
+          <div class="trending__tag" *ngFor="let tag of config.tags">
+            {{ tag.tag | translate | uppercase }}
+          </div>
+        </div>
+        <div class="trending__title" *ngIf="config.title" [ngStyle]="{ fontSize: (width / 100) * 45 + 'px' }">
+          {{ config.title | translate}}
+        </div>
+      </div>
+      <div class="trending__block">
+        <div class="trending__description"
+             *ngIf="(config?.truncatedDescriptions && ((!isMobile && isMainBlog) || (isMobile && config?.truncatedDescriptions)))"
+             [innerHTML]="config.truncatedDescriptions | translate | safeHtml">
+        </div>
+        <div class="trending__footer">
+          <div class="trending__autor">
+            <span>{{ 'Trendings.Label.By' | translate }}</span>
+            <span>&nbsp;</span>
+            <span>{{ config.author | translate}}</span>
+            <span class="spacer">|</span>
+          </div>
+          <div class="trending__date">
+            {{ config.date | translate }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </a>
+</div>

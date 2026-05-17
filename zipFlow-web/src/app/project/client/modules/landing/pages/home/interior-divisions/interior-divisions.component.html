@@ -1,0 +1,13 @@
+<div class="interior-divisions" *ngIf="interiorDivisions">
+  <!-- First two items -->
+  <div class="interior-divisions__column" *ngFor="let division of interiorDivisions.slice(0, 2); let i = index"
+       [style.width]="i === 1 ? 'calc(' + 30 + '% - 20px)' : 'calc(' + 30 + '% - 20px)'">
+    <app-interior-division [config]="division"></app-interior-division>
+  </div>
+  <!-- Last two items -->
+  <div class="interior-divisions__row" [style.width]="'calc(' + 40 + '% - 20px)'">
+    <div class="interior-divisions__column" *ngFor="let division of interiorDivisions.slice(2)">
+      <app-interior-division [config]="division"></app-interior-division>
+    </div>
+  </div>
+</div>

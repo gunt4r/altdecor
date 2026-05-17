@@ -1,0 +1,26 @@
+@import '../../../../assets/scss/variables';
+
+.tab-labels {
+  display: flex;
+  justify-content: left;
+  margin: 10px 0;
+
+  .tab-label {
+    cursor: pointer;
+    padding: 10px 30px;
+    border-bottom: 2px solid $theme-orange;
+
+    &.active {
+      font-weight: bold;
+      background-color: $theme-orange;
+      border-bottom: none;
+    }
+  }
+}
+
+.required-fields-message {
+  font-weight: bold;
+  color: $theme-orange;
+  margin:  12px 0;
+}
+

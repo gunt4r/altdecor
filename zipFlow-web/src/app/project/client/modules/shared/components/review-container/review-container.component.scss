@@ -1,0 +1,32 @@
+@import '../../../../../../../assets/styles/variables';
+
+.review-container {
+  padding: 45px 28px;
+  width: 100%;
+  background: $label-item;
+  color: $primary-color;
+  text-align: center;
+  border-radius: 4px;
+  margin: 35px 0 15px;
+
+  .review-title {
+    font-weight: 700;
+    font-size: 30px;
+    margin-top: 10px;
+  }
+
+  .review-description {
+    margin: 53px 0;
+    font-size: 22px;
+    font-weight: 400;
+  }
+}
+
+@media only screen and (max-width: 576px) {
+  .review-container {
+    .review-description {
+      margin: 20px 0;
+      font-size: 18px;
+    }
+  }
+}

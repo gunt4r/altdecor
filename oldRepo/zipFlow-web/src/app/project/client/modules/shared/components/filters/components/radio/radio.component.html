@@ -1,0 +1,9 @@
+<div class="radio" *ngIf="filter">
+  <div class="radio__label">{{ filter.label | translate }}</div>
+
+  <div class="radio__options">
+    <div class="option" *ngFor="let option of filter.options" [ngClass]="{ active: option === control.value }" (click)="setValue(option)">
+      {{ option | translate }}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,35 @@
+<ng-container *ngIf="!loading">
+  <app-page-container [pages]="pages">
+    <div class="portfolio">
+      <div class="portfolio__header">
+        <div class="title">{{data[0].title | translate}}</div>
+        <div class="offers">
+          <app-offers-header></app-offers-header>
+        </div>
+      </div>
+
+      <div class="portfolio__content">
+        <div class="description" [innerHTML]="data[0].description | translate | safeHtml"></div>
+        <div class="widgets">
+          <app-blog-recommendation>
+            <div title>{{'Portfolio.PopularArticles' | translate}}</div>
+          </app-blog-recommendation>
+
+          <app-review-container>
+            <div title>{{'Portfolio.Review.Title' | translate}}</div>
+            <div description>{{'Portfolio.Review.Description' | translate}}</div>
+            <button (click)="buy()" action class="default portfolio__button">
+              {{'Portfolio.Review.Button' | translate}}
+            </button>
+          </app-review-container>
+          <app-share-options></app-share-options>
+        </div>
+      </div>
+    </div>
+  </app-page-container>
+
+  <app-specifications></app-specifications>
+  <app-recommendations></app-recommendations>
+</ng-container>
+
+<app-loader class="loader" *ngIf="loading"></app-loader>

@@ -1,0 +1,154 @@
+@import '../../../../../../../assets/styles/variables';
+@import '../../../../../../../assets/styles/components';
+@import '../../../../../../../assets/styles/animations';
+
+.masterpieces {
+  padding: 70px 0 70px 40px;
+
+  &__slider {
+    position: relative;
+    height: auto;
+  }
+
+  &__slide {
+    display: flex !important;
+    margin-left: 10px;
+  }
+
+  &__left {
+    width: 25%;
+  }
+
+  &__logo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 999;
+
+    img {
+      width: 100px;
+    }
+  }
+
+  &__content {
+    position: absolute;
+    top: 110px;
+    left: 0;
+    border-radius: 10px;
+    padding: 50px 30px;
+    background: $base-color;
+    width: fit-content;
+    min-width: 540px;
+    overflow-y: auto;
+    max-height: 300px;
+  }
+
+  &__label {
+    font-weight: bold;
+    font-size: 10px;
+    line-height: 12px;
+    max-width: 250px;
+    margin-bottom: 10px;
+    color: #959595;
+  }
+
+  &__title {
+    font-size: 30px;
+    font-weight: bolder;
+    line-height: 36px;
+    color: $primary-color;
+    max-width: 400px;
+    margin-bottom: 30px;
+  }
+
+  &__right {
+    width: 75%;
+    height: auto;
+    min-height: 450px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .slick-dots {
+    position: absolute;
+    left: 0;
+    bottom: -10px;
+    width: fit-content;
+    display: flex;
+    gap: 7px;
+
+    li {
+      height: fit-content;
+      margin: 0;
+    }
+
+    .pager__item {
+      content: '';
+      background: #D9D9D9;
+      width: 20px;
+      height: 3px;
+      border-radius: 5px;
+    }
+
+    .slick-active {
+      .pager__item {
+        background: $base-color;
+      }
+    }
+  }
+
+  .slick-dotted.slick-slider {
+    margin-bottom: 0 !important;
+  }
+
+  // Change by animationSpeed / 2
+  .animate {
+    animation: easeInAnimation .6s ease-in .6s, easeOutAnimation .6s ease-out ;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .masterpieces {
+    padding: 70px 0;
+    .slick-dots {
+      left: 20px;
+    }
+    &__slide {
+      margin-left: 0;
+    }
+    &__content {
+      width: 60%;
+      left: 20%;
+      top: 20%;
+      min-width: auto;
+      padding: 30px;
+    }
+    &__left {
+      display: none;
+    }
+    &__right {
+      width: 100%;
+    }
+    &__logo {
+      display: none;
+    }
+    &__label {
+      font-size: 15px;
+      line-height: 20px;
+    }
+    &__title {
+      font-size: 26px;
+    }
+  }
+}
+
+@media only screen and (max-width: 576px) {
+  .masterpieces {
+    padding: 30px 0;
+    .masterpieces__title {
+      font-size: 18px;
+      line-height: 25px;
+    }
+  }
+}

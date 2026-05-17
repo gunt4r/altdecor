@@ -1,0 +1,103 @@
+<!--<div class="checkout-delivery" formGroupName="delivery">-->
+<!--  <div class="checkout-delivery__left">-->
+<!--    <app-checkout-progress [stage]="checkoutStage"></app-checkout-progress>-->
+
+<!--    <div class="checkout-delivery__content">-->
+<!--      <div class="title">{{ checkoutStage + 1 }}. {{ 'Checkout.Delivery.Title' | translate }}</div>-->
+
+<!--      <div class="checkout-delivery__form">-->
+<!--        <div class="form&#45;&#45;row">-->
+<!--          <app-custom-input formControlName="judiciary" class="form&#45;&#45;col"-->
+<!--                            [label]="'Checkout.Delivery.Judiciary' | translate"-->
+<!--                            [type]="inputType.Checkbox"></app-custom-input>-->
+<!--        </div>-->
+
+<!--        <div class="form&#45;&#45;row">-->
+<!--          <app-custom-input class="form&#45;&#45;col" formControlName="name"-->
+<!--                            [label]="'Checkout.Field.Name' | translate"></app-custom-input>-->
+<!--          <app-custom-input class="form&#45;&#45;col" formControlName="surname"-->
+<!--                            [label]="'Checkout.Field.Surname' | translate"></app-custom-input>-->
+<!--        </div>-->
+
+<!--        <div class="form&#45;&#45;row">-->
+<!--          <ng-container *ngIf="!isJudiciary; else companyName">-->
+<!--            <app-custom-input class="form&#45;&#45;col" formControlName="street"-->
+<!--                              [label]="'Checkout.Field.Street' | translate"></app-custom-input>-->
+<!--          </ng-container>-->
+
+<!--          <ng-template #companyName>-->
+<!--            <app-custom-input class="form&#45;&#45;col" formControlName="companyName"-->
+<!--                              [label]="'Checkout.Field.CompanyName' | translate"></app-custom-input>-->
+<!--          </ng-template>-->
+<!--        </div>-->
+
+<!--        <div class="form&#45;&#45;row">-->
+<!--          <ng-container *ngIf="!isJudiciary; else address">-->
+<!--            <app-custom-input class="form&#45;&#45;col" formControlName="apartment"-->
+<!--                              [label]="'Checkout.Field.Apartment' | translate"></app-custom-input>-->
+<!--          </ng-container>-->
+
+<!--          <ng-template #address>-->
+<!--            <app-custom-input class="form&#45;&#45;col" formControlName="address"-->
+<!--                              [label]="'Checkout.Field.JudiciaryAddress' | translate"></app-custom-input>-->
+<!--          </ng-template>-->
+<!--        </div>-->
+
+<!--        <div class="form&#45;&#45;row">-->
+<!--          <app-custom-input class="form&#45;&#45;col" formControlName="city"-->
+<!--                            [label]="'Checkout.Field.City' | translate"></app-custom-input>-->
+
+<!--          <ng-container *ngIf="!isJudiciary; else idno">-->
+<!--            <app-custom-input class="form&#45;&#45;col" formControlName="region"-->
+<!--                              [label]="'Checkout.Field.Region' | translate"></app-custom-input>-->
+<!--          </ng-container>-->
+
+<!--          <ng-template #idno>-->
+<!--            <app-custom-input class="form&#45;&#45;col" formControlName="idno"-->
+<!--                              [label]="'Checkout.Field.IDNO' | translate"></app-custom-input>-->
+<!--          </ng-template>-->
+<!--        </div>-->
+
+<!--        <div class="form&#45;&#45;row">-->
+<!--          <ng-container *ngIf="!isJudiciary; else tvacode">-->
+<!--            <app-custom-input class="form&#45;&#45;col" formControlName="zipcode"-->
+<!--                              [label]="'Checkout.Field.ZipCode' | translate"></app-custom-input>-->
+<!--          </ng-container>-->
+
+<!--          <ng-template #tvacode>-->
+<!--            <app-custom-input class="form&#45;&#45;col" formControlName="tvacode"-->
+<!--                              [label]="'Checkout.Field.TVACode' | translate"></app-custom-input>-->
+<!--          </ng-template>-->
+
+<!--          <app-custom-input class="form&#45;&#45;col" formControlName="country"-->
+<!--                            [label]="'Checkout.Field.Country' | translate"></app-custom-input>-->
+<!--        </div>-->
+
+<!--        <div class="form&#45;&#45;row">-->
+<!--          <app-custom-input class="form&#45;&#45;col" formControlName="phone"-->
+<!--                            [label]="'Checkout.Field.Phone' | translate"-->
+<!--                            [type]="inputType.Phone"></app-custom-input>-->
+<!--        </div>-->
+
+<!--        <div class="form&#45;&#45;radio">-->
+<!--          <div class="title">{{ 'Checkout.Delivery.Method.Title' | translate }}</div>-->
+
+<!--          <div class="content">-->
+<!--            <app-custom-input class="form&#45;&#45;col" formControlName="deliveryMethod" [type]="inputType.Radio"-->
+<!--                              [radioOptions]="deliveryMethods"></app-custom-input>-->
+<!--          </div>-->
+<!--        </div>-->
+
+<!--        <div class="form&#45;&#45;buttons">-->
+<!--          <button class="form&#45;&#45;submit default"-->
+<!--                  (click)="submit()">{{ 'Checkout.Delivery.Button.Next' | translate }}</button>-->
+<!--          <button class="form&#45;&#45;submit outlined"-->
+<!--                  (click)="previous()">{{ 'Checkout.Delivery.Button.Previous' | translate }}</button>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--  <div class="checkout-delivery__right">-->
+<!--    <app-checkout-total></app-checkout-total>-->
+<!--  </div>-->
+<!--</div>-->
