@@ -1,7 +1,0 @@
-<ul ngbNav class="nav-tabs">
-  <ng-container *ngFor="let item of routerList">
-    <li [ngbNavItem]="item.url" [disabled]="item.disabled">
-      <a ngbNavLink [routerLink]="item.url" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{exact: true}">{{item.title}}</a>
-    </li>
-  </ng-container>
-</ul>
