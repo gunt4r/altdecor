@@ -37,17 +37,24 @@
   </section>
 
   <section class="promo-banners" *ngIf="!loading && promoBanners.length">
-    <article class="promo-card" *ngFor="let banner of promoBanners">
+    <article class="promo-card"
+             *ngFor="let banner of promoBanners"
+             [class.clickable]="banner.link"
+             [attr.role]="banner.link ? 'link' : null"
+             [attr.tabindex]="banner.link ? 0 : null"
+             (click)="banner.link && navigateToLink(banner.link)"
+             (keydown.enter)="banner.link && navigateToLink(banner.link)"
+             (keydown.space)="banner.link && navigateToLink(banner.link)">
       <img class="promo-card__image" [src]="banner.image" [alt]="banner.title" loading="lazy" />
       <div class="promo-card__overlay"></div>
       <div class="promo-card__content">
         <span class="promo-card__title" *ngIf="banner.title">{{ banner.title }}</span>
-        <button class="promo-card__btn" type="button" (click)="navigateToLink(banner.link)">
+        <span class="promo-card__btn" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="5" y1="12" x2="19" y2="12"></line>
             <polyline points="12 5 19 12 12 19"></polyline>
           </svg>
-        </button>
+        </span>
       </div>
     </article>
   </section>
@@ -129,11 +136,9 @@
 
             <div class="contact-item__content">
               <h3>{{ address.name }}</h3>
-              <p>{{ address.street }}</p>
-              <p *ngFor="let schedule of address.schedule">{{ schedule }}</p>
-              <a *ngIf="address.phone" [href]="'tel:' + address.phone">{{ address.phone }}</a>
-              <a *ngIf="address.email" [href]="'mailto:' + address.email">{{ address.email }}</a>
-              <a *ngIf="address.mapUrl" class="address-link" (click)="openMap(address.mapUrl)">{{ ui.mapButton }}</a>
+              <p class="contact-item__address">{{ address.street }}</p>
+              <p class="contact-item__schedule" *ngFor="let schedule of address.schedule">{{ schedule }}</p>
+              <a *ngIf="address.phone" class="contact-item__phone" [href]="'tel:' + address.phone">{{ address.phone }}</a>
             </div>
           </article>
         </div>
@@ -160,7 +165,6 @@
         <ng-template #mapFallback>
           <img src="assets/images/content/map.png" alt="Map preview" />
         </ng-template>
-        <button class="map-btn" type="button" (click)="openMap(addresses.length ? addresses[0].mapUrl : mapUrl)">{{ ui.mapButton }}</button>
       </div>
     </div>
   </section>

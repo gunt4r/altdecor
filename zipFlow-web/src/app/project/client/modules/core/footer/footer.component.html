@@ -1,119 +1,47 @@
-<div class="page-footer">
-  <div class="footer-menu">
-    <div class="copyright-section" *ngIf="!isMobile">
-      {{data.COPYRIGHT}}
-      <a routerLink="" class="copyright-link">{{data.COPYRIGHT_OWNER}}</a>
-      <br>{{currentYear}}
-      <a href="https://naqqa.net/" target="_blank" class="copyright-link">{{data.POWERED_BY}}</a>
-    </div>
-    <div class="footer-menu-section" *ngIf="!isMobile; else accordionMenu">
-      <div *ngFor="let sectionKey of menuColumns">
-        <div class="footer-menu-column">
-          <div class="footer-menu-header">
-            {{sectionKey}}
-          </div>
-          <div *ngFor="let menuItemKey of getMenuItems(sectionKey)">
-            <a
-               class="footer-menu-subitems"
-               (click)="navigate(data.MENU[sectionKey][menuItemKey]['LINK'])">
-              {{data.MENU[sectionKey][menuItemKey]['LABEL'] | translate}}
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <ng-template #accordionMenu>
-      <mat-accordion *ngFor="let sectionKey of menuColumns">
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              {{sectionKey}}
-            </mat-panel-title>
-          </mat-expansion-panel-header>
-          <div *ngFor="let menuItemKey of getMenuItems(sectionKey)">
-            <a (click)="navigate(data.MENU[sectionKey][menuItemKey]['LINK'])">
-              {{data.MENU[sectionKey][menuItemKey]['LABEL'] | translate}}
-            </a>
-          </div>
-        </mat-expansion-panel>
-      </mat-accordion>
-    </ng-template>
-
-  </div>
-  <div class="footer-contact">
-    <div class="footer-address">
-      <a [href]="mapUrl" target="_blank">
-        {{generalDetails.address | translate}}
+<footer class="page-footer">
+  <div class="footer-inner">
+    <!-- Brand -->
+    <div class="footer-brand">
+      <a class="footer-logo" routerLink="/">
+        <img src="assets/images/content/logo-white.png" alt="Altdecor">
       </a>
-      <br>
-      <div class="footer-schedule" [innerHTML]="generalDetails.schedule | translate | safeHtml"></div>
+      <p class="footer-description">{{ t(description) }}</p>
+      <div class="footer-socials">
+        <a class="social-link" *ngFor="let key of socialMediaKeys"
+           (click)="navigate(data.SOCIAL_MEDIA[key]['LINK'])">
+          <img [src]="data.SOCIAL_MEDIA[key]['IMG']" [alt]="data.SOCIAL_MEDIA[key]['ALT']">
+        </a>
+      </div>
     </div>
-    <div class="footer-contact-data">
-      <div class="contact-item">
-        <div class="contact-label">
-          {{'Footer.Contacts.ClientAssist' | translate}}
-        </div>
-        <div class="contact-link">
-          <a [href]="'tel:' + generalDetails.main_phone">{{generalDetails.main_phone}}</a>
-        </div>
-      </div>
-      <div class="contact-item">
-        <div class="contact-label">
-          {{'Footer.Contacts.Email' | translate}}
-        </div>
-        <div class="contact-link">
-          <a [href]="'tel:' + generalDetails.main_email">{{generalDetails.main_email}}</a>
+
+    <!-- Magazine / showrooms -->
+    <div class="footer-column">
+      <h3>{{ t(columnTitles.magazine) }}</h3>
+      <div class="footer-showrooms">
+        <div class="footer-showroom" *ngFor="let s of showrooms">
+          <div class="footer-showroom__name" *ngIf="s.name">{{ s.name }}</div>
+          <div class="footer-showroom__address" *ngIf="s.address">{{ s.address }}</div>
         </div>
       </div>
+    </div>
+
+    <!-- Produse -->
+    <div class="footer-column">
+      <h3>{{ t(columnTitles.produse) }}</h3>
+      <a class="footer-link" *ngFor="let l of produseLinks" (click)="navigate(l.link)">{{ t(l.label) }}</a>
+    </div>
+
+    <!-- Informatii -->
+    <div class="footer-column">
+      <h3>{{ t(columnTitles.info) }}</h3>
+      <a class="footer-link" *ngFor="let l of infoLinks" (click)="navigate(l.link)">{{ t(l.label) }}</a>
     </div>
   </div>
-  <div class="footer-additional-tools">
-    <div class="footer-language-selection">
-      {{'Footer.Language' | translate}}
-      <select class="language-select-input" (change)="switchLanguage($event)">
-        <option class="language-select-option" *ngFor="let language of languages" [value]="language.key" [selected]="language.key === selectedLanguage">
-          {{language.label}}
-        </option>
-      </select>
-    </div>
-    <div class="footer-payment-info">
-      {{'Footer.WeAccept' | translate }}
-      <div>
-        <img src="assets/images/content/visa-logo.svg" alt="Visa logo">
-        <img src="assets/images/content/mastercard-logo.svg" alt="Mastercard logo">
-      </div>
-    </div>
-    <div class="footer-social-media">
-      {{'Footer.FollowUs' | translate }}
-      <div class="social-media-icons">
-        <div *ngFor="let socialMediaItem of socialMediaKeys">
-          <a (click)="navigate(data.SOCIAL_MEDIA[socialMediaItem]['LINK'])">
-            <img src="{{data.SOCIAL_MEDIA[socialMediaItem]['IMG']}}" alt="{{data.SOCIAL_MEDIA[socialMediaItem]['ALT']}}">
-          </a>
-        </div>
-      </div>
-    </div>
-    <div class="footer-newsletter" [formGroup]="newsletterForm">
-        <div class="newsletter-label">{{'Footer.Subscribe' | translate }}</div>
-        <div class="input-with-errors">
-          <input type="email" placeholder="E-mail" class="newsletter-input" formControlName="email" required>
-          <div class="newsletter-error-messages">
-            <div *ngIf="newsletterForm?.get('email')?.hasError('required') && newsletterForm?.get('email')?.touched">
-              {{'Footer.ErrorMessages.RequiredEmail' | translate }}
-            </div>
-            <div *ngIf="newsletterForm?.get('email')?.hasError('email') && newsletterForm?.get('email')?.touched">
-              {{'Footer.ErrorMessages.InvalidEmail' | translate }}
-            </div>
-          </div>
-        </div>
-        <button class="newsletter-send-button" (click)="newsletterSubmit()">{{'Footer.SendButton' | translate}}</button>
+
+  <div class="footer-bottom">
+    <p class="copyright-text">© {{ currentYear }} <a routerLink="/">Gardecor</a>. {{ t(rightsText) }}</p>
+    <div class="footer-legal-links">
+      <a *ngFor="let l of legalLinks" (click)="navigate(l.link)">{{ t(l.label) }}</a>
     </div>
   </div>
-  <div class="copyright-section" *ngIf="isMobile">
-    {{data.COPYRIGHT}}
-    <a routerLink="" class="copyright-link">{{data.COPYRIGHT_OWNER}}</a>
-    <br>{{currentYear}}
-    <a href="https://naqqa.net/" target="_blank" class="copyright-link">{{data.POWERED_BY}}</a>
-  </div>
-</div>
+</footer>

@@ -83,10 +83,13 @@ export function getQueryFilterParams(apiParamsString: string) {
       const parts = orParam.split(LinkWord.CONTAINS);
 
       filterParams.push({
-        key: parts[0],
+        // Trim key/value so links with stray leading/trailing whitespace (e.g. a
+        // trailing "%20" in marketing/ads URLs) still match. A trailing space would
+        // otherwise make the backend "contains" match fail and return no products.
+        key: parts[0]?.trim(),
         linkWord: LinkWord.CONTAINS,
         prefix: (andIndex === andParams.length - 1 && orIndex === orParts.length - 1) ? '' : (orIndex === orParts.length - 1 ? ParamsPrefix.AND : ParamsPrefix.OR),
-        value: parts[1]
+        value: typeof parts[1] === 'string' ? parts[1].trim() : parts[1]
       });
     });
   });

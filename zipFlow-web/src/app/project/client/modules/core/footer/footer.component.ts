@@ -88,6 +88,10 @@ export class FooterComponent implements OnInit {
           "LABEL": "Footer.Menu.Home.Portfolio",
           "LINK": PageSlug.Portfolio
         },
+        "GALLERY": {
+          "LABEL": "Footer.Menu.Home.Gallery",
+          "LINK": PageSlug.Proiecte
+        },
         "BLOG": {
           "LABEL": "Footer.Menu.Home.Blog",
           "LINK": PageSlug.Blog
@@ -130,6 +134,58 @@ export class FooterComponent implements OnInit {
   languages: any[] = [];
   selectedLanguage: string = localStorage.getItem('language') || 'ro';
 
+  // ---- Footer content (matches production layout) ----
+  description: Record<string, string> = {
+    ro: 'Experți în panouri decorative pentru spații moderne',
+    ru: 'Эксперты по декоративным панелям для современных пространств',
+    en: 'Experts in decorative panels for modern spaces'
+  };
+
+  rightsText: Record<string, string> = {
+    ro: 'Toate drepturile rezervate. Prețurile pot fi modificate.',
+    ru: 'Все права защищены. Цены могут быть изменены.',
+    en: 'All rights reserved. Prices subject to change.'
+  };
+
+  columnTitles = {
+    magazine: {ro: 'Magazine', ru: 'Магазины', en: 'Stores'},
+    produse: {ro: 'Produse', ru: 'Продукты', en: 'Products'},
+    info: {ro: 'Informații', ru: 'Информация', en: 'Information'}
+  };
+
+  showrooms: { name: string; address: string }[] = [];
+
+  produseLinks = [
+    {label: {ro: 'Panou decorativ INTERIOR', ru: 'Декоративная панель ИНТЕРЬЕР', en: 'Decorative panel INTERIOR'}, link: '/products?filter=product_type_contains_Panou decorativ INTERIOR'},
+    {label: {ro: 'Panou decorativ EXTERIOR', ru: 'Декоративная панель ЭКСТЕРЬЕР', en: 'Decorative panel EXTERIOR'}, link: '/products?filter=product_type_contains_Panou decorativ EXTERIOR'},
+    {label: {ro: 'Profil decorativ', ru: 'Декоративный профиль', en: 'Decorative profile'}, link: '/products?filter=product_type_contains_Profil decorativ'},
+    {label: {ro: 'Panou Autoadeziv', ru: 'Самоклеящаяся панель', en: 'Self-adhesive panel'}, link: '/products?filter=product_type_contains_Panou Autoadeziv'},
+    {label: {ro: 'Răcitoare de aer evaporative', ru: 'Испарительные охладители', en: 'Evaporative air coolers'}, link: '/products?filter=product_type_contains_Răcitoare de aer evaporative'},
+    {label: {ro: 'Pardosea', ru: 'Напольное покрытие', en: 'Flooring'}, link: '/products?filter=product_type_contains_Pardosea'}
+  ];
+
+  infoLinks = [
+    {label: {ro: 'Despre noi', ru: 'О нас', en: 'About us'}, link: '/about-us'},
+    {label: {ro: 'Livrare și plată', ru: 'Доставка и оплата', en: 'Delivery & payment'}, link: '/products'},
+    {label: {ro: 'Promoții', ru: 'Акции', en: 'Promotions'}, link: '/products?filter=has_sale_contains_true'},
+    {label: {ro: 'Contacte', ru: 'Контакты', en: 'Contacts'}, link: '/contacts'}
+  ];
+
+  legalLinks = [
+    {label: {ro: 'Politica de confidențialitate', ru: 'Политика конфиденциальности', en: 'Privacy policy'}, link: ''},
+    {label: {ro: 'Termeni și condiții', ru: 'Условия и положения', en: 'Terms & conditions'}, link: ''}
+  ];
+
+  get lang(): string {
+    return (this.selectedLanguage || 'ro').toLowerCase();
+  }
+
+  t(value: any): string {
+    if (!value) return '';
+    if (typeof value === 'string') return value;
+    return value[this.lang] || value['ro'] || value['en'] || (Object.values(value)[0] as string) || '';
+  }
+
   constructor(private formBuilder: FormBuilder,
               @Inject(PLATFORM_ID) private platformId: Object,
               private router: Router,
@@ -165,6 +221,14 @@ export class FooterComponent implements OnInit {
           };
         }
       })
+
+      this.publicService.getAddresses({page: 1, rowsPerPage: 100, sortBy: 'created_at', sortOrder: 'ASC'}).subscribe((res: any) => {
+        this.showrooms = (res?.data || []).map((addr: any) => ({
+          name: this.t(findObjectByKey(addr.data, 'name') || findObjectByKey(addr.data, 'label')),
+          address: this.t(findObjectByKey(addr.data, 'street') || findObjectByKey(addr.data, 'address'))
+        })).filter((s: any) => s.name || s.address);
+        this.cdr.detectChanges();
+      });
 
       this.getData();
     }

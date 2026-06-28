@@ -87,9 +87,13 @@ export class FiltersComponent implements OnInit {
       this.filtersChange.emit(filters);
     }
 
-    this.isSideFilterOpen = false;
-
-    this.filterOpen.emit(this.isSideFilterOpen);
+    // Apply the filter live. On mobile, keep the side panel open so the user can
+    // select several filters in a row — it only closes via the close (X) button.
+    // On desktop the side panel isn't rendered, so this is a no-op there.
+    if (!this.isMobile) {
+      this.isSideFilterOpen = false;
+      this.filterOpen.emit(this.isSideFilterOpen);
+    }
 
     this.filtersChange.emit(filters);
   }
