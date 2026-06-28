@@ -623,6 +623,149 @@ select.form-control {
   margin-top: 8px;
 }
 
+// === Projects (gallery) ===
+.project-item {
+  background: $admin-card;
+  border: 1px solid $admin-border;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+
+  strong {
+    font-size: 12px;
+    color: $admin-text-muted;
+  }
+
+  .project-count {
+    color: $admin-text-light;
+    font-weight: 500;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 6px;
+  }
+}
+
+.project-field {
+  margin-bottom: 10px;
+
+  label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: $admin-text-muted;
+    margin-bottom: 4px;
+
+    .optional {
+      font-weight: 400;
+      color: $admin-text-light;
+    }
+  }
+}
+
+.project-photos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.project-photo {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid $admin-border;
+  background: #f9f9f9;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &__cover {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    background: $admin-accent;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 5px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+  }
+
+  &__actions {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    padding: 3px;
+    background: rgba(0, 0, 0, .55);
+    opacity: 0;
+    transition: opacity .15s ease;
+
+    button {
+      background: rgba(255, 255, 255, .9);
+      border: none;
+      border-radius: 3px;
+      width: 22px;
+      height: 20px;
+      font-size: 12px;
+      line-height: 1;
+      cursor: pointer;
+
+      &:disabled {
+        opacity: .4;
+        cursor: not-allowed;
+      }
+    }
+
+    .project-photo__remove {
+      color: $admin-danger;
+      font-weight: 700;
+    }
+  }
+
+  &:hover .project-photo__actions {
+    opacity: 1;
+  }
+
+  &--add {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border: 1px dashed $admin-border-dark;
+    color: $admin-text-muted;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 6px;
+
+    &:hover {
+      border-color: $admin-accent;
+      color: $admin-accent;
+      background: $admin-accent-hover;
+    }
+  }
+}
+
 // === Form Actions ===
 .form-actions {
   display: flex;

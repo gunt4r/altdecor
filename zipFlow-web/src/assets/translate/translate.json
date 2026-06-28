@@ -83,6 +83,7 @@
           "Shop": "Shop now",
           "AboutUs": "About us",
           "Portfolio": "Portfolio",
+          "Gallery": "Proiectele Noastre",
           "Blog": "Blog",
           "FAQ": "FAQ",
           "ContactUs": "Contact us"
@@ -174,7 +175,8 @@
       "Shop": "Shop",
       "ProductsPage": "Produse",
       "Blog": "Blog",
-      "Portfolio": "Portfoliu"
+      "Portfolio": "Portfoliu",
+      "Gallery": "Proiectele Noastre"
     },
     "Cart": {
       "TotalProducts": "Total produse: ",
@@ -434,6 +436,7 @@
           "Shop": "Магазин сейчас",
           "AboutUs": "О нас",
           "Portfolio": "Портфолио",
+          "Gallery": "Наши проекты",
           "Blog": "Блог",
           "FAQ": "Вопросы и ответы",
           "ContactUs": "Свяжитесь с нами"
@@ -525,7 +528,8 @@
       "Shop": "Магазин",
       "ProductsPage": "Продукты",
       "Blog": "Блог",
-      "Portfolio": "Портфолио"
+      "Portfolio": "Портфолио",
+      "Gallery": "Наши проекты"
     },
     "Cart": {
       "TotalProducts": "Всего продуктов: ",
@@ -785,6 +789,7 @@
           "Shop": "Shop now",
           "AboutUs": "About us",
           "Portfolio": "Portfolio",
+          "Gallery": "Our Projects",
           "Blog": "Blog",
           "FAQ": "FAQ",
           "ContactUs": "Contact us"
@@ -876,7 +881,8 @@
       "Shop": "Shop",
       "ProductsPage": "Products",
       "Blog": "Blog",
-      "Portfolio": "Portfolio"
+      "Portfolio": "Portfolio",
+      "Gallery": "Our Projects"
     },
     "Cart": {
       "TotalProducts": "Total products: ",

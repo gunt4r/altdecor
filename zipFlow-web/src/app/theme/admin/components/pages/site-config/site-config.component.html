@@ -319,6 +319,64 @@
             + Add Tag
           </button>
         </div>
+
+        <!-- Projects (gallery category → projects → photos) -->
+        <div class="form-group form-group--projects" *ngIf="field.type === 'projects'">
+          <label class="form-label">{{ field.label }}</label>
+          <p class="form-help" *ngIf="field.help">{{ field.help }}</p>
+
+          <div class="project-item" *ngFor="let project of formData['projects']; let pi = index">
+            <div class="project-header">
+              <strong>Project #{{ pi + 1 }}<span class="project-count" *ngIf="project.photos?.length"> · {{ project.photos.length }} photo(s)</span></strong>
+              <div class="project-header__actions">
+                <button class="btn btn-sm btn-outline-secondary" type="button" (click)="moveProject(pi, -1)" [disabled]="pi === 0" title="Move up">↑</button>
+                <button class="btn btn-sm btn-outline-secondary" type="button" (click)="moveProject(pi, 1)" [disabled]="pi === formData['projects'].length - 1" title="Move down">↓</button>
+                <button class="btn btn-sm btn-outline-danger" type="button" (click)="removeProject(pi)" title="Remove project">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="project-field">
+              <label>Project Title <span class="optional">(optional)</span></label>
+              <div class="lang-tabs lang-tabs--small">
+                <button *ngFor="let lang of languages"
+                        class="lang-tab"
+                        [class.active]="activeLang === lang"
+                        (click)="activeLang = lang"
+                        type="button">{{ lang | uppercase }}</button>
+              </div>
+              <input type="text" class="form-control"
+                     placeholder="e.g. Apartament Centru / Квартира в центре"
+                     [(ngModel)]="project.title[activeLang]">
+            </div>
+
+            <div class="project-field">
+              <label>Photos <span class="optional">(first photo = cover tile)</span></label>
+              <div class="project-photos">
+                <div class="project-photo" *ngFor="let photo of project.photos; let phi = index">
+                  <img [src]="photo" alt="Project photo">
+                  <span class="project-photo__cover" *ngIf="phi === 0">Cover</span>
+                  <div class="project-photo__actions">
+                    <button type="button" (click)="movePhoto(pi, phi, -1)" [disabled]="phi === 0" title="Move left">←</button>
+                    <button type="button" (click)="movePhoto(pi, phi, 1)" [disabled]="phi === project.photos.length - 1" title="Move right">→</button>
+                    <button type="button" class="project-photo__remove" (click)="removeProjectPhoto(pi, phi)" title="Remove">×</button>
+                  </div>
+                </div>
+
+                <label class="project-photo project-photo--add">
+                  <span *ngIf="!projectUploading[pi]">+ Add photos</span>
+                  <span *ngIf="projectUploading[pi]">Uploading {{ projectUploading[pi] }}...</span>
+                  <input type="file" accept="image/*" multiple (change)="onProjectPhotosSelected($event, pi)" hidden>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-sm btn-outline-primary btn-add-child" (click)="addProject()" type="button">
+            + Add Project
+          </button>
+        </div>
       </ng-container>
     </div>
 

@@ -33,6 +33,7 @@ import {PageNotFoundComponent} from "./page-not-found/page-not-found.component";
 import {ContactsComponent} from "./contacts/contacts.component";
 import {ConsultComponent} from "./contacts/consult/consult.component";
 import {PortfolioComponent} from "./portfolio/portfolio.component";
+import {GalleryComponent} from "./gallery/gallery.component";
 import {AboutUsComponent} from "./about-us/about-us.component";
 import {ShopComponent} from "./shop/shop.component";
 
@@ -46,6 +47,7 @@ const pages = [
   PageNotFoundComponent,
   ContactsComponent,
   PortfolioComponent,
+  GalleryComponent,
   AboutUsComponent,
   ShopComponent
 ]

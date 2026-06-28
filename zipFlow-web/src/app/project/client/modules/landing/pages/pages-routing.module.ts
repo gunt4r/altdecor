@@ -10,6 +10,7 @@ import {BlogsComponent} from "./blogs/blogs.component";
 import {BlogDetailsComponent} from "./blogs/blogs-details/blog-details.component";
 import {PageNotFoundComponent} from "./page-not-found/page-not-found.component";
 import {PortfolioComponent} from "./portfolio/portfolio.component";
+import {GalleryComponent} from "./gallery/gallery.component";
 import {ContactsComponent} from "./contacts/contacts.component";
 import {AboutUsComponent} from "./about-us/about-us.component";
 import {FAQComponent} from "../faq/faq.component";
@@ -46,6 +47,10 @@ const appRoutes: Routes = [
       {
         path: PageSlug.Portfolio,
         component: PortfolioComponent
+      },
+      {
+        path: PageSlug.Proiecte,
+        component: GalleryComponent
       },
       {
         path: PageSlug.Contacts,
