@@ -1,28 +1,62 @@
 <app-page-container [pages]="pages">
   <div class="products" *ngIf="products; else loading">
 
-    <div class="products__header">
-      <app-products-header [total]="products.total" (onSort)="onSort($event)"></app-products-header>
-    </div>
+    <h1 class="products__title">{{ pageTitle || ('Products.Categories' | translate) }}</h1>
 
     <div class="products__content">
       <div class="products__filters">
         <app-filters [filters]="filters"
                      *ngIf="filters?.length"
+                     [activeChips]="activeChips"
+                     [showMobileTrigger]="false"
                      (filtersChange)="filtersChange($event)"
-                     (filterOpen)="openFilter($event)"></app-filters>
+                     (filterOpen)="openFilter($event)"
+                     (chipRemove)="removeChip($event)"></app-filters>
       </div>
 
-      <div class="products__spacer"></div>
-
       <div class="products__right">
-        <app-products-list [products]="products" [loading]="productsLoading" (loadNextPage)="loadNextPage()"
+        <div class="products__toolbar">
+          <app-products-header [total]="products.total"
+                               (onSort)="onSort($event)"
+                               (openFilter)="filtersComp?.toggleSideFilter()"></app-products-header>
+        </div>
+
+        <div class="products__chips" *ngIf="activeChips.length">
+          <button class="chip" *ngFor="let chip of activeChips" type="button" (click)="removeChip(chip)">
+            <span class="chip__label">{{ chip.label }}</span>
+            <svg class="chip__x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <app-products-list [products]="products" [loading]="productsLoading"
+                           [refetching]="productsLoading && !saveOld" (loadNextPage)="loadNextPage()"
                            [ngClass]="{'filter-open': isFilterOpen}"></app-products-list>
       </div>
     </div>
   </div>
 
   <ng-template #loading>
-    <app-loader class="loader"></app-loader>
+    <div class="products products--skeleton" aria-hidden="true">
+      <div class="sk products-skeleton__title"></div>
+
+      <div class="products__content">
+        <div class="products__filters">
+          <div class="sk products-skeleton__filters-title"></div>
+          <div class="sk products-skeleton__filter-row" *ngFor="let row of skeletonRows"></div>
+        </div>
+
+        <div class="products__right">
+          <div class="products__toolbar products-skeleton__toolbar">
+            <div class="sk products-skeleton__count"></div>
+            <div class="sk products-skeleton__sort"></div>
+          </div>
+
+          <app-products-list [refetching]="true"></app-products-list>
+        </div>
+      </div>
+    </div>
   </ng-template>
 </app-page-container>

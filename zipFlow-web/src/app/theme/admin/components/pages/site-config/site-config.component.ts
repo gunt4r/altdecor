@@ -24,12 +24,13 @@ interface ConfigTypeDefinition {
 interface FieldDef {
   key: string;
   label: string;
-  type: 'text' | 'textarea' | 'number' | 'toggle' | 'image' | 'translated' | 'dropdown' | 'children' | 'file' | 'icon' | 'tags';
+  type: 'text' | 'textarea' | 'number' | 'toggle' | 'image' | 'translated' | 'dropdown' | 'children' | 'file' | 'icon' | 'tags' | 'projects';
   placeholder?: string;
   help?: string;
   required?: boolean;
   accept?: string;
   options?: {label: string; value: string}[];
+  default?: any;
 }
 
 @Component({
@@ -139,6 +140,31 @@ export class SiteConfigComponent implements OnInit {
         {key: 'link', label: 'PDF File', type: 'file', accept: 'application/pdf', help: 'Upload a PDF file or paste a URL.', required: true},
         {key: 'is_active', label: 'Active', type: 'toggle', help: 'Only one catalog should be active at a time.'}
       ]
+    },
+    {
+      value: 'gallery_page',
+      label: 'Gallery Page Header',
+      description: 'The title and optional subtitle shown at the top of the "Proiectele Noastre" gallery page. Only one allowed.',
+      iconId: 'image',
+      maxEntries: 1,
+      fields: [
+        {key: 'label', label: 'Page Title', type: 'translated', placeholder: 'e.g. Proiectele Noastre / Наши проекты / Our Projects', help: 'Main heading at the top of the gallery page.', required: true},
+        {key: 'subtitle', label: 'Subtitle', type: 'translated', placeholder: 'Optional intro line under the title', help: 'Optional text shown below the title.'},
+        {key: 'is_active', label: 'Active', type: 'toggle', help: 'Toggle off to hide the gallery header.'}
+      ]
+    },
+    {
+      value: 'gallery_category',
+      label: 'Gallery Categories',
+      description: 'Categories (tabs) on the "Proiectele Noastre" page — e.g. Bucătărie, Living, Baie. Each category contains projects, and each project has its own photos. The count shown ("X proiecte") equals the number of projects.',
+      iconId: 'grid',
+      fields: [
+        {key: 'label', label: 'Category Name', type: 'translated', placeholder: 'e.g. Bucătărie / Кухня / Kitchen', help: 'Tab label and section heading. Translated per language.', required: true},
+        {key: 'order_index', label: 'Display Order', type: 'number', placeholder: '1', help: 'Lower numbers appear first (1, 2, 3...).'},
+        {key: 'is_active', label: 'Active', type: 'toggle', help: 'Toggle off to hide this category without deleting it.'},
+        {key: 'group_photos', label: 'Group photos by project', type: 'toggle', default: false, help: 'Off (default): every photo is shown one by one as its own tile in the section. On: show a single cover tile per project — clicking it opens that project\'s photos in a carousel.'},
+        {key: 'projects', label: 'Projects', type: 'projects', help: 'Each project has an optional title and a set of photos. The first photo is used as the cover tile; clicking it opens a carousel of that project\'s photos.'}
+      ]
     }
   ];
 
@@ -223,10 +249,12 @@ export class SiteConfigComponent implements OnInit {
       if (f.type === 'translated') {
         this.formData[f.key] = {ro: '', ru: '', en: ''};
       } else if (f.type === 'toggle') {
-        this.formData[f.key] = true;
+        this.formData[f.key] = f.default !== undefined ? f.default : true;
       } else if (f.type === 'children') {
         this.formData[f.key] = [];
       } else if (f.type === 'tags') {
+        this.formData[f.key] = [];
+      } else if (f.type === 'projects') {
         this.formData[f.key] = [];
       } else if (f.type === 'number') {
         this.formData[f.key] = this.filteredEntries.length + 1;
@@ -255,6 +283,15 @@ export class SiteConfigComponent implements OnInit {
         this.formData[f.key] = Array.isArray(val) ? val.map((t: any) =>
           typeof t === 'object' && t !== null ? {...t} : {ro: t || '', ru: '', en: ''}
         ) : [];
+      } else if (f.type === 'projects') {
+        this.formData[f.key] = Array.isArray(val) ? val.map((p: any) => ({
+          title: typeof p?.title === 'object' && p?.title !== null
+            ? {...p.title}
+            : {ro: p?.title || '', ru: '', en: ''},
+          photos: Array.isArray(p?.photos)
+            ? p.photos.map((ph: any) => typeof ph === 'string' ? ph : (ph?.file_url || ph?.url || '')).filter(Boolean)
+            : []
+        })) : [];
       } else if (f.type === 'file' || f.type === 'image') {
         // File fields may have arrays from DB (e.g. image: []) — normalize to string
         if (Array.isArray(val)) {
@@ -274,6 +311,7 @@ export class SiteConfigComponent implements OnInit {
     this.formData = {};
     this.uploadedFileNames = {};
     this.iconMode = {};
+    this.projectUploading = {};
   }
 
   addChild() {
@@ -296,6 +334,66 @@ export class SiteConfigComponent implements OnInit {
 
   removeTag(fieldKey: string, index: number) {
     this.formData[fieldKey].splice(index, 1);
+  }
+
+  // ---- Projects (gallery categories) ----
+  projectUploading: Record<number, number> = {};
+
+  addProject() {
+    if (!this.formData['projects']) this.formData['projects'] = [];
+    this.formData['projects'].push({
+      title: {ro: '', ru: '', en: ''},
+      photos: []
+    });
+  }
+
+  removeProject(index: number) {
+    if (!confirm('Remove this project and all its photos?')) return;
+    this.formData['projects'].splice(index, 1);
+  }
+
+  moveProject(index: number, direction: -1 | 1) {
+    const projects = this.formData['projects'];
+    const target = index + direction;
+    if (target < 0 || target >= projects.length) return;
+    [projects[index], projects[target]] = [projects[target], projects[index]];
+  }
+
+  onProjectPhotosSelected(event: Event, projectIndex: number) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+    const files = Array.from(input.files);
+    const project = this.formData['projects'][projectIndex];
+    if (!Array.isArray(project.photos)) project.photos = [];
+
+    this.projectUploading[projectIndex] = (this.projectUploading[projectIndex] || 0) + files.length;
+
+    files.forEach(file => {
+      this.fileService.uploadFile(file, 'gallery').subscribe({
+        next: (res: any) => {
+          if (res?.file_url) project.photos.push(res.file_url);
+          this.projectUploading[projectIndex] = Math.max(0, (this.projectUploading[projectIndex] || 1) - 1);
+        },
+        error: () => {
+          this.projectUploading[projectIndex] = Math.max(0, (this.projectUploading[projectIndex] || 1) - 1);
+          this.toastr.error(`Failed to upload ${file.name}`);
+        }
+      });
+    });
+
+    // reset the input so the same files can be re-selected if needed
+    input.value = '';
+  }
+
+  removeProjectPhoto(projectIndex: number, photoIndex: number) {
+    this.formData['projects'][projectIndex].photos.splice(photoIndex, 1);
+  }
+
+  movePhoto(projectIndex: number, photoIndex: number, direction: -1 | 1) {
+    const photos = this.formData['projects'][projectIndex].photos;
+    const target = photoIndex + direction;
+    if (target < 0 || target >= photos.length) return;
+    [photos[photoIndex], photos[target]] = [photos[target], photos[photoIndex]];
   }
 
   uploadingField: string | null = null;
@@ -422,12 +520,23 @@ export class SiteConfigComponent implements OnInit {
       }
     }
 
+    // Validate projects — each project needs at least one photo
+    if (this.formData['projects']?.length) {
+      for (let i = 0; i < this.formData['projects'].length; i++) {
+        const project = this.formData['projects'][i];
+        if (!Array.isArray(project?.photos) || project.photos.length === 0) {
+          this.toastr.error(`Project #${i + 1} has no photos. Upload at least one photo or remove the project.`);
+          return;
+        }
+      }
+    }
+
     this.saving = true;
     try {
       const dataArray: any[] = [{config_type: this.activeTab}];
 
       typeDef.fields.forEach(f => {
-        if (f.key === 'children' || f.key === 'tags') return;
+        if (f.key === 'children' || f.key === 'tags' || f.key === 'projects') return;
         const val = this.formData[f.key];
         dataArray.push({[f.key]: val});
       });
@@ -439,6 +548,11 @@ export class SiteConfigComponent implements OnInit {
       // Always persist tags array (even empty) so admin can intentionally clear tags
       if (Array.isArray(this.formData['tags'])) {
         dataArray.push({tags: this.formData['tags']});
+      }
+
+      // Always persist projects array (even empty) so admin can intentionally clear them
+      if (Array.isArray(this.formData['projects'])) {
+        dataArray.push({projects: this.formData['projects']});
       }
 
       const payload = {data: dataArray};

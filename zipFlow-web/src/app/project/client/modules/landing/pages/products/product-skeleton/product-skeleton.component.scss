@@ -1,0 +1,76 @@
+// Mirrors the real .product card geometry so skeletons swap in with zero layout
+// shift. Uses the app-wide `shine` keyframe (assets/styles/global.scss) so the
+// shimmer matches the rest of the site.
+.sk {
+  background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+  background-size: 200% 100%;
+  animation: 1s shine linear infinite;
+  border-radius: 5px;
+}
+
+.product-skeleton {
+  border: 1px solid #ececec;
+  border-radius: 12px;
+  padding: 14px;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  &__image {
+    height: 200px;
+    width: 100%;
+    border-radius: 8px;
+  }
+
+  &__content {
+    padding-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+  }
+
+  &__code {
+    height: 12px;
+    width: 40%;
+  }
+
+  &__title {
+    height: 16px;
+    width: 90%;
+
+    &--short {
+      width: 60%;
+    }
+  }
+
+  &__footer {
+    margin-top: auto;
+    padding-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  &__price {
+    height: 20px;
+    width: 80px;
+  }
+
+  &__cart {
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .product-skeleton {
+    &__title {
+      height: 15px;
+    }
+  }
+}

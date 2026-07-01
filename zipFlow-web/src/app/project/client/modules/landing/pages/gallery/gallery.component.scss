@@ -1,0 +1,426 @@
+$accent: #f47920;
+$text: #141414;
+$muted: #8a8a8a;
+$border: #ececec;
+
+.gallery {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 28px 24px 72px;
+  background: #ffffff;
+  font-family: 'DM Sans', sans-serif;
+
+  &__header {
+    text-align: center;
+    margin: 16px 0 22px;
+  }
+
+  &__title {
+    font-size: clamp(30px, 4.4vw, 46px);
+    font-weight: 700;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    color: $text;
+    margin: 0;
+  }
+
+  &__title-underline {
+    display: block;
+    width: 64px;
+    height: 3px;
+    margin: 14px auto 0;
+    background: $accent;
+    border-radius: 2px;
+  }
+
+  &__subtitle {
+    margin: 16px auto 0;
+    max-width: 680px;
+    color: $muted;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  // Tabs
+  &__tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px 34px;
+    padding: 8px 8px 4px;
+    margin-bottom: 34px;
+  }
+
+  &__tab {
+    background: none;
+    border: none;
+    padding: 6px 2px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #4a4a4a;
+    cursor: pointer;
+    position: relative;
+    transition: color .2s ease;
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -3px;
+      height: 2px;
+      background: $accent;
+      transform: scaleX(0);
+      transition: transform .2s ease;
+    }
+
+    &:hover {
+      color: $text;
+    }
+
+    &.active {
+      color: $accent;
+      font-weight: 600;
+
+      &::after {
+        transform: scaleX(1);
+      }
+    }
+  }
+
+  &__empty {
+    text-align: center;
+    color: $muted;
+    padding: 48px 0;
+  }
+}
+
+.gallery-section {
+  scroll-margin-top: 24px;
+  margin-bottom: 44px;
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  &__title {
+    font-size: 17px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: $text;
+    margin: 0;
+  }
+
+  &__count {
+    font-size: 12px;
+    color: $accent;
+    font-weight: 500;
+  }
+
+  &__more {
+    margin-left: auto;
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: #5a5a5a;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: color .2s ease, background .2s ease;
+
+    svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    &:hover {
+      color: $accent;
+      background: #fdf1e6;
+    }
+  }
+}
+
+// === Justified rows gallery ===
+// Each tile keeps its aspect ratio (--ratio) at a fixed row height (--rh),
+// so rows fill the width like a Google-Photos / flickr layout.
+.gallery-grid {
+  --rh: 184px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  @media (max-width: 1100px) { --rh: 168px; }
+  @media (max-width: 760px)  { --rh: 148px; }
+  @media (max-width: 520px)  { --rh: 122px; gap: 6px; }
+}
+
+.gallery-tile {
+  --ratio: 1.5;
+  position: relative;
+  height: var(--rh);
+  flex-grow: var(--ratio);
+  flex-basis: calc(var(--ratio) * var(--rh));
+  min-width: 0;
+  padding: 0;
+  border: none;
+  border-radius: 3px;
+  overflow: hidden;
+  cursor: pointer;
+  background: #f1f1f1;
+
+  &__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .5s ease;
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    padding: 10px 12px;
+    background: linear-gradient(to top, rgba(0, 0, 0, .58) 0%, rgba(0, 0, 0, 0) 50%);
+    opacity: 0;
+    transition: opacity .25s ease;
+  }
+
+  &__title {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: left;
+    line-height: 1.3;
+  }
+
+  &:hover {
+    .gallery-tile__img {
+      transform: scale(1.05);
+    }
+
+    .gallery-tile__overlay {
+      opacity: 1;
+    }
+  }
+}
+
+// === Loading skeleton ===
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: #ececec;
+  border-radius: 4px;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .65), transparent);
+    animation: gallery-shimmer 1.4s ease infinite;
+  }
+
+  &--title {
+    display: block;
+    width: clamp(260px, 36vw, 420px);
+    height: 46px;
+    margin: 0 auto;
+    border-radius: 6px;
+  }
+
+  &--tab {
+    width: 86px;
+    height: 18px;
+  }
+
+  &--section-title {
+    width: 168px;
+    height: 20px;
+  }
+
+  &--count {
+    width: 64px;
+    height: 12px;
+  }
+}
+
+.gallery__tabs--skeleton {
+  align-items: center;
+}
+
+.gallery-tile--skeleton {
+  cursor: default;
+  background: #ececec;
+  border-radius: 3px;
+}
+
+@keyframes gallery-shimmer {
+  100% { transform: translateX(100%); }
+}
+
+// === Lightbox ===
+.lightbox {
+  position: fixed;
+  inset: 0;
+  // Above the sticky site header (z-index 1200) and mobile menu (1202)
+  // so the fullscreen viewer fully covers them while open.
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 10, 10, .92);
+  padding: 24px;
+  animation: lightbox-in .2s ease;
+
+  &__close {
+    position: absolute;
+    top: 18px;
+    right: 24px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 38px;
+    line-height: 1;
+    cursor: pointer;
+    opacity: .8;
+    transition: opacity .15s ease;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  &__nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, .12);
+    color: #fff;
+    font-size: 32px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background .15s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, .25);
+    }
+
+    &--prev {
+      left: 16px;
+    }
+
+    &--next {
+      right: 16px;
+    }
+  }
+
+  &__stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 90vw;
+    max-height: 90vh;
+  }
+
+  &__img {
+    max-width: 90vw;
+    max-height: 72vh;
+    object-fit: contain;
+    border-radius: 6px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, .5);
+  }
+
+  &__caption {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 14px;
+    color: #fff;
+  }
+
+  &__title {
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  &__counter {
+    font-size: 13px;
+    color: rgba(255, 255, 255, .65);
+  }
+
+  // Thumbnail nav-bar
+  &__thumbs {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    max-width: min(92vw, 760px);
+    overflow-x: auto;
+    padding: 8px 10px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, .06);
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;          // Firefox
+    -ms-overflow-style: none;       // IE/Edge
+    &::-webkit-scrollbar { display: none; } // WebKit
+  }
+
+  &__thumb {
+    flex: 0 0 auto;
+    width: 64px;
+    height: 48px;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    overflow: hidden;
+    padding: 0;
+    cursor: pointer;
+    opacity: .45;
+    scroll-snap-align: center;
+    transition: opacity .18s ease, border-color .18s ease, transform .18s ease;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    &:hover {
+      opacity: .8;
+    }
+
+    &.active {
+      opacity: 1;
+      border-color: $accent;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(244, 121, 32, .45);
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .lightbox__nav {
+    width: 42px;
+    height: 42px;
+    font-size: 26px;
+  }
+}
+
+@keyframes lightbox-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

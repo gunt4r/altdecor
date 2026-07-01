@@ -16,6 +16,7 @@ import {ProductsListComponent} from "./products/products-list/products-list.comp
 import {ProductsHeaderComponent} from "./products/products-header/products-header.component";
 import {ProductPageComponent} from "./product/product.component";
 import {ProductComponent} from "./products/product/product.component";
+import {ProductSkeletonComponent} from "./products/product-skeleton/product-skeleton.component";
 import {ProductSummaryComponent} from "./product/product-summary/product-summary.component";
 import {CheckoutComponent} from "./checkout/checkout.component";
 import {CheckoutDetailsComponent} from "./checkout/checkout-details/checkout-details.component";
@@ -33,6 +34,7 @@ import {PageNotFoundComponent} from "./page-not-found/page-not-found.component";
 import {ContactsComponent} from "./contacts/contacts.component";
 import {ConsultComponent} from "./contacts/consult/consult.component";
 import {PortfolioComponent} from "./portfolio/portfolio.component";
+import {GalleryComponent} from "./gallery/gallery.component";
 import {AboutUsComponent} from "./about-us/about-us.component";
 import {ShopComponent} from "./shop/shop.component";
 
@@ -46,6 +48,7 @@ const pages = [
   PageNotFoundComponent,
   ContactsComponent,
   PortfolioComponent,
+  GalleryComponent,
   AboutUsComponent,
   ShopComponent
 ]
@@ -58,6 +61,7 @@ const outerComponents = [
 
   /* Products page components */
   ProductComponent,
+  ProductSkeletonComponent,
   ProductsListComponent,
   ProductsHeaderComponent,
 

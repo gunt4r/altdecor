@@ -641,6 +641,7 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.staticNavLinks = [
       {label: language === 'ru' ? 'Блог' : language === 'en' ? 'Blog' : 'Blog', path: '/blog'},
+      {label: language === 'ru' ? 'Наши проекты' : language === 'en' ? 'Our Projects' : 'Proiectele Noastre', path: '/proiecte'},
       {label: language === 'ru' ? 'Контакты' : language === 'en' ? 'Contacts' : 'Contacte', path: '/contacts'}
     ];
   }

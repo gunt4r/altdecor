@@ -310,12 +310,14 @@ export class HomeComponent implements OnInit {
       const phone = findObjectByKey(addr.data, 'phone') || findObjectByKey(addr.data, 'main_phone');
       const email = findObjectByKey(addr.data, 'email') || findObjectByKey(addr.data, 'main_email');
       const mapUrl = findObjectByKey(addr.data, 'map_url') || findObjectByKey(addr.data, 'map');
+      const scheduleRaw = findObjectByKey(addr.data, 'schedule');
+      const scheduleStr = typeof scheduleRaw === 'object' ? (scheduleRaw?.[this.currentLanguage] || scheduleRaw?.['ro'] || '') : (scheduleRaw || '');
       return {
         name: typeof name === 'object' ? (name?.[this.currentLanguage] || name?.['ro'] || '') : (name || ''),
         street: typeof street === 'object' ? (street?.[this.currentLanguage] || street?.['ro'] || '') : (street || ''),
         phone: phone || '',
         email: email || '',
-        schedule: [],
+        schedule: scheduleStr ? scheduleStr.split('|').map((s: string) => s.trim()).filter(Boolean) : [],
         mapUrl: mapUrl || ''
       };
     });

@@ -9,5 +9,10 @@ import {Products} from "../products.type";
 export class ProductsListComponent {
   @Input() products!: Products;
   @Input() loading: boolean = false;
+  // When true the grid shows skeleton cards instead of products — used for the
+  // initial load and when a fresh query (filter/sort) is being fetched.
+  @Input() refetching: boolean = false;
   @Output() loadNextPage = new EventEmitter;
+
+  skeletonItems = Array.from({length: 9});
 }

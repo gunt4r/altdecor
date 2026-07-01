@@ -1,0 +1,121 @@
+<ng-container *ngIf="!loading">
+  <app-page-container [pages]="pages">
+    <div class="gallery">
+      <!-- Page header -->
+      <div class="gallery__header">
+        <h1 class="gallery__title">{{ title || ('Page.Gallery' | translate) }}</h1>
+        <span class="gallery__title-underline"></span>
+        <p class="gallery__subtitle" *ngIf="subtitle">{{ subtitle }}</p>
+      </div>
+
+      <!-- Category tabs -->
+      <div class="gallery__tabs" *ngIf="categories.length">
+        <button class="gallery__tab"
+                *ngFor="let cat of categories"
+                [class.active]="activeCategoryId === cat.id"
+                (click)="selectCategory(cat)"
+                type="button">
+          {{ cat.label }}
+        </button>
+      </div>
+
+      <!-- Stacked category sections -->
+      <section class="gallery-section"
+               *ngFor="let cat of categories"
+               [id]="'gallery-cat-' + cat.id">
+        <div class="gallery-section__head">
+          <h2 class="gallery-section__title">{{ cat.label }}</h2>
+          <span class="gallery-section__count">{{ cat.projects.length }} {{ projectCountLabel(cat.projects.length) }}</span>
+          <button class="gallery-section__more" type="button"
+                  (click)="openLightbox(cat.tiles[0])"
+                  [attr.aria-label]="'Vezi ' + cat.label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
+        </div>
+
+        <div class="gallery-grid">
+          <button class="gallery-tile"
+                  *ngFor="let tile of cat.tiles"
+                  [style.--ratio]="tile.ratio"
+                  (click)="openLightbox(tile)"
+                  type="button"
+                  [attr.aria-label]="tile.title || 'Proiect'">
+            <img class="gallery-tile__img"
+                 [src]="tile.photo"
+                 [alt]="tile.title || cat.label"
+                 loading="lazy"
+                 (load)="onTileLoad($event, tile)">
+            <span class="gallery-tile__overlay" *ngIf="tile.title">
+              <span class="gallery-tile__title">{{ tile.title }}</span>
+            </span>
+          </button>
+        </div>
+      </section>
+
+      <div class="gallery__empty" *ngIf="!categories.length">
+        {{ 'Page.Gallery' | translate }}
+      </div>
+    </div>
+  </app-page-container>
+
+  <!-- Lightbox carousel -->
+  <div class="lightbox" *ngIf="lightboxOpen" (click)="closeLightbox()">
+    <button class="lightbox__close" (click)="closeLightbox()" type="button" aria-label="Close">&times;</button>
+
+    <button class="lightbox__nav lightbox__nav--prev"
+            *ngIf="lightboxPhotos.length > 1"
+            (click)="prevPhoto(); $event.stopPropagation()"
+            type="button" aria-label="Previous">&#8249;</button>
+
+    <div class="lightbox__stage" (click)="$event.stopPropagation()">
+      <img class="lightbox__img" [src]="lightboxPhotos[lightboxIndex]" [alt]="lightboxTitle || 'Photo'">
+      <div class="lightbox__caption">
+        <span class="lightbox__title" *ngIf="lightboxTitle">{{ lightboxTitle }}</span>
+        <span class="lightbox__counter" *ngIf="lightboxPhotos.length > 1">{{ lightboxIndex + 1 }} / {{ lightboxPhotos.length }}</span>
+      </div>
+      <div class="lightbox__thumbs" *ngIf="lightboxPhotos.length > 1">
+        <button class="lightbox__thumb"
+                *ngFor="let photo of lightboxPhotos; let i = index"
+                [class.active]="i === lightboxIndex"
+                (click)="goToPhoto(i)"
+                type="button">
+          <img [src]="photo" [alt]="'Thumbnail ' + (i + 1)" loading="lazy">
+        </button>
+      </div>
+    </div>
+
+    <button class="lightbox__nav lightbox__nav--next"
+            *ngIf="lightboxPhotos.length > 1"
+            (click)="nextPhoto(); $event.stopPropagation()"
+            type="button" aria-label="Next">&#8250;</button>
+  </div>
+</ng-container>
+
+<!-- Loading skeleton: title, tabs and stacked section grids -->
+<app-page-container [pages]="pages" *ngIf="loading">
+  <div class="gallery">
+    <div class="gallery__header">
+      <span class="skeleton skeleton--title"></span>
+      <span class="gallery__title-underline"></span>
+    </div>
+
+    <div class="gallery__tabs gallery__tabs--skeleton">
+      <span class="skeleton skeleton--tab" *ngFor="let t of [1,2,3,4,5]"></span>
+    </div>
+
+    <section class="gallery-section" *ngFor="let s of skeletonSections">
+      <div class="gallery-section__head">
+        <span class="skeleton skeleton--section-title"></span>
+        <span class="skeleton skeleton--count"></span>
+      </div>
+      <div class="gallery-grid">
+        <span class="skeleton gallery-tile gallery-tile--skeleton"
+              *ngFor="let t of skeletonTiles"
+              [style.--ratio]="t"></span>
+      </div>
+    </section>
+  </div>
+</app-page-container>

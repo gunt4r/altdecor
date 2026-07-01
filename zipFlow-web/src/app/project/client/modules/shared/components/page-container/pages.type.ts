@@ -15,6 +15,7 @@ export enum PageSlug {
   NotFound = 'not-found',
   Contacts = 'contacts',
   Portfolio = 'portfolio',
+  Proiecte = 'proiecte',
   AboutUs = 'about-us',
   Faq = 'faq',
   Dialog = 'd'
@@ -25,7 +26,8 @@ export const PageLabels: Record<PageSlug, string> = {
   [PageSlug.Products]: 'Page.ProductsPage',
   [PageSlug.Blog]: 'Page.Blog',
   [PageSlug.BlogId]: 'Page.Blog.BlogId',
-  [PageSlug.Portfolio]: 'Page.Portfolio'
+  [PageSlug.Portfolio]: 'Page.Portfolio',
+  [PageSlug.Proiecte]: 'Page.Gallery'
 
 } as Record<PageSlug, string>;
 

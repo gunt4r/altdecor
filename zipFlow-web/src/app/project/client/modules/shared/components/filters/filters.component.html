@@ -1,18 +1,19 @@
 <div class="filters">
   <button class="default"
           (click)="toggleSideFilter()"
-          *ngIf="isMobile">
+          *ngIf="isMobile && showMobileTrigger">
     {{'MobileFilterButton' | translate}}
   </button>
   <div *ngIf="!isMobile; else mobileFilter">
+    <div class="filters__heading">{{ 'Filters.Title' | translate }}</div>
     <div [formGroup]="form">
-      <div class="filter" *ngFor="let filter of filters">
+      <div class="filter" *ngFor="let filter of filters; trackBy: trackByDbKey">
         <ng-container [ngSwitch]="filter.filter_type" *ngIf="form.controls[filter.db_key]">
           <ng-container *ngSwitchCase="filterType.Dropdown">
             <app-dropdown [filter]="filter"
                           [formControlName]="filter.db_key"
-                          [singleSelection]="true"
-                          (valueChanged)="submit(filter.db_key)"></app-dropdown>
+                          [singleSelection]="false"
+                          (valueChanged)="submit()"></app-dropdown>
           </ng-container>
 
           <ng-container *ngSwitchCase="filterType.Checkbox">
@@ -33,14 +34,34 @@
 </div>
 
 <ng-template #mobileFilter>
-  <div class="filter-container" [class.sidenav-open]="isSideFilterOpen">
-    <div class="filter-sidenav">
+  <div class="filter-container" [class.sidenav-open]="isSideFilterOpen" (click)="toggleSideFilter()">
+    <div class="filter-sidenav" (click)="$event.stopPropagation()">
+      <div class="filter-sidenav__header">
+        <span class="filter-sidenav__title">{{ 'Filters.Title' | translate }}</span>
+        <button class="filter-sidenav__close" type="button" (click)="toggleSideFilter()" aria-label="Close filters">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="filter-sidenav__chips" *ngIf="activeChips.length">
+        <button class="filter-chip" *ngFor="let chip of activeChips" type="button" (click)="chipRemove.emit(chip)">
+          <span class="filter-chip__label">{{ chip.label }}</span>
+          <svg class="filter-chip__x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
       <div class="filter-content">
         <div [formGroup]="form">
-          <div class="filter" *ngFor="let filter of filters">
+          <div class="filter" *ngFor="let filter of filters; trackBy: trackByDbKey">
             <ng-container [ngSwitch]="filter.filter_type">
               <ng-container *ngSwitchCase="filterType.Dropdown">
-                <app-dropdown [filter]="filter" [formControlName]="filter.db_key" (valueChanged)="submit(filter.db_key)"></app-dropdown>
+                <app-dropdown [filter]="filter" [formControlName]="filter.db_key" (valueChanged)="submit()"></app-dropdown>
               </ng-container>
 
               <ng-container *ngSwitchCase="filterType.Checkbox">
@@ -58,9 +79,6 @@
           </div>
         </div>
       </div>
-      <button class="close-sidenav" (click)="toggleSideFilter()">
-        <img src="assets/images/content/close.svg" alt="Close menu">
-      </button>
     </div>
   </div>
 </ng-template>

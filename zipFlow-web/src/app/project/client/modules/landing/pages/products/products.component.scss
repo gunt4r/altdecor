@@ -1,29 +1,70 @@
+$orange: #f47920;
+$ink: #1c1c1c;
+
 .products {
   margin-top: 20px;
   margin-bottom: 50px;
 
-  &__content {
-    display: flex;
-    margin-top: 30px;
+  &__title {
+    font-size: clamp(26px, 3.4vw, 38px);
+    font-weight: 700;
+    color: $ink;
+    margin: 8px 0 24px;
   }
 
-  &__spacer {
-    padding: 1px;
-    background: #CCCCCC;
-    margin-left: 10px;
-    margin-right: 25px;
+  &__content {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
   }
 
   &__filters {
     top: 10px;
     position: sticky;
-    max-width: 315px;
+    max-width: 300px;
     width: 100%;
+    flex-shrink: 0;
     height: fit-content;
   }
 
   &__right {
     width: 100%;
+    min-width: 0;
+  }
+
+  &__toolbar {
+    margin-bottom: 16px;
+  }
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid $orange;
+    background: #fff5ec;
+    color: $orange;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease;
+
+    &:hover {
+      background: #ffe9d6;
+    }
+
+    &__x {
+      width: 14px;
+      height: 14px;
+    }
   }
 }
 
@@ -34,11 +75,98 @@
   margin: 30px auto;
 }
 
-@media only screen and (max-width: 1025px) {
+// ---- Initial-load skeleton shell (mirrors the real page layout) ----
+.sk {
+  background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+  background-size: 200% 100%;
+  animation: 1s shine linear infinite;
+  border-radius: 5px;
+}
+
+.products-skeleton {
+  &__title {
+    height: 34px;
+    width: 260px;
+    max-width: 60%;
+    margin: 8px 0 24px;
+  }
+
+  &__filters-title {
+    height: 22px;
+    width: 120px;
+    margin-bottom: 24px;
+  }
+
+  &__filter-row {
+    height: 18px;
+    width: 100%;
+    margin-bottom: 26px;
+
+    &:nth-child(odd) {
+      width: 80%;
+    }
+  }
+
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  &__count {
+    height: 20px;
+    width: 120px;
+  }
+
+  &__sort {
+    height: 40px;
+    width: 200px;
+  }
+}
+
+@media only screen and (max-width: 1024px) {
+  // On mobile the real page has no inline filter column (filters open in a
+  // drawer), so the skeleton shouldn't render one either.
+  .products--skeleton .products__filters {
+    display: none;
+  }
+
+  // Mobile toolbar is two equal buttons (Filtre / Sortare).
+  .products-skeleton {
+    &__toolbar {
+      gap: 12px;
+    }
+
+    &__count,
+    &__sort {
+      flex: 1;
+      width: auto;
+      height: 52px;
+      border-radius: 10px;
+    }
+  }
+}
+
+@media only screen and (max-width: 1024px) {
   .products {
     &__content {
       flex-direction: column;
       gap: 20px;
+    }
+
+    &__filters {
+      position: static;
+      max-width: 100%;
+    }
+
+    // Chips live inside the filter drawer on mobile.
+    &__chips {
+      display: none;
+    }
+
+    &__toolbar {
+      margin-bottom: 20px;
     }
   }
 }
