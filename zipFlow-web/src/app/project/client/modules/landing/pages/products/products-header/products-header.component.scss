@@ -1,59 +1,138 @@
 @import '../../../../../../../../assets/styles/variables';
 
-.products-header {
+$orange: #f47920;
+$ink: #1c1c1c;
+
+.products-toolbar {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 20px;
+  width: 100%;
 
-  &__title {
-    color: $base-color;
-    font-size: 30px;
-    line-height: 35px;
-    font-weight: 700;
-    width: 30%;
-  }
-
-  &__products {
+  &__amount {
     display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    align-items: center;
-    width: 100%;
-  }
+    align-items: baseline;
+    gap: 8px;
+    color: $ink;
+    font-size: 18px;
+    line-height: 1.2;
 
-  &__sort, &__amount {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
-
-  .amount {
-    color: $base-color;
-    font-size: 20px;
-    line-height: 21px;
-    font-weight: 400;
-
-    &--value {
+    .amount--value {
       font-weight: 700;
     }
   }
 
-  &__label {
-    color: $base-color;
+  &__sort {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__sort-label {
+    color: $ink;
     font-size: 15px;
-    line-height: 21px;
-    font-weight: 400;
+  }
+
+  // Mobile two-button toolbar (hidden on desktop)
+  &__mobile {
+    display: none;
   }
 }
 
-@media only screen and (max-width: 992px) {
-  .products-header {
-    flex-direction: column;
-    &__title {
-      width: 100%;
+.toolbar-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 52px;
+  padding: 0 18px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  &--filter {
+    background: $orange;
+    border: 1px solid $orange;
+    color: #fff;
+
+    &:hover {
+      background: #e06a10;
     }
-    &__products {
-      flex-wrap: wrap;
+  }
+
+  &--sort {
+    background: #fff;
+    border: 1px solid #d8d8d8;
+    color: $ink;
+    width: 100%;
+
+    &:hover,
+    &.open {
+      border-color: $orange;
+    }
+  }
+}
+
+.toolbar-sort {
+  flex: 1;
+  position: relative;
+
+  &__menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    z-index: 30;
+    margin: 0;
+    padding: 6px;
+    list-style: none;
+    background: #fff;
+    border: 1px solid #ececec;
+    border-radius: 10px;
+    box-shadow: 0 10px 28px rgba(29, 31, 34, 0.14);
+  }
+
+  &__item {
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 15px;
+    color: $ink;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+
+    &:hover {
+      background: #fff5ec;
+    }
+
+    &.active {
+      color: $orange;
+      font-weight: 600;
+      background: #fff5ec;
+    }
+  }
+}
+
+@media only screen and (max-width: 1024px) {
+  .products-toolbar {
+    &__amount,
+    &__sort {
+      display: none;
+    }
+
+    &__mobile {
+      display: flex;
+      gap: 12px;
+      width: 100%;
     }
   }
 }

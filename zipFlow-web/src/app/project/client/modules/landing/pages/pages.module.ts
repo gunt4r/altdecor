@@ -16,6 +16,7 @@ import {ProductsListComponent} from "./products/products-list/products-list.comp
 import {ProductsHeaderComponent} from "./products/products-header/products-header.component";
 import {ProductPageComponent} from "./product/product.component";
 import {ProductComponent} from "./products/product/product.component";
+import {ProductSkeletonComponent} from "./products/product-skeleton/product-skeleton.component";
 import {ProductSummaryComponent} from "./product/product-summary/product-summary.component";
 import {CheckoutComponent} from "./checkout/checkout.component";
 import {CheckoutDetailsComponent} from "./checkout/checkout-details/checkout-details.component";
@@ -60,6 +61,7 @@ const outerComponents = [
 
   /* Products page components */
   ProductComponent,
+  ProductSkeletonComponent,
   ProductsListComponent,
   ProductsHeaderComponent,
 

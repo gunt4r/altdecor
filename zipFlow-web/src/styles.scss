@@ -332,3 +332,9 @@ li {
   align-items: center;
 }
 
+
+// Hide the sticky site header while the gallery lightbox is open so the
+// fullscreen viewer is never overlapped (guards against stacking-context quirks).
+body.gallery-lightbox-open app-header {
+  visibility: hidden;
+}

@@ -141,7 +141,11 @@
     "Products": {
       "Label": {
         "Sort": "Sortează dupa:",
-        "Products": "Produse:"
+        "SortShort": "Sortare",
+        "FilterShort": "Filtre",
+        "Products": "Produse:",
+        "Code": "Cod produs:",
+        "PriceOnRequest": "Preț la cerere"
       },
       "DataSheet": "Fișa tehnică",
       "SortCategories": {
@@ -350,6 +354,11 @@
     "CategoriesBanner": {
       "Categories": "Categorii",
       "ViewProducts": "Vezi produsele"
+    },
+    "Filters": {
+      "Title": "Filtre",
+      "ShowMore": "Afișează încă",
+      "ShowLess": "Afișează mai puțin"
     }
   },
   "ru": {
@@ -494,7 +503,11 @@
     "Products": {
       "Label": {
         "Sort": "Сортировать по:",
-        "Products": "Продукты:"
+        "SortShort": "Сортировка",
+        "FilterShort": "Фильтры",
+        "Products": "Продукты:",
+        "Code": "Код товара:",
+        "PriceOnRequest": "Цена по запросу"
       },
       "DataSheet": "Техническая спецификация",
       "SortCategories": {
@@ -703,6 +716,11 @@
     "CategoriesBanner": {
       "Categories": "Категории",
       "ViewProducts": "Просмотреть продукты"
+    },
+    "Filters": {
+      "Title": "Фильтры",
+      "ShowMore": "Показать ещё",
+      "ShowLess": "Свернуть"
     }
   },
   "en": {
@@ -847,7 +865,11 @@
     "Products": {
       "Label": {
         "Sort": "Sort by:",
-        "Products": "Products:"
+        "SortShort": "Sort",
+        "FilterShort": "Filter",
+        "Products": "Products:",
+        "Code": "Product code:",
+        "PriceOnRequest": "Price on request"
       },
       "DataSheet": "Data Sheet",
       "SortCategories": {
@@ -1056,6 +1078,11 @@
     "CategoriesBanner": {
       "Categories": "Categories",
       "ViewProducts": "View Products"
+    },
+    "Filters": {
+      "Title": "Filters",
+      "ShowMore": "Show",
+      "ShowLess": "Show less"
     }
   }
 }

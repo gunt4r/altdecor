@@ -6,7 +6,10 @@
 }
 
 .app-container {
-  max-width: 1600px;
+  // Full-width like production: each page caps its own inner content
+  // (hero/sections at 1440px, gallery/contacts at their own max-width).
+  // A wrapper cap here would box the home and stop the hero going full-bleed.
+  width: 100%;
   margin: auto;
   position: relative;
   min-height: calc(100vh - 700px);

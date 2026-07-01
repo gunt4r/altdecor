@@ -1,16 +1,45 @@
-<div class="products-header">
-  <div class="products-header__title">
-    {{ 'Products.Categories' | translate }}
+<div class="products-toolbar">
+  <!-- Desktop / tablet: product count + sort select -->
+  <div class="products-toolbar__amount">
+    <span class="amount--label">{{ 'Products.Label.Products' | translate }}</span>
+    <span class="amount--value">{{ total }}</span>
   </div>
-  <div class="products-header__products">
-    <div class="products-header__sort">
-      <span class="products-header__label">{{ 'Products.Label.Sort' | translate }}</span>
-      <app-select [selectedOption]="sortBy" [options]="sorts" [type]="selectType.Default" (optionSelected)="sort($event)"></app-select>
-    </div>
 
-    <div class="products-header__amount">
-      <span class="amount--label">{{ 'Products.Label.Products' | translate }}</span>
-      <span class="amount--value">{{ total }}</span>
+  <div class="products-toolbar__sort">
+    <span class="products-toolbar__sort-label">{{ 'Products.Label.Sort' | translate }}</span>
+    <app-select [selectedOption]="sortBy" [options]="sorts" [type]="selectType.Default" (optionSelected)="sort($event)"></app-select>
+  </div>
+
+  <!-- Mobile: Filtre + Sortare buttons -->
+  <div class="products-toolbar__mobile">
+    <button class="toolbar-btn toolbar-btn--filter" type="button" (click)="openFilter.emit()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="4" y1="6" x2="20" y2="6"></line>
+        <line x1="7" y1="12" x2="17" y2="12"></line>
+        <line x1="10" y1="18" x2="14" y2="18"></line>
+      </svg>
+      <span>{{ 'Products.Label.FilterShort' | translate }}</span>
+    </button>
+
+    <div class="toolbar-sort">
+      <button class="toolbar-btn toolbar-btn--sort" type="button" (click)="toggleSortMenu()" [class.open]="isSortMenuOpen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="7 13 7 5 4 8"></polyline>
+          <line x1="7" y1="5" x2="7" y2="19"></line>
+          <polyline points="17 11 17 19 20 16"></polyline>
+          <line x1="17" y1="19" x2="17" y2="5"></line>
+        </svg>
+        <span>{{ 'Products.Label.SortShort' | translate }}</span>
+      </button>
+
+      <ul class="toolbar-sort__menu" *ngIf="isSortMenuOpen">
+        <li *ngFor="let option of sorts"
+            class="toolbar-sort__item"
+            [class.active]="option.value === activeSortValue"
+            (click)="selectSort(option)">
+          {{ option.label | translate }}
+        </li>
+      </ul>
     </div>
   </div>
 </div>

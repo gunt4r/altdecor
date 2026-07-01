@@ -1,16 +1,22 @@
 <div class="products">
-  <ng-container *ngIf="products && products.content.length > 0; else noProducts">
-    <app-product *ngFor="let product of products.content" [product]="product"></app-product>
+  <ng-container *ngIf="refetching; else realList">
+    <app-product-skeleton *ngFor="let i of skeletonItems"></app-product-skeleton>
   </ng-container>
 
-  <ng-template #noProducts>
-    <div class="products__empty">
-      {{ 'Products.NoProducts' | translate }}
-    </div>
+  <ng-template #realList>
+    <ng-container *ngIf="products && products.content.length > 0; else noProducts">
+      <app-product *ngFor="let product of products.content" [product]="product"></app-product>
+    </ng-container>
+
+    <ng-template #noProducts>
+      <div class="products__empty">
+        {{ 'Products.NoProducts' | translate }}
+      </div>
+    </ng-template>
   </ng-template>
 </div>
 
-<div class="products__button" *ngIf="products.content?.length !== products.total">
+<div class="products__button" *ngIf="!refetching && products && products.content?.length !== products.total">
   <app-loader class="loader" *ngIf="loading"></app-loader>
   <button class="dark" [ngClass]="{disabled: loading}" (click)="loadNextPage.emit()">{{ 'Products.Button.More' | translate }}</button>
 </div>

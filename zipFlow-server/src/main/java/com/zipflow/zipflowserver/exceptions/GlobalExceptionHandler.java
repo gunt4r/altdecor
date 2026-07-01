@@ -26,14 +26,22 @@ import java.util.Map;
 public class GlobalExceptionHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+    // Client-safe messages. Internal exception detail is logged server-side only,
+    // never returned to the caller, to avoid information disclosure.
+    private static final String MSG_BAD_REQUEST = "Invalid request";
+    private static final String MSG_NOT_FOUND = "Resource not found";
+    private static final String MSG_INTERNAL = "An unexpected error occurred";
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException e) {
-        return build(HttpStatus.BAD_REQUEST, e.getMessage());
+        LOGGER.warn("Bad request: {}", e.getMessage());
+        return build(HttpStatus.BAD_REQUEST, MSG_BAD_REQUEST);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleEntityNotFound(EntityNotFoundException e) {
-        return build(HttpStatus.NOT_FOUND, e.getMessage());
+        LOGGER.warn("Not found: {}", e.getMessage());
+        return build(HttpStatus.NOT_FOUND, MSG_NOT_FOUND);
     }
 
     @ExceptionHandler(IllegalStateException.class)
@@ -42,21 +50,26 @@ public class GlobalExceptionHandler {
         // The dynamic-table service throws this for both "does not exist" (a 404
         // condition) and genuine persistence failures (a 500 condition).
         if (message.toLowerCase().contains("does not exist")) {
-            return build(HttpStatus.NOT_FOUND, message);
+            LOGGER.warn("Not found: {}", message);
+            return build(HttpStatus.NOT_FOUND, MSG_NOT_FOUND);
         }
         LOGGER.error("Unhandled illegal state", e);
-        return build(HttpStatus.INTERNAL_SERVER_ERROR, message);
+        return build(HttpStatus.INTERNAL_SERVER_ERROR, MSG_INTERNAL);
     }
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<Map<String, Object>> handleResponseStatus(ResponseStatusException e) {
-        return build(HttpStatus.valueOf(e.getStatusCode().value()), e.getReason());
+        HttpStatus status = HttpStatus.valueOf(e.getStatusCode().value());
+        // Reason is set explicitly by application code, so it is safe to return;
+        // fall back to the status phrase if none was provided.
+        String reason = e.getReason() != null ? e.getReason() : status.getReasonPhrase();
+        return build(status, reason);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGeneric(Exception e) {
         LOGGER.error("Unhandled exception", e);
-        return build(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred");
+        return build(HttpStatus.INTERNAL_SERVER_ERROR, MSG_INTERNAL);
     }
 
     private ResponseEntity<Map<String, Object>> build(HttpStatus status, String message) {

@@ -30,6 +30,7 @@ interface FieldDef {
   required?: boolean;
   accept?: string;
   options?: {label: string; value: string}[];
+  default?: any;
 }
 
 @Component({
@@ -161,6 +162,7 @@ export class SiteConfigComponent implements OnInit {
         {key: 'label', label: 'Category Name', type: 'translated', placeholder: 'e.g. Bucătărie / Кухня / Kitchen', help: 'Tab label and section heading. Translated per language.', required: true},
         {key: 'order_index', label: 'Display Order', type: 'number', placeholder: '1', help: 'Lower numbers appear first (1, 2, 3...).'},
         {key: 'is_active', label: 'Active', type: 'toggle', help: 'Toggle off to hide this category without deleting it.'},
+        {key: 'group_photos', label: 'Group photos by project', type: 'toggle', default: false, help: 'Off (default): every photo is shown one by one as its own tile in the section. On: show a single cover tile per project — clicking it opens that project\'s photos in a carousel.'},
         {key: 'projects', label: 'Projects', type: 'projects', help: 'Each project has an optional title and a set of photos. The first photo is used as the cover tile; clicking it opens a carousel of that project\'s photos.'}
       ]
     }
@@ -247,7 +249,7 @@ export class SiteConfigComponent implements OnInit {
       if (f.type === 'translated') {
         this.formData[f.key] = {ro: '', ru: '', en: ''};
       } else if (f.type === 'toggle') {
-        this.formData[f.key] = true;
+        this.formData[f.key] = f.default !== undefined ? f.default : true;
       } else if (f.type === 'children') {
         this.formData[f.key] = [];
       } else if (f.type === 'tags') {

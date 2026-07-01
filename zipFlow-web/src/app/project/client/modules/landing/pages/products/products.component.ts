@@ -1,4 +1,5 @@
-import {ChangeDetectorRef, Component, DestroyRef, Inject, OnInit, PLATFORM_ID} from '@angular/core';
+import {ChangeDetectorRef, Component, DestroyRef, Inject, OnInit, PLATFORM_ID, ViewChild} from '@angular/core';
+import {FiltersComponent} from "../../../shared/components/filters/filters.component";
 import {Page, PageLabels, PageSlug} from "../../../shared/components/page-container/pages.type";
 import {FilterType} from "../../../shared/interfaces/filters.interface";
 import {MetaService} from "../../../shared/services/meta.service";
@@ -38,7 +39,15 @@ export class ProductsComponent implements OnInit {
 
   products: any;
 
+  // Page heading. Reflects the product_type the user navigated to (the label
+  // comes straight from the DB/admin filter value in the URL — never hardcoded);
+  // falls back to the generic "Shop Categorii" label when browsing everything.
+  pageTitle = '';
+
   filters: any = [];
+
+  @ViewChild(FiltersComponent) filtersComp?: FiltersComponent;
+  activeChips: { dbKey: string; option: any; label: string }[] = [];
 
   defaultPaging = {
     page: 1,
@@ -59,6 +68,9 @@ export class ProductsComponent implements OnInit {
   isFilterOpen = false;
 
   browserLoaded = false;
+
+  // Filter-group placeholders shown in the initial-load skeleton.
+  skeletonRows = Array.from({length: 7});
 
   constructor(private meta: MetaService,
               private router: Router,
@@ -170,9 +182,14 @@ export class ProductsComponent implements OnInit {
     }
 
     let apiFilterParams = undefined;
+    this.pageTitle = '';
 
     if (params.filter) {
       const parsedFilterParams = getQueryFilterParams(params.filter);
+
+      // Heading follows the product_type the user is browsing (DB label from the URL).
+      const typeParam = parsedFilterParams.find((el: any) => el.key === 'product_type');
+      this.pageTitle = typeParam?.value || '';
 
       apiFilterParams = parsedFilterParams.map((el: any) => {
         if (el.key === 'height') {
@@ -261,7 +278,25 @@ export class ProductsComponent implements OnInit {
       }
     })
 
+    this.buildChips();
     this.cdr.detectChanges();
+  }
+
+  buildChips() {
+    const chips: { dbKey: string; option: any; label: string }[] = [];
+    (this.filters || []).forEach((f: any) => {
+      const val = f.value;
+      if (Array.isArray(val)) {
+        val.forEach((opt: any) => chips.push({dbKey: f.db_key, option: opt, label: getLocalized(opt) || opt}));
+      } else if (typeof val === 'string' && val) {
+        chips.push({dbKey: f.db_key, option: val, label: val});
+      }
+    });
+    this.activeChips = chips;
+  }
+
+  removeChip(chip: { dbKey: string; option: any; label: string }) {
+    this.filtersComp?.removeValue(chip.dbKey, chip.option);
   }
 
   setNestedFilters(nestedCategoryValue: any, params?: any) {
@@ -399,6 +434,7 @@ export class ProductsComponent implements OnInit {
     // change filters pointer
     this.filters = JSON.parse(JSON.stringify(this.filters));
 
+    this.buildChips();
     this.cdr.detectChanges();
   }
 
@@ -503,6 +539,19 @@ export class ProductsComponent implements OnInit {
     this.qpService.updateParams(getApiParams(this.searchString, this.filterParam, this.sortParam, this.defaultPaging.page, this.defaultPaging.rowsPerPage));
   }
 
+  // Build a "value currency" price string from a product configuration, tolerant
+  // of the shapes the API may return: price as an array ([{value,currency}]), an
+  // object ({value,currency}) or a bare scalar. Returns '' when there's no usable
+  // value so the card simply hides the price instead of showing "undefined".
+  private buildPrice(configuration: any, key: 'price' | 'old_price'): string {
+    const raw = configuration?.[key];
+    const entry = Array.isArray(raw) ? raw[0] : raw;
+    const value = (entry && typeof entry === 'object') ? (entry['value'] ?? entry['amount']) : entry;
+    if (value === undefined || value === null || value === '') return '';
+    const currency = (entry && typeof entry === 'object') ? (entry['currency'] ?? '') : '';
+    return `${value} ${currency}`.trim();
+  }
+
   getData(params: any) {
     this.productsLoading = true;
 
@@ -510,16 +559,17 @@ export class ProductsComponent implements OnInit {
       if (response && response.data) {
         this.products = {
           content: (this.saveOld ? this.products.content : []).concat(response.data.map((item: any) => {
+            const configuration = findObjectByKey(item.data, 'configurations')?.[0]?.['configuration']?.[0];
             return {
               image: findObjectByKey(item.data, 'images')?.[0]?.['file_url'],
               title: findObjectByKey(item.data, 'title'),
               model: findObjectByKey(item.data, 'model'),
-              size: findObjectByKey(item.data, 'configurations')?.[0]?.['configuration']?.[0]?.['size'],
+              size: configuration?.['size'],
               sku: findObjectByKey(item.data, 'sku'),
               label: findObjectByKey(item.data, 'product_category')?.[0]?.['value']['label'],
               price: {
-                current: `${findObjectByKey(item.data, 'configurations')?.[0]?.['configuration']?.[0]?.['price']?.[0]?.['value']} ${findObjectByKey(item.data, 'configurations')?.[0]?.['configuration']?.[0]?.['price']?.[0]?.['currency']}`,
-                old: `${findObjectByKey(item.data, 'configurations')?.[0]?.['configuration']?.[0]?.['old_price']?.[0]?.['value']} ${findObjectByKey(item.data, 'configurations')?.[0]?.['configuration']?.[0]?.['old_price']?.[0]?.['currency']}`,
+                current: this.buildPrice(configuration, 'price'),
+                old: this.buildPrice(configuration, 'old_price'),
               },
               isNew: findObjectByKey(item.data, 'is_new'),
               isSale: findObjectByKey(item.data, 'has_sale'),

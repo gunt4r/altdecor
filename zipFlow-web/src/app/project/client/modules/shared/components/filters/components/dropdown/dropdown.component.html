@@ -1,11 +1,22 @@
-<div class="dropdown" *ngIf="filter.options">
-  <button class="dropdown__button" (click)="toggleOptions()" [ngClass]="{open: isOptionsVisible}">
-    <span>{{ filter.label | translate }}</span>
-    <img [src]="'assets/icons/dropdown-' + (isOptionsVisible ? 'show' : 'hide') + '.svg'" alt="dropdown">
+<div class="filter-group" *ngIf="filter.options">
+  <button class="filter-group__head" (click)="toggleOptions()" [class.open]="isOptionsVisible" type="button">
+    <span class="filter-group__title">{{ filter.label | translate }}</span>
+    <svg class="filter-group__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polyline points="6 9 12 15 18 9"></polyline>
+    </svg>
   </button>
 
-  <ul *ngIf="isOptionsVisible" class="dropdown__list">
-    <li *ngFor="let option of filter.options" (click)="setValue(option)"
-        [ngClass]="{ active: isActiveOption(option) }">{{ option | translate }}</li>
+  <ul *ngIf="isOptionsVisible" class="filter-options">
+    <li class="filter-option" *ngFor="let option of visibleOptions" (click)="setValue(option)"
+        [class.active]="isActiveOption(option)">
+      <span class="filter-option__box" aria-hidden="true"></span>
+      <span class="filter-option__label">{{ option | translate }}</span>
+    </li>
+
+    <li class="filter-options__more" *ngIf="hiddenCount > 0" (click)="showAll = !showAll">
+      <ng-container *ngIf="!showAll">{{ 'Filters.ShowMore' | translate }} {{ hiddenCount }}</ng-container>
+      <ng-container *ngIf="showAll">{{ 'Filters.ShowLess' | translate }}</ng-container>
+    </li>
   </ul>
 </div>
