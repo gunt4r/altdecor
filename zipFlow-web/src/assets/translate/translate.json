@@ -194,7 +194,9 @@
       "Model": "Model",
       "SKU": "SKU",
       "Size": "Marime",
-      "Color": "Culoare"
+      "Color": "Culoare",
+      "AddedToastTitle": "Adăugat în coș",
+      "AddedToastText": "Produsul a fost adăugat în coș."
     },
     "Checkout": {
       "Stage": {
@@ -556,7 +558,9 @@
       "Model": "Модель",
       "SKU": "SKU",
       "Size": "Размер",
-      "Color": "Цвет"
+      "Color": "Цвет",
+      "AddedToastTitle": "Добавлено в корзину",
+      "AddedToastText": "Товар добавлен в корзину."
     },
     "Checkout": {
       "Stage": {
@@ -918,7 +922,9 @@
       "Model": "Model",
       "SKU": "SKU",
       "Size": "Size",
-      "Color": "Color"
+      "Color": "Color",
+      "AddedToastTitle": "Added to cart",
+      "AddedToastText": "Product added to your cart."
     },
     "Checkout": {
       "Stage": {

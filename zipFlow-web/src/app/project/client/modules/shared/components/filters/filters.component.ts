@@ -80,13 +80,19 @@ export class FiltersComponent implements OnInit {
 
   // Remove a single selected option (used by the active filter chips).
   removeValue(dbKey: string, option: any): void {
-    const control = this.form.get(dbKey);
-    if (!control) return;
-    const current = control.value;
-    if (Array.isArray(current)) {
-      control.setValue(current.filter((el: any) => getLocalized(el) !== getLocalized(option)));
-    } else {
-      control.setValue(typeof current === 'string' ? null : []);
+    // The same category can live in several product_type groups, so remove the
+    // option from every array control that holds it (not just dbKey); otherwise
+    // the chip reappears from the other group on the next rebuild.
+    for (const name in this.form.controls) {
+      const control = this.form.get(name);
+      if (!control) continue;
+      const current = control.value;
+      if (Array.isArray(current)) {
+        const next = current.filter((el: any) => getLocalized(el) !== getLocalized(option));
+        if (next.length !== current.length) control.setValue(next);
+      } else if (name === dbKey) {
+        control.setValue(typeof current === 'string' ? null : []);
+      }
     }
     this.submit();
   }

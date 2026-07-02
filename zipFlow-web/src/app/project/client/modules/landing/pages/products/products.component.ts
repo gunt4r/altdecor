@@ -56,6 +56,14 @@ export class ProductsComponent implements OnInit {
 
   params: ApiParams = this.defaultPaging;
   sortParam: any = undefined;
+  // When a price sort is active we sort the fetched products numerically on the
+  // client ('asc' = cheap→expensive, 'desc' = expensive→cheap); null = default order.
+  priceSortOrder: 'asc' | 'desc' | null = null;
+  // For a price sort the whole result set is fetched and sorted once, then paged
+  // on the client so we still show 12 at a time (a working "show more") instead of
+  // dumping all ~400 cards at once.
+  private sortedPool: any[] = [];
+  private clientPage = 1;
   filterParam: any = undefined;
   searchParam: any = undefined;
   labels: any;
@@ -138,22 +146,26 @@ export class ProductsComponent implements OnInit {
   }
 
   getFilterParams(params: any) {
+    // Price is stored as a STRING in the product JSON, and many products have an
+    // empty price. Sorting that field server-side gives a lexicographic order
+    // ("1200" < "400") with empty values scattered through the list. So for the
+    // two price sorts we fetch the whole result set and sort it numerically on
+    // the client (unpriced items always pushed to the end). created_at DESC stays
+    // the server order in every case.
+    this.sortParam = {
+      sortBy: 'created_at',
+      sortOrder: SortTypes.DESC
+    };
     if (params.sortBy === ProductsSort.Cheap2Expensive) {
-      this.sortParam = {
-        sortBy: 'data.5.configurations.0.configuration.0.price.0.value',
-        sortOrder: SortTypes.ASC
-      }
+      this.priceSortOrder = 'asc';
     } else if (params.sortBy === ProductsSort.Expensive2Cheap) {
-      this.sortParam = {
-        sortBy: 'data.5.configurations.0.configuration.0.price.0.value',
-        sortOrder: SortTypes.DESC
-      }
+      this.priceSortOrder = 'desc';
     } else {
-      this.sortParam = {
-        sortBy: 'created_at',
-        sortOrder: SortTypes.DESC
-      }
+      this.priceSortOrder = null;
     }
+    // Fresh query (sort/filter change) → restart the client-side paging window.
+    this.clientPage = 1;
+    this.sortedPool = [];
 
     if (params.search) {
       this.searchString = params.search;
@@ -224,7 +236,10 @@ export class ProductsComponent implements OnInit {
 
     this.filterParam = apiFilterParams;
 
-    this.params = getApiParams(this.searchParam, apiFilterParams, this.sortParam, params.page || this.defaultPaging.page, params.rowsPerPage || this.defaultPaging.rowsPerPage, false);
+    // For a price sort we need the full result set in one shot so it can be
+    // ordered numerically client-side; "show more" is irrelevant then.
+    const rowsPerPage = this.priceSortOrder ? 1000 : (params.rowsPerPage || this.defaultPaging.rowsPerPage);
+    this.params = getApiParams(this.searchParam, apiFilterParams, this.sortParam, params.page || this.defaultPaging.page, rowsPerPage, false);
     this.getData(this.params);
   }
 
@@ -284,12 +299,22 @@ export class ProductsComponent implements OnInit {
 
   buildChips() {
     const chips: { dbKey: string; option: any; label: string }[] = [];
+    // A category can belong to more than one product_type group, so the same
+    // selection surfaces in several filter groups. Dedupe by label so it shows
+    // as a single chip (removeChip clears it from every group).
+    const seen = new Set<string>();
     (this.filters || []).forEach((f: any) => {
       const val = f.value;
+      const add = (option: any, label: string) => {
+        const key = String(label).toLowerCase();
+        if (!label || seen.has(key)) return;
+        seen.add(key);
+        chips.push({dbKey: f.db_key, option, label});
+      };
       if (Array.isArray(val)) {
-        val.forEach((opt: any) => chips.push({dbKey: f.db_key, option: opt, label: getLocalized(opt) || opt}));
+        val.forEach((opt: any) => add(opt, getLocalized(opt) || opt));
       } else if (typeof val === 'string' && val) {
-        chips.push({dbKey: f.db_key, option: val, label: val});
+        add(val, val);
       }
     });
     this.activeChips = chips;
@@ -477,7 +502,13 @@ export class ProductsComponent implements OnInit {
     const categoryValues: any[] = [];
     Object.keys(event).forEach((key) => {
       if (key.includes('product_type') && Array.isArray(event[key])) {
-        event[key].forEach((el: any) => categoryValues.push(getLocalized(el)));
+        event[key].forEach((el: any) => {
+          // A category shared by several product_type groups lands in each group's
+          // control, so dedupe to avoid a duplicated "cat _or_ cat" clause (and the
+          // duplicated chip that produced).
+          const value = getLocalized(el);
+          if (!categoryValues.includes(value)) categoryValues.push(value);
+        });
       }
     });
 
@@ -561,34 +592,70 @@ export class ProductsComponent implements OnInit {
     return `${value} ${currency}`.trim();
   }
 
+  // Parse the numeric part out of a "850 MDL" / "1,200 MDL" price string.
+  // Returns null when there's no usable number (empty / "price on request").
+  private parsePriceNumber(price?: string): number | null {
+    if (!price) return null;
+    const match = String(price).replace(/[,\s]/g, '').match(/-?\d+(\.\d+)?/);
+    return match ? Number(match[0]) : null;
+  }
+
+  // Sort in place by current price. Priced items order by direction; unpriced
+  // ("Preț la cerere") always sink to the bottom regardless of direction, so
+  // they never sit between priced cards.
+  private applyPriceSort(list: any[]): void {
+    const dir = this.priceSortOrder === 'asc' ? 1 : -1;
+    list.sort((a, b) => {
+      const pa = this.parsePriceNumber(a?.price?.current);
+      const pb = this.parsePriceNumber(b?.price?.current);
+      if (pa === null && pb === null) return 0;
+      if (pa === null) return 1;
+      if (pb === null) return -1;
+      return (pa - pb) * dir;
+    });
+  }
+
   getData(params: any) {
     this.productsLoading = true;
 
     this.publicService.getProducts(params).pipe(takeUntilDestroyed(this.destroy)).subscribe(response => {
       if (response && response.data) {
-        this.products = {
-          content: (this.saveOld ? this.products.content : []).concat(response.data.map((item: any) => {
-            const configuration = findObjectByKey(item.data, 'configurations')?.[0]?.['configuration']?.[0];
-            return {
-              image: findObjectByKey(item.data, 'images')?.[0]?.['file_url'],
-              title: findObjectByKey(item.data, 'title'),
-              model: findObjectByKey(item.data, 'model'),
-              size: configuration?.['size'],
-              sku: findObjectByKey(item.data, 'sku'),
-              label: findObjectByKey(item.data, 'product_category')?.[0]?.['value']['label'],
-              price: {
-                current: this.buildPrice(configuration, 'price'),
-                old: this.buildPrice(configuration, 'old_price'),
-              },
-              isNew: findObjectByKey(item.data, 'is_new'),
-              isSale: findObjectByKey(item.data, 'has_sale'),
-              outOfStock: findObjectByKey(item.data, 'out_of_stock'),
-              comingSoon: findObjectByKey(item.data, 'coming_soon'),
-              id: item.id
-            };
-          })),
-          total: response.meta.total
-        };
+        const content = (this.saveOld ? this.products.content : []).concat(response.data.map((item: any) => {
+          const configuration = findObjectByKey(item.data, 'configurations')?.[0]?.['configuration']?.[0];
+          return {
+            image: findObjectByKey(item.data, 'images')?.[0]?.['file_url'],
+            title: findObjectByKey(item.data, 'title'),
+            model: findObjectByKey(item.data, 'model'),
+            size: configuration?.['size'],
+            sku: findObjectByKey(item.data, 'sku'),
+            label: findObjectByKey(item.data, 'product_category')?.[0]?.['value']['label'],
+            price: {
+              current: this.buildPrice(configuration, 'price'),
+              old: this.buildPrice(configuration, 'old_price'),
+            },
+            isNew: findObjectByKey(item.data, 'is_new'),
+            isSale: findObjectByKey(item.data, 'has_sale'),
+            outOfStock: findObjectByKey(item.data, 'out_of_stock'),
+            comingSoon: findObjectByKey(item.data, 'coming_soon'),
+            id: item.id
+          };
+        }));
+
+        if (this.priceSortOrder) {
+          // Whole set fetched → sort once, keep the pool, show only the first page.
+          this.applyPriceSort(content);
+          this.sortedPool = content;
+          const shown = this.defaultPaging.rowsPerPage * this.clientPage;
+          this.products = {
+            content: this.sortedPool.slice(0, shown),
+            total: this.sortedPool.length
+          };
+        } else {
+          this.products = {
+            content,
+            total: response.meta.total
+          };
+        }
 
         this.saveOld = false;
         this.productsLoading = false;
@@ -598,6 +665,19 @@ export class ProductsComponent implements OnInit {
   }
 
   loadNextPage() {
+    // Price sort keeps the full sorted set client-side — just reveal the next
+    // slice, no refetch (and no skeleton flash).
+    if (this.priceSortOrder && this.sortedPool.length) {
+      this.clientPage++;
+      const shown = this.defaultPaging.rowsPerPage * this.clientPage;
+      this.products = {
+        content: this.sortedPool.slice(0, shown),
+        total: this.sortedPool.length
+      };
+      this.cdr.detectChanges();
+      return;
+    }
+
     this.params.page++;
     this.saveOld = true;
     this.qpService.updateParams(getApiParams(this.searchString, this.filterParam, this.sortParam, this.params.page, this.defaultPaging.rowsPerPage));
