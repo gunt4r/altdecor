@@ -466,20 +466,29 @@ export class ProductsComponent implements OnInit {
 
   filtersChange(event: any) {
     let filterParams: any = [];
-    const productTypes = Object.keys(event).filter(key => key.includes('product_type') && event[key]);
 
-    if (productTypes?.length) {
-      productTypes.forEach((key, index) => {
-        event[key].forEach((el: any, elIndex: number) => {
-          filterParams = [...filterParams, {
-            key: 'product_category',
-            value: getLocalized(el),
-            linkWord: LinkWord.CONTAINS,
-            prefix: (((index === productTypes.length - 1) && (elIndex === event[key].length - 1)) || ((elIndex === event[key].length - 1) && productTypes[index + 1] && !event[productTypes[index + 1]]?.length)) ? '' : ParamsPrefix.OR
-          }]
-        })
-      });
-    }
+    // Every selected category (across ALL product_type dropdowns) is an
+    // alternative → OR them together. The previous per-dropdown prefix logic
+    // emitted '' whenever the *next* dropdown was empty, and the final pass below
+    // turns '' into AND — so categories in non-adjacent groups got AND-joined and
+    // returned zero products. Flattening to a single OR list avoids that: only the
+    // last category gets '' so the whole category group is AND-ed with other filter
+    // types (characteristics/sizes), never with each other.
+    const categoryValues: any[] = [];
+    Object.keys(event).forEach((key) => {
+      if (key.includes('product_type') && Array.isArray(event[key])) {
+        event[key].forEach((el: any) => categoryValues.push(getLocalized(el)));
+      }
+    });
+
+    categoryValues.forEach((value: any, index: number) => {
+      filterParams = [...filterParams, {
+        key: 'product_category',
+        value,
+        linkWord: LinkWord.CONTAINS,
+        prefix: index === categoryValues.length - 1 ? '' : ParamsPrefix.OR
+      }];
+    });
 
     Object.keys(event).forEach((key: any) => {
       if (!key.includes('product_type') &&
