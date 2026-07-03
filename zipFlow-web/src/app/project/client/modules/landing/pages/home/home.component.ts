@@ -140,6 +140,11 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     this.currentLanguage = this.getLanguage();
     this.meta.getMeta(this.router.url);
+    // Embedded company-location map (was never assigned → the section always fell
+    // back to the static placeholder image).
+    this.mapEmbedUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+      'https://maps.google.com/maps?q=46.9878428,28.8349773&z=17&output=embed'
+    );
     this.loadHomepageData();
 
     this.router.events.pipe(

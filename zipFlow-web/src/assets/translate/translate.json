@@ -18,7 +18,8 @@
       },
       "HeaderInfo": "Midseason Sale: 20% Off — Auto Applied at Checkout — Limited Time Only",
       "BuyNowButton": "Toate produsele",
-      "ContactUs": "Ai nevoie de ajutor? Contactează-ne: "
+      "ContactUs": "Ai nevoie de ajutor? Contactează-ne: ",
+      "More": "Mai multe"
     },
     "Recommendations": {
       "Title": "Recomandat pentru tine",
@@ -382,7 +383,8 @@
       },
       "HeaderInfo": "Скидка среди сезона: 20% скидка — автоматически применяется при оформлении заказа — ограниченное время",
       "BuyNowButton": "Все товары",
-      "ContactUs": "Нужна помощь? Свяжитесь с нами: "
+      "ContactUs": "Нужна помощь? Свяжитесь с нами: ",
+      "More": "Ещё"
     },
     "Recommendations": {
       "Title": "Рекомендации для вас",
@@ -746,7 +748,8 @@
       },
       "HeaderInfo": "Midseason Sale: 20% Off — Auto Applied at Checkout — Limited Time Only",
       "BuyNowButton": "All products",
-      "ContactUs": "Need help? Contact us: "
+      "ContactUs": "Need help? Contact us: ",
+      "More": "More"
     },
     "Recommendations": {
       "Title": "Recommended for you",

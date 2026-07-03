@@ -54,9 +54,10 @@ interface NavProductLink {
 
 interface TopNavLink {
   label: string;
-  type: 'category' | 'route';
+  type: 'category' | 'route' | 'link';
   path?: string;
   query?: any;
+  link?: string;
 }
 
 const FALLBACK_LANGUAGES = ['RO', 'RU', 'EN'];
@@ -107,7 +108,13 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   private openMenuTimer: ReturnType<typeof setTimeout> | null = null;
   private closeMenuTimer: ReturnType<typeof setTimeout> | null = null;
   navProductLinks: NavProductLink[] = [];
+  // Flat desktop nav (admin "Desktop Menu" config). First MAX_FLAT_NAV shown
+  // inline; any beyond that collapse into the "More" dropdown.
   topNavLinks: TopNavLink[] = [];
+  overflowNavLinks: TopNavLink[] = [];
+  moreMenuOpen = false;
+  private desktopMenuRaw: { label: any; link: string; order: number }[] = [];
+  private readonly MAX_FLAT_NAV = 4;
   staticNavLinks: Array<{ label: string; path: string }> = [];
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object,
@@ -153,6 +160,7 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
       this.selectedLanguage = this.getLanguage().toUpperCase();
       this.getMenuKeys();
       this.rebuildNavLabels();
+      this.loadDesktopMenu();
       this.checkScreenSize();
 
       this.router.events.pipe(
@@ -458,12 +466,28 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   handleTopNavClick(link: TopNavLink) {
+    if (link.type === 'link' && link.link) {
+      this.goToRawLink(link.link);
+      return;
+    }
+
     if (link.type === 'route' && link.path) {
       this.goToNavLink({path: link.path, query: link.query || {sortBy: 'created_at', sortOrder: 'DESC', page: 1, rowsPerPage: 12}});
       return;
     }
 
     this.goToCategoryByName(link.label);
+  }
+
+  // Navigate to an admin-provided menu link (a full "/products?..." path with
+  // query string), prefixed with the active language segment.
+  goToRawLink(link: string) {
+    const language = this.getLanguage();
+    const path = link.startsWith('/') ? link : `/${link}`;
+    this.router.navigateByUrl(`/${language}${path}`);
+    this.moreMenuOpen = false;
+    this.toggleMenuOpened(false);
+    this.toggleMobileNav(false);
   }
 
   goToCategoryByName(label: string) {
@@ -570,14 +594,18 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
       return this.isActiveNav(link.path);
     }
 
-    const filter = this.normalizeText(this.qpService.getParamValue('filter') || '');
-    const label = this.normalizeText(link.label);
-
-    if (!filter || !this.isActiveNav('/products')) {
+    const currentFilter = this.normalizeText(this.qpService.getParamValue('filter') || '');
+    if (!currentFilter || !this.isActiveNav('/products')) {
       return false;
     }
 
-    return filter.includes(label);
+    // For admin menu links, compare the link's own filter= param to the active one.
+    if (link.type === 'link' && link.link) {
+      const linkFilter = this.normalizeText(decodeURIComponent((link.link.match(/[?&]filter=([^&]*)/)?.[1]) || ''));
+      return !!linkFilter && currentFilter === linkFilter;
+    }
+
+    return currentFilter.includes(this.normalizeText(link.label));
   }
 
   getLocalizedLabel(label: any): string {
@@ -631,15 +659,52 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   private rebuildNavLabels() {
     const language = this.getLanguage();
 
-    // Desktop/mobile menu is admin-driven (Catalog dropdown / productsMenuData).
-    // The old hardcoded category shortcuts are intentionally not shown.
-    this.topNavLinks = [];
+    // Desktop nav entries come from the admin "Desktop Menu" config (site_config
+    // config_type=desktop_menu). Rebuilt here so labels follow the active language.
+    this.buildDesktopMenuNav();
 
     this.staticNavLinks = [
       {label: language === 'ru' ? 'Блог' : language === 'en' ? 'Blog' : 'Blog', path: '/blog'},
       {label: language === 'ru' ? 'Наши проекты' : language === 'en' ? 'Our Projects' : 'Proiectele Noastre', path: '/proiecte'},
       {label: language === 'ru' ? 'Контакты' : language === 'en' ? 'Contacts' : 'Contacte', path: '/contacts'}
     ];
+  }
+
+  // Load the admin-configured "Desktop Menu" (site_config, config_type=desktop_menu):
+  // active entries ordered by order_index, each linking to a pre-built /products URL.
+  private loadDesktopMenu() {
+    this.publicService.getSiteConfig({rowsPerPage: 200}).pipe(
+      catchError(() => of({data: []})),
+      takeUntilDestroyed(this.destroy)
+    ).subscribe((res: any) => {
+      this.desktopMenuRaw = (res?.data || [])
+        .filter((row: any) => findObjectByKey(row.data, 'config_type') === 'desktop_menu'
+          && findObjectByKey(row.data, 'is_active') !== false)
+        .map((row: any) => ({
+          label: findObjectByKey(row.data, 'label'),
+          link: findObjectByKey(row.data, 'link') || '',
+          order: findObjectByKey(row.data, 'order_index') ?? 0
+        }))
+        .sort((a: any, b: any) => a.order - b.order);
+
+      this.buildDesktopMenuNav();
+      this.cdr.detectChanges();
+    });
+  }
+
+  // Split the desktop-menu entries into the inline row + "More" overflow, with
+  // labels localized to the active language.
+  private buildDesktopMenuNav() {
+    const links: TopNavLink[] = (this.desktopMenuRaw || [])
+      .filter((e) => e.link)
+      .map((e) => ({label: this.getLocalizedLabel(e.label), type: 'link' as const, link: e.link}));
+
+    this.topNavLinks = links.slice(0, this.MAX_FLAT_NAV);
+    this.overflowNavLinks = links.slice(this.MAX_FLAT_NAV);
+  }
+
+  toggleMoreMenu(open?: boolean) {
+    this.moreMenuOpen = open ?? !this.moreMenuOpen;
   }
 
   private syncScrollLock() {

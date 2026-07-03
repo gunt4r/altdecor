@@ -59,6 +59,25 @@
       {{ link.label }}
     </button>
 
+        <div class="nav-item nav-item--more" *ngIf="overflowNavLinks.length"
+             (mouseenter)="toggleMoreMenu(true)"
+             (mouseleave)="toggleMoreMenu(false)">
+          <button class="nav-item nav-more__trigger" [class.active]="moreMenuOpen"
+                  (click)="toggleMoreMenu()">
+            {{ 'Header.More' | translate }}
+            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6" fill="none">
+              <path d="M5 6L0 0H10L5 6Z" fill="currentColor"/>
+            </svg>
+          </button>
+          <div class="nav-more__dropdown" *ngIf="moreMenuOpen">
+            <button class="nav-more__item" *ngFor="let link of overflowNavLinks"
+                    [class.active]="isTopNavLinkActive(link)"
+                    (click)="handleTopNavClick(link)">
+              {{ link.label }}
+            </button>
+          </div>
+        </div>
+
         <button class="nav-item" *ngFor="let link of staticNavLinks"
           [class.active]="isActiveNav(link.path)"
           (click)="goToNavLink(link)">
@@ -82,19 +101,8 @@
 
     <div class="mobile-nav__links">
       <div class="mobile-nav__section">
-        <button class="mobile-nav-link" type="button" *ngFor="let link of topNavLinks; let i = index"
-                [style.animation-delay]="isMobileNavOpen ? (i * 28) + 'ms' : '0ms'"
-                [class.fade-row]="isMobileNavOpen"
-                (click)="handleTopNavClick(link)">
-          {{ link.label }}
-        </button>
-      </div>
-
-      <div class="mobile-nav__divider"></div>
-
-      <div class="mobile-nav__section">
         <div class="mobile-nav-expandable" *ngFor="let productType of productsMenuData; let j = index"
-             [style.animation-delay]="isMobileNavOpen ? ((topNavLinks.length + j) * 28) + 'ms' : '0ms'"
+             [style.animation-delay]="isMobileNavOpen ? (j * 28) + 'ms' : '0ms'"
              [class.fade-row]="isMobileNavOpen">
           <button class="mobile-nav-link mobile-nav-link--expandable" type="button"
                   [class.expanded]="expandedMobileType === productType.type.id"
@@ -121,7 +129,7 @@
 
       <div class="mobile-nav__section">
         <button class="mobile-nav-link" type="button" *ngFor="let link of staticNavLinks; let k = index"
-                [style.animation-delay]="isMobileNavOpen ? ((topNavLinks.length + productsMenuData.length + k) * 28) + 'ms' : '0ms'"
+                [style.animation-delay]="isMobileNavOpen ? ((productsMenuData.length + k) * 28) + 'ms' : '0ms'"
                 [class.fade-row]="isMobileNavOpen"
                 (click)="goToNavLink(link)">
           {{ link.label }}
