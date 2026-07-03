@@ -113,7 +113,10 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   topNavLinks: TopNavLink[] = [];
   overflowNavLinks: TopNavLink[] = [];
   moreMenuOpen = false;
+  // Mobile drawer (admin "Drawer Menu") — flat links.
+  drawerMenuLinks: TopNavLink[] = [];
   private desktopMenuRaw: { label: any; link: string; order: number }[] = [];
+  private drawerMenuRaw: { label: any; link: string; order: number }[] = [];
   private readonly MAX_FLAT_NAV = 4;
   staticNavLinks: Array<{ label: string; path: string }> = [];
 
@@ -160,7 +163,7 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
       this.selectedLanguage = this.getLanguage().toUpperCase();
       this.getMenuKeys();
       this.rebuildNavLabels();
-      this.loadDesktopMenu();
+      this.loadMenus();
       this.checkScreenSize();
 
       this.router.events.pipe(
@@ -479,11 +482,24 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
     this.goToCategoryByName(link.label);
   }
 
-  // Navigate to an admin-provided menu link (a full "/products?..." path with
-  // query string), prefixed with the active language segment.
+  // Navigate to an admin-provided menu link. Handles both a relative "/products?..."
+  // path and a full "https://altdecor.md/ro/products?..." URL; strips any origin and
+  // leading language segment, then re-prefixes with the active language.
   goToRawLink(link: string) {
     const language = this.getLanguage();
-    const path = link.startsWith('/') ? link : `/${link}`;
+    let path = link;
+    try {
+      if (/^https?:\/\//i.test(link)) {
+        const url = new URL(link);
+        path = url.pathname + url.search;
+      }
+    } catch {
+      // keep raw link on parse failure
+    }
+    path = path.replace(/^\/[a-z]{2}(?=\/|$)/i, '');
+    if (!path.startsWith('/')) {
+      path = `/${path}`;
+    }
     this.router.navigateByUrl(`/${language}${path}`);
     this.moreMenuOpen = false;
     this.toggleMenuOpened(false);
@@ -659,9 +675,10 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   private rebuildNavLabels() {
     const language = this.getLanguage();
 
-    // Desktop nav entries come from the admin "Desktop Menu" config (site_config
-    // config_type=desktop_menu). Rebuilt here so labels follow the active language.
+    // Desktop nav + mobile drawer entries come from the admin menus (site_config
+    // config_type=desktop_menu / drawer_menu). Rebuilt here so labels follow language.
     this.buildDesktopMenuNav();
+    this.buildDrawerMenuNav();
 
     this.staticNavLinks = [
       {label: language === 'ru' ? 'Блог' : language === 'en' ? 'Blog' : 'Blog', path: '/blog'},
@@ -670,26 +687,32 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
     ];
   }
 
-  // Load the admin-configured "Desktop Menu" (site_config, config_type=desktop_menu):
-  // active entries ordered by order_index, each linking to a pre-built /products URL.
-  private loadDesktopMenu() {
+  // Load the admin-configured menus from site_config in one fetch: the desktop
+  // top bar (config_type=desktop_menu) and the mobile drawer (config_type=drawer_menu).
+  // Both are lists of active entries ordered by order_index, each with a pre-built link.
+  private loadMenus() {
     this.publicService.getSiteConfig({rowsPerPage: 200}).pipe(
       catchError(() => of({data: []})),
       takeUntilDestroyed(this.destroy)
     ).subscribe((res: any) => {
-      this.desktopMenuRaw = (res?.data || [])
-        .filter((row: any) => findObjectByKey(row.data, 'config_type') === 'desktop_menu'
-          && findObjectByKey(row.data, 'is_active') !== false)
-        .map((row: any) => ({
-          label: findObjectByKey(row.data, 'label'),
-          link: findObjectByKey(row.data, 'link') || '',
-          order: findObjectByKey(row.data, 'order_index') ?? 0
-        }))
-        .sort((a: any, b: any) => a.order - b.order);
-
+      this.desktopMenuRaw = this.extractMenu(res?.data, 'desktop_menu');
+      this.drawerMenuRaw = this.extractMenu(res?.data, 'drawer_menu');
       this.buildDesktopMenuNav();
+      this.buildDrawerMenuNav();
       this.cdr.detectChanges();
     });
+  }
+
+  private extractMenu(rows: any[], configType: string) {
+    return (rows || [])
+      .filter((row: any) => findObjectByKey(row.data, 'config_type') === configType
+        && findObjectByKey(row.data, 'is_active') !== false)
+      .map((row: any) => ({
+        label: findObjectByKey(row.data, 'label'),
+        link: findObjectByKey(row.data, 'link') || '',
+        order: findObjectByKey(row.data, 'order_index') ?? 0
+      }))
+      .sort((a: any, b: any) => a.order - b.order);
   }
 
   // Split the desktop-menu entries into the inline row + "More" overflow, with
@@ -701,6 +724,13 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.topNavLinks = links.slice(0, this.MAX_FLAT_NAV);
     this.overflowNavLinks = links.slice(this.MAX_FLAT_NAV);
+  }
+
+  // Mobile drawer entries (config_type=drawer_menu), localized to the active language.
+  private buildDrawerMenuNav() {
+    this.drawerMenuLinks = (this.drawerMenuRaw || [])
+      .filter((e) => e.link)
+      .map((e) => ({label: this.getLocalizedLabel(e.label), type: 'link' as const, link: e.link}));
   }
 
   toggleMoreMenu(open?: boolean) {

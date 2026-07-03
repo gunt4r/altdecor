@@ -101,35 +101,20 @@
 
     <div class="mobile-nav__links">
       <div class="mobile-nav__section">
-        <div class="mobile-nav-expandable" *ngFor="let productType of productsMenuData; let j = index"
-             [style.animation-delay]="isMobileNavOpen ? (j * 28) + 'ms' : '0ms'"
-             [class.fade-row]="isMobileNavOpen">
-          <button class="mobile-nav-link mobile-nav-link--expandable" type="button"
-                  [class.expanded]="expandedMobileType === productType.type.id"
-                  (click)="toggleMobileType(productType.type.id)">
-            {{ getLocalizedLabel(productType.type?.label) }}
-            <svg class="chevron-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="9 18 15 12 9 6"/>
-            </svg>
-          </button>
-
-          <div class="mobile-nav-subcategories" *ngIf="expandedMobileType === productType.type.id">
-            <button type="button"
-                    class="mobile-nav-subcategory"
-                    *ngFor="let category of $any(productType.categories)"
-                    (click)="goToCategoryMobile($any(category))">
-              {{ getLocalizedLabel($any(category).label) }}
-            </button>
-          </div>
-        </div>
+        <button class="mobile-nav-link" type="button" *ngFor="let link of drawerMenuLinks; let j = index"
+                [style.animation-delay]="isMobileNavOpen ? (j * 28) + 'ms' : '0ms'"
+                [class.fade-row]="isMobileNavOpen"
+                [class.active]="isTopNavLinkActive(link)"
+                (click)="handleTopNavClick(link)">
+          {{ link.label }}
+        </button>
       </div>
 
       <div class="mobile-nav__divider"></div>
 
       <div class="mobile-nav__section">
         <button class="mobile-nav-link" type="button" *ngFor="let link of staticNavLinks; let k = index"
-                [style.animation-delay]="isMobileNavOpen ? ((productsMenuData.length + k) * 28) + 'ms' : '0ms'"
+                [style.animation-delay]="isMobileNavOpen ? ((drawerMenuLinks.length + k) * 28) + 'ms' : '0ms'"
                 [class.fade-row]="isMobileNavOpen"
                 (click)="goToNavLink(link)">
           {{ link.label }}
