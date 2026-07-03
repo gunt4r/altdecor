@@ -1,6 +1,5 @@
 <div class="product" [routerLink]="[product.id]">
   <div class="product__image" (click)="showImage(product.image); $event.stopPropagation()" [ngStyle]="{ backgroundImage: 'url(' + product.image + ')' }">
-    <span class="product__dimension" *ngIf="dimensionLabel">{{ dimensionLabel }}</span>
     <div class="badges">
       <app-badge class="product__new" *ngIf="product.isNew" [badge]="badge.Dark"
                  [label]="('Products.Badge.New' | translate) || ''" [radius]="'0 5px 5px 0'"></app-badge>

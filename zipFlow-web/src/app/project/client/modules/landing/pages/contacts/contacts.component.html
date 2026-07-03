@@ -17,7 +17,7 @@
 
             <div class="contact-item__content">
               <h3>{{ address.name }}</h3>
-              <p class="contact-item__address">{{ address.street }}</p>
+              <a class="contact-item__address" [href]="address.mapUrl || mapUrl" target="_blank" rel="noopener">{{ address.street }}</a>
               <p class="contact-item__schedule" *ngFor="let schedule of address.schedule">{{ schedule }}</p>
               <a *ngIf="address.phone" class="contact-item__phone" [href]="'tel:' + address.phone">{{ address.phone }}</a>
             </div>

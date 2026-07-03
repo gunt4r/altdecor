@@ -412,6 +412,13 @@
   background-size: cover;
 }
 
+.category-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
 .category-card__title {
   margin: 0;
   font-size: 1.05rem;
@@ -422,7 +429,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-top: -8px;
 
   span {
     display: inline-flex;
@@ -445,6 +451,7 @@
   justify-content: center;
   gap: 8px;
   width: 100%;
+  margin-top: auto;
   border: none;
   border-radius: 60px;
   background: var(--accent);
@@ -737,11 +744,21 @@
   }
 
   .contact-item__address {
+    display: inline-block;
     margin: 0 0 8px;
     color: #f47920;
     font-size: 14px;
     line-height: 1.4;
     font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: #e06a10;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
   }
 
   .contact-item__schedule {

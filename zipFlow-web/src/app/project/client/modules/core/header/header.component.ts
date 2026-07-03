@@ -631,13 +631,9 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   private rebuildNavLabels() {
     const language = this.getLanguage();
 
-    this.topNavLinks = [
-      {label: language === 'ru' ? 'Промо' : language === 'en' ? 'Promotions' : 'Promoții', type: 'route', path: '/products'},
-      {label: language === 'ru' ? 'Стена' : language === 'en' ? 'Wall' : 'Perete', type: 'category'},
-      {label: language === 'ru' ? 'Пол' : language === 'en' ? 'Floor' : 'Podea', type: 'category'},
-      {label: language === 'ru' ? 'Потолок' : language === 'en' ? 'Ceiling' : 'Tavan', type: 'category'},
-      {label: language === 'ru' ? 'Аксессуары' : language === 'en' ? 'Accessories' : 'Accesorii', type: 'category'}
-    ];
+    // Desktop/mobile menu is admin-driven (Catalog dropdown / productsMenuData).
+    // The old hardcoded category shortcuts are intentionally not shown.
+    this.topNavLinks = [];
 
     this.staticNavLinks = [
       {label: language === 'ru' ? 'Блог' : language === 'en' ? 'Blog' : 'Blog', path: '/blog'},
