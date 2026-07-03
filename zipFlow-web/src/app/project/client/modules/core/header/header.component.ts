@@ -11,7 +11,8 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  PLATFORM_ID
+  PLATFORM_ID,
+  ViewChild
 } from '@angular/core';
 import {isPlatformBrowser} from "@angular/common";
 import {PageSlug} from "../../shared/components/page-container/pages.type";
@@ -58,6 +59,7 @@ interface TopNavLink {
   path?: string;
   query?: any;
   link?: string;
+  icon?: string;
 }
 
 const FALLBACK_LANGUAGES = ['RO', 'RU', 'EN'];
@@ -65,7 +67,11 @@ const FALLBACK_LANGUAGES = ['RO', 'RU', 'EN'];
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+  styleUrls: ['./header.component.scss'],
+  // The header is highly interactive (cart, language/search/catalog dropdowns) and
+  // was producing SSR hydration mismatches that left toggles broken. Skip hydration
+  // so it renders cleanly on the client.
+  host: {ngSkipHydration: 'true'}
 })
 export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   @Output() active: EventEmitter<boolean> = new EventEmitter(false);
@@ -93,6 +99,8 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   menuKeys: string[] = [];
   selectedLanguage = (localStorage.getItem('language') || 'ro').toUpperCase();
   isCartOpen: boolean = false;
+  isSearchOpen = false;
+  @ViewChild('searchInput') searchInput?: ElementRef<HTMLInputElement>;
   isSideMenuOpen: boolean = false;
   isMobile: boolean = false;
   sizeChecked: boolean = false;
@@ -115,10 +123,10 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   moreMenuOpen = false;
   // Mobile drawer (admin "Drawer Menu") — flat links.
   drawerMenuLinks: TopNavLink[] = [];
-  private desktopMenuRaw: { label: any; link: string; order: number }[] = [];
-  private drawerMenuRaw: { label: any; link: string; order: number }[] = [];
+  private desktopMenuRaw: { label: any; link: string; order: number; icon?: string }[] = [];
+  private drawerMenuRaw: { label: any; link: string; order: number; icon?: string }[] = [];
   private readonly MAX_FLAT_NAV = 4;
-  staticNavLinks: Array<{ label: string; path: string }> = [];
+  staticNavLinks: Array<{ label: string; path: string; icon?: string }> = [];
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object,
               private route: ActivatedRoute,
@@ -384,6 +392,31 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   toggleOpenCart(): void {
     this.isCartOpen = !this.isCartOpen;
+  }
+
+  toggleSearch(open?: boolean): void {
+    this.isSearchOpen = open ?? !this.isSearchOpen;
+    if (this.isSearchOpen && isPlatformBrowser(this.platformId)) {
+      setTimeout(() => this.searchInput?.nativeElement?.focus(), 0);
+    }
+  }
+
+  submitSearch(): void {
+    const term = (this.searchInput?.nativeElement?.value || '').trim();
+    if (!term) {
+      return;
+    }
+    const language = this.getLanguage();
+    this.router.navigate([`/${language}/products`], {
+      queryParams: {search: term, sortBy: 'created_at', sortOrder: 'DESC', page: 1, rowsPerPage: 12}
+    });
+    this.isSearchOpen = false;
+    this.toggleMobileNav(false);
+  }
+
+  get searchPlaceholder(): string {
+    const l = this.getLanguage();
+    return l === 'ru' ? 'Поиск товаров...' : l === 'en' ? 'Search products...' : 'Caută produse...';
   }
 
   setActiveType(id: any) {
@@ -681,9 +714,9 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
     this.buildDrawerMenuNav();
 
     this.staticNavLinks = [
-      {label: language === 'ru' ? 'Блог' : language === 'en' ? 'Blog' : 'Blog', path: '/blog'},
-      {label: language === 'ru' ? 'Наши проекты' : language === 'en' ? 'Our Projects' : 'Proiectele Noastre', path: '/proiecte'},
-      {label: language === 'ru' ? 'Контакты' : language === 'en' ? 'Contacts' : 'Contacte', path: '/contacts'}
+      {label: language === 'ru' ? 'Блог' : language === 'en' ? 'Blog' : 'Blog', path: '/blog', icon: 'book'},
+      {label: language === 'ru' ? 'Наши проекты' : language === 'en' ? 'Our Projects' : 'Proiectele Noastre', path: '/proiecte', icon: 'image'},
+      {label: language === 'ru' ? 'Контакты' : language === 'en' ? 'Contacts' : 'Contacte', path: '/contacts', icon: 'phone'}
     ];
   }
 
@@ -710,7 +743,8 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
       .map((row: any) => ({
         label: findObjectByKey(row.data, 'label'),
         link: findObjectByKey(row.data, 'link') || '',
-        order: findObjectByKey(row.data, 'order_index') ?? 0
+        order: findObjectByKey(row.data, 'order_index') ?? 0,
+        icon: findObjectByKey(row.data, 'icon') || ''
       }))
       .sort((a: any, b: any) => a.order - b.order);
   }
@@ -726,11 +760,12 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
     this.overflowNavLinks = links.slice(this.MAX_FLAT_NAV);
   }
 
-  // Mobile drawer entries (config_type=drawer_menu), localized to the active language.
+  // Mobile drawer entries (config_type=drawer_menu), localized to the active language,
+  // carrying the admin-configured icon name (lucide: hexagon/puzzle/square/layers…).
   private buildDrawerMenuNav() {
     this.drawerMenuLinks = (this.drawerMenuRaw || [])
       .filter((e) => e.link)
-      .map((e) => ({label: this.getLocalizedLabel(e.label), type: 'link' as const, link: e.link}));
+      .map((e) => ({label: this.getLocalizedLabel(e.label), type: 'link' as const, link: e.link, icon: e.icon}));
   }
 
   toggleMoreMenu(open?: boolean) {

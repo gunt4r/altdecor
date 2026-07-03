@@ -205,6 +205,69 @@
   font-weight: 600;
 }
 
+/* ─── Header search bar (toggled by the search icon) ─── */
+
+.header-search {
+  padding: 10px clamp(16px, 5vw, 80px) 14px;
+  border-top: 1px solid #f0f0f0;
+  animation: search-drop 0.2s ease;
+}
+
+.header-search__box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 720px;
+  margin: 0 auto;
+  background: #f6f6f6;
+  border: 1px solid #e6e6e6;
+  border-radius: 10px;
+  padding: 10px 14px;
+
+  &:focus-within {
+    border-color: #f47920;
+    background: #fff;
+  }
+}
+
+.header-search__icon {
+  flex-shrink: 0;
+  color: #8a8a8a;
+}
+
+.header-search__input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  color: #1a1a1a;
+
+  &::placeholder {
+    color: #9a9a9a;
+  }
+}
+
+.header-search__close {
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  color: #8a8a8a;
+  display: inline-flex;
+  cursor: pointer;
+  padding: 2px;
+
+  &:hover {
+    color: #1a1a1a;
+  }
+}
+
+@keyframes search-drop {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* ─── "More" overflow dropdown (extra Desktop Menu entries beyond the flat row) ─── */
 
 .nav-item--more {
@@ -409,6 +472,71 @@
   text-transform: uppercase;
   font-size: 13px;
   letter-spacing: 0.04em;
+}
+
+/* ─── Admin-driven drawer rows: [icon] label [chevron] ─── */
+
+.mobile-nav-link--rich,
+.mobile-nav-link--catalog {
+  gap: 14px;
+
+  .mobile-nav-link__label {
+    flex: 1;
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  &.active {
+    color: #f47920;
+
+    .mobile-nav-link__icon {
+      border-color: rgba(244, 121, 32, 0.35);
+      background: #fff1e8;
+      color: #f47920;
+    }
+  }
+}
+
+.mobile-nav-link__icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid #ececec;
+  background: #f7f7f7;
+  color: #1a1a1a;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.mobile-nav-link__chevron {
+  flex-shrink: 0;
+  display: inline-flex;
+  color: #c2c2c2;
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.mobile-nav-link--catalog {
+  .mobile-nav-link__trail {
+    display: inline-flex;
+    color: #9a9a9a;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
 }
 
 .mobile-nav-expandable {
