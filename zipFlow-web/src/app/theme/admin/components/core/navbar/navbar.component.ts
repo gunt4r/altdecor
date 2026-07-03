@@ -44,7 +44,11 @@ export class NavbarComponent extends AbstractComponent {
           : this.qpService.deleteParam('query');
       });
 
-    this.searchTerm = this.qpService.getParamValue('query') || '';
+    // Keep the box in sync with the URL: reflects the active filter and clears
+    // itself when navigating to a different entity list (query param drops).
+    this.qpService.getParamSubs('query').subscribe((value: string) => {
+      this.searchTerm = value || '';
+    });
   }
 
   get entities() {
