@@ -5,6 +5,9 @@ import {Store} from "@ngrx/store";
 import {Entities, PolicyActions} from "../../../dictionary/permissions.dictionary";
 import {PermissionsService} from "../../../services/permissions.service";
 import {AuthService} from "../../../services/auth.service";
+import {QueryParamsService} from "../../../services/query-params.service";
+import {Subject} from "rxjs";
+import {debounceTime, distinctUntilChanged} from "rxjs/operators";
 
 @Component({
   selector   : 'app-navbar',
@@ -13,6 +16,8 @@ import {AuthService} from "../../../services/auth.service";
 })
 export class NavbarComponent extends AbstractComponent {
   public isCollapsed = true;
+  public searchTerm = '';
+  private searchSubject = new Subject<string>();
   public navItems: NavItemInterface[] = [
     // {
     //   name: 'Profile',
@@ -24,9 +29,22 @@ export class NavbarComponent extends AbstractComponent {
     protected override store: Store,
     protected permissionService: PermissionsService,
     private authService: AuthService,
+    private qpService: QueryParamsService,
     @Inject(PLATFORM_ID) protected override platformId: Object
   ) {
     super(store, permissionService, platformId);
+
+    // Global search: writes the `query` param that AbstractListingComponent already
+    // reads, so it filters the active list (same mechanism as the per-table search).
+    this.searchSubject
+      .pipe(debounceTime(400), distinctUntilChanged())
+      .subscribe((value) => {
+        value
+          ? this.qpService.updateParam('query', value)
+          : this.qpService.deleteParam('query');
+      });
+
+    this.searchTerm = this.qpService.getParamValue('query') || '';
   }
 
   get entities() {
@@ -35,6 +53,16 @@ export class NavbarComponent extends AbstractComponent {
 
   get policyActions() {
     return PolicyActions;
+  }
+
+  onSearch(value: string) {
+    this.searchTerm = value;
+    this.searchSubject.next(value);
+  }
+
+  clearSearch() {
+    this.searchTerm = '';
+    this.qpService.deleteParam('query');
   }
 
   logout() {
