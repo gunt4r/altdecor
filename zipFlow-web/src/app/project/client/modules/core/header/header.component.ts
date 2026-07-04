@@ -20,9 +20,9 @@ import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 import {TranslateService} from "../../shared/services/translate.service";
 import {PublicService} from "../../shared/services/public.service";
 import {CartProductService} from "../../shared/services/cart-products.service";
-import {catchError, debounceTime, filter, forkJoin, of, tap} from "rxjs";
+import {catchError, debounceTime, filter, forkJoin, of, Subject, tap} from "rxjs";
 import {QueryParamsService} from "../../../../../theme/shared/services/query-params.service";
-import {SortTypes} from "../../../../../theme/client/utils/api-params.utils";
+import {getApiParams, LinkWord, ParamsPrefix, SortTypes} from "../../../../../theme/client/utils/api-params.utils";
 import {findObjectByKey} from "../../../../../theme/shared/utils/form.utils";
 import {ToastrService} from "ngx-toastr";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
@@ -108,6 +108,11 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   cartCount = 0;
   searchParam = "search";
   searchTerm!: string;
+  // Live product-search popover (client-facing content only — products, not admin entities).
+  searchResults: MenuProduct[] = [];
+  isSearchLoading = false;
+  showSearchResults = false;
+  private searchSubject = new Subject<string>();
   currentUrl = '';
   isLanguageDropdownOpen = false;
   isMobileNavOpen = false;
@@ -162,6 +167,7 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.elementRef.nativeElement.contains(event.target)) {
       this.isLanguageDropdownOpen = false;
       this.toggleMenuOpened(false);
+      this.showSearchResults = false;
     }
   }
 
@@ -224,6 +230,12 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
           this.searchTerm = params.search;
         }
       });
+
+      // Debounced live product search for the header popover.
+      this.searchSubject.pipe(
+        debounceTime(300),
+        takeUntilDestroyed(this.destroy)
+      ).subscribe((term: string) => this.runProductSearch(term));
 
       if (!this.languages.length) {
         this.languages = [...FALLBACK_LANGUAGES];
@@ -398,15 +410,76 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isSearchOpen = open ?? !this.isSearchOpen;
     if (this.isSearchOpen && isPlatformBrowser(this.platformId)) {
       setTimeout(() => this.searchInput?.nativeElement?.focus(), 0);
+    } else {
+      this.showSearchResults = false;
+      this.searchResults = [];
     }
   }
 
+  // Live typeahead: as the user types, fetch matching PRODUCTS only (client content)
+  // and show them in the popover. Enter / "see all" still opens the full results page.
+  onSearchInput(value: string): void {
+    this.searchTerm = value;
+    const term = (value || '').trim();
+    if (term.length < 2) {
+      this.searchResults = [];
+      this.showSearchResults = false;
+      this.isSearchLoading = false;
+      return;
+    }
+    this.showSearchResults = true;
+    this.isSearchLoading = true;
+    this.searchSubject.next(term);
+  }
+
+  private runProductSearch(term: string): void {
+    if (!term || term.trim().length < 2) {
+      this.isSearchLoading = false;
+      return;
+    }
+
+    const searchParam = [
+      {key: 'product_type', value: term, linkWord: LinkWord.CONTAINS, prefix: ParamsPrefix.OR},
+      {key: 'product_category', value: term, linkWord: LinkWord.CONTAINS, prefix: ParamsPrefix.OR},
+      {key: 'title', value: term, linkWord: LinkWord.CONTAINS}
+    ];
+    const params = getApiParams(searchParam, undefined, {sortBy: 'created_at', sortOrder: SortTypes.DESC}, 1, 6, false);
+
+    this.publicService.getProducts(params).pipe(
+      catchError(() => of({data: []})),
+      takeUntilDestroyed(this.destroy)
+    ).subscribe((res: any) => {
+      // Ignore a stale response if the user has kept typing.
+      if ((this.searchTerm || '').trim() !== term) {
+        return;
+      }
+      this.searchResults = (res?.data || []).map((product: any) => ({
+        id: product.id,
+        title: this.getLocalizedLabel(findObjectByKey(product.data, 'title')),
+        image: findObjectByKey(product.data, 'images')?.[0]?.['file_url'] || '',
+        url: `/products/${product.id}`
+      }));
+      this.isSearchLoading = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  selectSearchResult(product: MenuProduct): void {
+    this.showSearchResults = false;
+    this.searchResults = [];
+    this.isSearchOpen = false;
+    this.router.navigate([`/${this.getLanguage()}/products/${product.id}`]);
+    this.toggleMobileNav(false);
+  }
+
   submitSearch(): void {
-    const term = (this.searchInput?.nativeElement?.value || '').trim();
+    const term = (this.searchInput?.nativeElement?.value || this.searchTerm || '').trim();
     if (!term) {
       return;
     }
     const language = this.getLanguage();
+    this.showSearchResults = false;
+    this.searchResults = [];
     this.router.navigate([`/${language}/products`], {
       queryParams: {search: term, sortBy: 'created_at', sortOrder: 'DESC', page: 1, rowsPerPage: 12}
     });

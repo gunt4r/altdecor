@@ -9,8 +9,8 @@ import {AuthService} from "../../../services/auth.service";
 import {EntityService} from "../../../services/entity.service";
 import {HttpGateway} from "../../../helpers/http.gateway";
 import {isPlatformBrowser} from "@angular/common";
-import {Subject, forkJoin, of, lastValueFrom} from "rxjs";
-import {catchError, debounceTime, distinctUntilChanged} from "rxjs/operators";
+import {Subject, forkJoin, of} from "rxjs";
+import {catchError, debounceTime} from "rxjs/operators";
 
 interface SearchResultItem {
   id: string | number;
@@ -60,8 +60,10 @@ export class NavbarComponent extends AbstractComponent {
       this.language = localStorage.getItem('language') || 'ro';
       this.loadEntities();
 
+      // NOTE: no distinctUntilChanged — searching the same term twice in a row
+      // (e.g. after clicking a result and reopening) must re-run, not be swallowed.
       this.searchSubject
-        .pipe(debounceTime(300), distinctUntilChanged())
+        .pipe(debounceTime(300))
         .subscribe((value) => this.runSearch(value));
     }
   }
@@ -177,8 +179,11 @@ export class NavbarComponent extends AbstractComponent {
   }
 
   selectResult(slug: string, id: string | number) {
-    this.closeResults();
+    this.showResults = false;
+    this.results = [];
     this.searchTerm = '';
+    // Same absolute path the list's edit action uses; the languageMatcher injects the
+    // active language segment, so this resolves to /{lang}/admin/crud/<slug>/<id>.
     void this.router.navigate(['/admin/crud', slug, id]);
   }
 
