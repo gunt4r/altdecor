@@ -39,6 +39,9 @@ export class ProductDetailsComponent implements OnInit {
 
   quantity = 1;
 
+  isFavorite = false;
+  private readonly favKey = 'favorite_products';
+
   constructor(private cartService: CartProductService,
               private router: Router,
               private publicService: PublicService,
@@ -60,6 +63,8 @@ export class ProductDetailsComponent implements OnInit {
           this.initialOption = this.getSizesOption(this.selectedSizes);
         }
       }
+      this.isFavorite = this.readFavorites().includes(String(this.product.id));
+
       this.publicService.getGeneralDetails().subscribe((response: any) => {
         if (response && response.data) {
           this.contactPhone = {
@@ -71,8 +76,37 @@ export class ProductDetailsComponent implements OnInit {
     }
   }
 
+  private readFavorites(): string[] {
+    if (!isPlatformBrowser(this.platformId)) {
+      return [];
+    }
+    try {
+      const raw = JSON.parse(localStorage.getItem(this.favKey) || '[]');
+      return Array.isArray(raw) ? raw.map((id: any) => String(id)) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  toggleFavorite() {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    const id = String(this.product.id);
+    const list = this.readFavorites();
+    const idx = list.indexOf(id);
+    if (idx >= 0) {
+      list.splice(idx, 1);
+      this.isFavorite = false;
+    } else {
+      list.push(id);
+      this.isFavorite = true;
+    }
+    localStorage.setItem(this.favKey, JSON.stringify(list));
+  }
+
   getSizeMeasure(size: number | string): string {
-    return size + ' (' + this.product.measure + ')';
+    return size + ' ' + this.product.measure;
   }
 
   changeOption(sizes: ProductSize | unknown) {
@@ -86,7 +120,7 @@ export class ProductDetailsComponent implements OnInit {
   }
 
   private getSizesOption(sizes: ProductSize): string {
-    return `${sizes.height}x${sizes.width}x${sizes.length} (${this.product.measure})`;
+    return `${sizes.width} × ${sizes.length} × ${sizes.height} ${this.product.measure}`;
   }
 
   addToCart() {

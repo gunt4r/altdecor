@@ -26,18 +26,23 @@ export class ImagesSlideComponent {
   }
 
   changeImage(index: number) {
-    // this.startAnimation = false;
-
-    // setTimeout(() => {
     this.imageIndex = index;
-    // }, this.animationSpeed / 2);
+  }
 
+  prevImage(event?: Event) {
+    event?.stopPropagation();
+    if (!this.images?.length) {
+      return;
+    }
+    this.imageIndex = (this.imageIndex - 1 + this.images.length) % this.images.length;
+  }
 
-    // setTimeout(() => {
-    //   this.startAnimation = false;
-    // }, this.animationSpeed);
-
-    // if (this.imageIndex !== index) this.startAnimation = true;
+  nextImage(event?: Event) {
+    event?.stopPropagation();
+    if (!this.images?.length) {
+      return;
+    }
+    this.imageIndex = (this.imageIndex + 1) % this.images.length;
   }
 
   showImages(activeIndex: number) {

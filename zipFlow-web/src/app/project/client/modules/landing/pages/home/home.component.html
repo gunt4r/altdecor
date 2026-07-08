@@ -1,14 +1,7 @@
 <main class="figma-home">
   <section class="hero">
-    <div class="hero__skeleton" *ngIf="!heroImageLoaded">
+    <div class="hero__skeleton" *ngIf="!heroImageLoaded" aria-hidden="true">
       <div class="hero__skeleton-shimmer"></div>
-      <div class="hero__skeleton-content">
-        <div class="skeleton skeleton--hero-title"></div>
-        <div class="skeleton skeleton--hero-btn"></div>
-        <div class="hero__skeleton-stats">
-          <div class="skeleton skeleton--hero-stat" *ngFor="let i of [1, 2, 3]"></div>
-        </div>
-      </div>
     </div>
     <img class="hero__bg-image"
          [class.loaded]="heroImageLoaded"
@@ -18,7 +11,7 @@
          loading="eager"
          (load)="onHeroImageLoad()" />
     <div class="hero__overlay"></div>
-    <div class="hero__content" [class.visible]="heroImageLoaded">
+    <div class="hero__content visible">
       <h1>{{ heroTitle || ui.heroTitle }}</h1>
       <button class="primary-btn" (click)="heroButtonLink ? navigateToLink(heroButtonLink) : navigateToProducts()">{{ ui.catalogCta }}</button>
 

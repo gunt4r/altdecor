@@ -91,7 +91,7 @@
     <button class="nav-item nav-item--catalog" [class.active]="menuOpened"
             (mouseenter)="onNavMouseEnter()"
             (mouseleave)="onNavMouseLeave()"
-            (click)="toggleMenuOpened(!menuOpened)">
+            (click)="onCatalogClick()">
       Catalog
       <svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6" fill="none">
         <path d="M5 6L0 0H10L5 6Z" fill="currentColor"/>
@@ -215,6 +215,8 @@
       </button>
     </div>
   </aside>
+
+  <div class="nav-backdrop" *ngIf="menuOpened && !isMobile" (click)="toggleMenuOpened(false)"></div>
 
   <div class="product-menu"
       (mouseenter)="onNavMouseEnter()"

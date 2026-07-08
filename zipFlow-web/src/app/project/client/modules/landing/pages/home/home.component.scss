@@ -67,7 +67,10 @@
 .hero__skeleton {
   position: absolute;
   inset: 0;
-  z-index: 3;
+  // Behind the overlay (1) and content (2) so it is only a background placeholder
+  // while the hero image loads — it must never sit over (and block) the CTA button.
+  z-index: 0;
+  pointer-events: none;
   display: flex;
   flex-direction: column;
   transition: opacity 0.5s ease;

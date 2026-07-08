@@ -12,6 +12,14 @@
   z-index: 9999999999 !important;
 }
 
+// ngx-toastr pins its container to the viewport with `position: fixed`, but Bootstrap's
+// own `.toast-container { position: absolute }` is bundled after toastr.css and was
+// overriding it — so the cart toast drifted with the page and showed mid-screen when
+// scrolled. This two-class selector out-specifies Bootstrap regardless of load order.
+.overlay-container .toast-container {
+  position: fixed;
+}
+
 body, html {
   font-family: 'DM Sans', sans-serif;
   overflow-x: hidden;

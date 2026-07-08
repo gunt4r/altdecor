@@ -705,6 +705,22 @@
 
 /* ─── Desktop Product Mega Menu ─── */
 
+/* Full-viewport catch layer: any click that is not on the nav bar or the menu panel
+   closes the mega-menu — reliably, without depending on click events bubbling to
+   document (page content that calls stopPropagation used to swallow the close). */
+.nav-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  background: transparent;
+}
+
+.header-main-bar,
+.header-nav-bar {
+  position: relative;
+  z-index: 20;
+}
+
 .product-menu {
   position: absolute;
   left: 50%;
@@ -722,6 +738,7 @@
   padding: 10px 20px;
   animation: dropdown-in 0.22s ease;
   align-items: start;
+  z-index: 30;
 }
 
 .main-panel {

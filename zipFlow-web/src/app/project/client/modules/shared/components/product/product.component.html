@@ -1,16 +1,70 @@
 <div class="product" *ngIf="product">
-  <div class="product-header">
-    <div class="product-title">
-      {{product.title | translate}}
+  <div class="product__media">
+    <app-images-slide [images]="product.images" [sale]="product.isSale" [isNew]="product.isNew"
+                      [comingSoon]="product.comingSoon" [outOfStock]="product.outOfStock"></app-images-slide>
+  </div>
+
+  <div class="product__aside">
+    <div class="product__head">
+      <div class="product__title">{{ product.title | translate }}</div>
+      <div class="product__cod">
+        <span>{{ 'Product.Label.Cod' | translate }}: </span>
+        <span>{{ product.labels[0] | translate }}</span>
+      </div>
     </div>
-    <div class="product-cod">
-      <span>{{'Product.Label.Cod' | translate}}: </span>
-      <span>{{product.labels[0] | translate}}</span>
+
+    <app-product-details [product]="product" [cart]="cart">
+      <ng-content></ng-content>
+    </app-product-details>
+  </div>
+</div>
+
+<div class="product-features" *ngIf="product">
+  <div class="product-features__item">
+    <div class="product-features__icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M1 3h15v13H1zM16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+      </svg>
+    </div>
+    <div class="product-features__text">
+      <h4>{{ 'Product.Features.Delivery.Title' | translate }}</h4>
+      <p>{{ 'Product.Features.Delivery.Text' | translate }}</p>
     </div>
   </div>
-  <app-images-slide [images]="product.images" [sale]="product.isSale" [isNew]="product.isNew" [comingSoon]="product.comingSoon" [outOfStock]="product.outOfStock"></app-images-slide>
 
-  <app-product-details [product]="product" [cart]="cart">
-    <ng-content></ng-content>
-  </app-product-details>
+  <div class="product-features__item">
+    <div class="product-features__icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2l8 4v5c0 5-3.4 8.5-8 11-4.6-2.5-8-6-8-11V6z"/><path d="M9 12l2 2 4-4"/>
+      </svg>
+    </div>
+    <div class="product-features__text">
+      <h4>{{ 'Product.Features.Payment.Title' | translate }}</h4>
+      <p>{{ 'Product.Features.Payment.Text' | translate }}</p>
+    </div>
+  </div>
+
+  <div class="product-features__item">
+    <div class="product-features__icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2l8 4v5c0 5-3.4 8.5-8 11-4.6-2.5-8-6-8-11V6z"/>
+      </svg>
+    </div>
+    <div class="product-features__text">
+      <h4>{{ 'Product.Features.Warranty.Title' | translate }}</h4>
+      <p>{{ 'Product.Features.Warranty.Text' | translate }}</p>
+    </div>
+  </div>
+
+  <div class="product-features__item">
+    <div class="product-features__icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>
+      </svg>
+    </div>
+    <div class="product-features__text">
+      <h4>{{ 'Product.Features.Return.Title' | translate }}</h4>
+      <p>{{ 'Product.Features.Return.Text' | translate }}</p>
+    </div>
+  </div>
 </div>

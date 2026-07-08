@@ -518,38 +518,34 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    if (this.openMenuTimer) {
-      clearTimeout(this.openMenuTimer);
-    }
-
     if (this.closeMenuTimer) {
       clearTimeout(this.closeMenuTimer);
       this.closeMenuTimer = null;
     }
 
-    this.openMenuTimer = setTimeout(() => {
+    // Hover opens the menu immediately (only if closed, so it never fights a click).
+    if (!this.menuOpened) {
       this.toggleMenuOpened(true);
-      this.openMenuTimer = null;
-    }, 90);
+    }
+  }
+
+  onCatalogClick() {
+    // Plain toggle. Opening is usually done by hover; a click on the trigger is the
+    // explicit "close" (and the primary open action on touch devices with no hover).
+    this.toggleMenuOpened(!this.menuOpened);
   }
 
   onNavMouseLeave() {
-    if (this.isMobile) {
-      return;
-    }
+    // Intentionally a no-op: once the Catalog menu is open it must STAY open when the
+    // mouse leaves. It only closes on: clicking Catalog again, clicking outside
+    // (onDocumentClick), selecting an item (NavigationEnd), or pressing Escape.
+  }
 
-    if (this.openMenuTimer) {
-      clearTimeout(this.openMenuTimer);
-      this.openMenuTimer = null;
-    }
-
-    if (this.closeMenuTimer) {
-      clearTimeout(this.closeMenuTimer);
-    }
-
-    this.closeMenuTimer = setTimeout(() => {
+  @HostListener('document:keydown.escape')
+  onEscape() {
+    if (this.menuOpened) {
       this.toggleMenuOpened(false);
-    }, 220);
+    }
   }
 
   toggleMobileNav(value?: boolean) {

@@ -252,7 +252,7 @@ export class HomeComponent implements OnInit {
     ]).pipe(
       takeUntilDestroyed(this.destroy)
     ).subscribe(([categories, offers, general, siteConfig, addresses]) => {
-      this.buildCategoryCards(categories?.data || []);
+      this.buildCategoryCards(siteConfig?.data || [], categories?.data || []);
       this.buildOfferCards(offers?.data || []);
       this.buildAddresses(addresses?.data || []);
       this.buildDesignerPhones(general?.data || []);
@@ -262,8 +262,41 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  private buildCategoryCards(categories: any[]) {
-    this.categoryCards = categories.map((cat: any) => {
+  private buildCategoryCards(siteConfig: any[], categories: any[]) {
+    // Homepage category cards are driven explicitly by the admin Site Config
+    // "Homepage Categories" tab (config_type === 'homepage_category'), NOT by the
+    // product-category entity. Only fall back to product categories if no config exists.
+    const homepageCategoryConfigs = (siteConfig || [])
+      .filter((item: any) => findObjectByKey(item.data, 'config_type') === 'homepage_category')
+      .filter((item: any) => findObjectByKey(item.data, 'is_active') !== false)
+      .sort((a: any, b: any) =>
+        Number(findObjectByKey(a.data, 'order_index') || 999) - Number(findObjectByKey(b.data, 'order_index') || 999));
+
+    if (homepageCategoryConfigs.length) {
+      this.categoryCards = homepageCategoryConfigs.map((item: any) => {
+        const label = findObjectByKey(item.data, 'label');
+        const link = findObjectByKey(item.data, 'link') || '';
+        const image = findObjectByKey(item.data, 'image');
+        const rawTags = findObjectByKey(item.data, 'tags');
+        const tags = Array.isArray(rawTags)
+          ? rawTags.map((t: any) => (typeof t === 'object' ? (t?.[this.currentLanguage] || t?.['ro'] || '') : (t || ''))).filter(Boolean)
+          : [];
+        return {
+          title: typeof label === 'object' ? (label?.[this.currentLanguage] || label?.['ro'] || '') : (label || ''),
+          tags,
+          image: Array.isArray(image) ? image[0]?.file_url : (image || 'assets/images/placeholder.png'),
+          filter: typeof label === 'object' ? (label?.['ro'] || label?.[this.currentLanguage] || String(item.id)) : (label || String(item.id)),
+          filterType: 'category' as const,
+          categoryId: item.id,
+          action: this.ui.catalogCta,
+          link
+        };
+      });
+      return;
+    }
+
+    // Fallback: derive cards from product categories when no homepage_category config is set.
+    this.categoryCards = (categories || []).map((cat: any) => {
       const label = findObjectByKey(cat.data, 'label');
       const image = findObjectByKey(cat.data, 'image');
       const slug = findObjectByKey(cat.data, 'slug');

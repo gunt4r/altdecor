@@ -1,102 +1,93 @@
 <div class="details" *ngIf="product">
-  <div class="details__labels">
-    <ng-container *ngFor="let label of product.labels">
-      <div class="details__item product-cod">
-        <span>{{'Product.Label.Cod' | translate}}: </span>
-        <span>{{ label | uppercase }}</span>
+  <section class="spec">
+    <h2 class="spec__title">{{ 'Product.Spec.Title' | translate | uppercase }}</h2>
+
+    <div class="spec__table">
+      <div class="spec__row" *ngIf="product.model">
+        <div class="spec__key">{{ 'Product.Spec.Model' | translate }}</div>
+        <div class="spec__val">{{ product.model }}</div>
       </div>
-    </ng-container>
-  </div>
 
-  <div class="details__title">
-    {{ product.title | translate }}
-  </div>
+      <div class="spec__row" *ngIf="product.type">
+        <div class="spec__key">{{ 'Product.Spec.Type' | translate }}</div>
+        <div class="spec__val">{{ product.type | translate }}</div>
+      </div>
 
-  <div class="details__prices">
-    <div class="price--new">
-      {{ product.price.current | uppercase }}
+      <div class="spec__row" *ngIf="product.material">
+        <div class="spec__key">{{ 'Product.Spec.Material' | translate }}</div>
+        <div class="spec__val">{{ product.material | translate }}</div>
+      </div>
+
+      <!-- Every characteristic configured in the admin panel is rendered inside the table. -->
+      <ng-container *ngIf="product.characteristic?.length">
+        <ng-container *ngFor="let carac of product.characteristic">
+          <div class="spec__row" *ngIf="carac.key?.ro || carac.key?.ru || carac.key?.en">
+            <div class="spec__key">{{ carac.key | translate }}</div>
+            <div class="spec__val">{{ carac.value | translate }}</div>
+          </div>
+        </ng-container>
+      </ng-container>
     </div>
+  </section>
 
-    <div class="price--old">
-      {{ product.price.old | uppercase }}
+  <div class="dims" *ngIf="sizesOptions?.length">
+    <div class="dims__col" *ngIf="selectedSizes?.height">
+      <span class="dims__label">{{ 'Product.Spec.Thickness' | translate }}</span>
+      <span class="dims__val">{{ getSizeMeasure(selectedSizes.height) }}</span>
+    </div>
+    <div class="dims__col" *ngIf="selectedSizes?.width">
+      <span class="dims__label">{{ 'Product.Spec.Width' | translate }}</span>
+      <span class="dims__val">{{ getSizeMeasure(selectedSizes.width) }}</span>
+    </div>
+    <div class="dims__col" *ngIf="selectedSizes?.length">
+      <span class="dims__label">{{ 'Product.Spec.Length' | translate }}</span>
+      <span class="dims__val">{{ getSizeMeasure(selectedSizes.length) }}</span>
     </div>
   </div>
 
-  <div class="details__item">
-    {{ vatLabels[product.vat] | translate }}
-  </div>
-
-  <div class="details__spacer"></div>
-
-  <div class="details__stock" *ngIf="product?.stock">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <div class="stock" *ngIf="product?.stock">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M15 9.90573V10.5037C14.9992 11.9054 14.5453 13.2693 13.706 14.3919C12.8668 15.5146 11.6871 16.3358 10.343 16.7333C8.99881 17.1307 7.56224 17.083 6.2474 16.5972C4.93259 16.1115 3.81002 15.2137 3.04712 14.0378C2.28422 12.8619 1.92186 11.471 2.01409 10.0723C2.10631 8.67368 2.64819 7.34233 3.55888 6.27682C4.46958 5.2113 5.70031 4.46872 7.06752 4.15981C8.43474 3.85091 9.86519 3.99224 11.1455 4.56272" stroke="#65BF70" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       <path d="M15 5L8.84615 12L7 9.9021" stroke="#65BF70" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
-
     {{ 'Product.Stock' | translate }}
   </div>
 
-  <div class="details__row" *ngIf="product.model">
-    <div class="details__col">
-      <div class="details__label">{{ labels['model'] | translate }}</div>
-      <div class="details__item">{{ product.model }}</div>
-    </div>
-  </div>
-
-  <div class="details__row" *ngIf="product.type">
-    <div class="details__col">
-      <div class="details__label">{{ labels['type'] | translate }}</div>
-      <div class="details__item">{{ product.type | translate }}</div>
-    </div>
-  </div>
-
-  <div class="details__row" *ngIf="product.material">
-    <div class="details__col">
-      <div class="details__label">{{ labels['material'] | translate }}</div>
-      <div class="details__item">{{ product.material | translate }}</div>
-    </div>
-  </div>
-
-  <ng-container *ngIf="product.characteristic?.length">
-    <ng-container *ngFor="let carac of product.characteristic">
-      <div class="details__row" *ngIf="carac.key?.ro">
-        <div class="details__col">
-          <div class="details__label">{{ carac.key | translate }}:</div>
-          <div class="details__item">{{ carac.value | translate }}</div>
-        </div>
+  <div class="buy">
+    <div class="buy__row">
+      <div class="buy__field buy__field--qty">
+        <span class="buy__label">{{ 'Product.Field.Quantity' | translate | uppercase }}</span>
+        <app-counter [value]="quantity" (counterChange)="getQuantity($event)"></app-counter>
       </div>
-    </ng-container>
-  </ng-container>
+      <div class="buy__field buy__field--dim" *ngIf="sizesOptions?.length">
+        <span class="buy__label">{{ 'Product.Field.Dimension' | translate | uppercase }}</span>
+        <app-select [selectedOption]="initialOption" [options]="sizesOptions"
+                    (optionSelected)="changeOption($event)"></app-select>
+      </div>
+    </div>
 
-  <div class="details__row" *ngIf="sizesOptions?.length">
-    <div class="details__col">
-      <div class="details__label">{{ labels['depth'] | translate }}</div>
-      <div class="details__item" *ngIf="selectedSizes?.height">{{ getSizeMeasure(selectedSizes.height) }}</div>
-    </div>
-    <div class="details__col">
-      <div class="details__label">{{ labels['width'] | translate }}</div>
-      <div class="details__item" *ngIf="selectedSizes?.width">{{ getSizeMeasure(selectedSizes.width) }}</div>
-    </div>
-    <div class="details__col">
-      <div class="details__label">{{ labels['length'] | translate }}</div>
-      <div class="details__item" *ngIf="selectedSizes?.length">{{ getSizeMeasure(selectedSizes.length) }}</div>
-    </div>
+    <button class="btn btn--cart" *ngIf="cart" (click)="addToCart()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+      </svg>
+      {{ 'Product.Button.AddToCart' | translate }}
+    </button>
+
+    <a class="btn btn--contact" [href]="'tel:' + contactPhone.main_phone">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+      </svg>
+      {{ 'Product.Button.ContactOffer' | translate }}
+    </a>
+
+    <button class="btn btn--fav" type="button" [class.active]="isFavorite" (click)="toggleFavorite()">
+      <svg width="20" height="20" viewBox="0 0 24 24" [attr.fill]="isFavorite ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+      </svg>
+      {{ 'Product.Button.Favorite' | translate }}
+    </button>
   </div>
-
-  <div class="details__quantity">
-    <div class="details__label">{{ 'Product.Label.Amount' | translate }}</div>
-
-    <div class="details__row">
-      <app-counter [value]="quantity" (counterChange)="getQuantity($event)"></app-counter>
-      <app-select [selectedOption]="initialOption" [options]="sizesOptions"
-                  (optionSelected)="changeOption($event)" *ngIf="sizesOptions?.length"></app-select>
-    </div>
-  </div>
-
-  <button class="details__button default" (click)="buyNow()">{{ 'Product.Button.Buy' | translate }}</button><br>
-  <button class="details__button default" *ngIf="cart" (click)="addToCart()">{{ 'Product.Button.AddToCart' | translate }}</button>
-  <button class="details__button default green-button"><a [href]="'tel:' + contactPhone.main_phone">{{ 'Contact.Button.Contact' | translate }}</a></button>
 
   <ng-content></ng-content>
 </div>
