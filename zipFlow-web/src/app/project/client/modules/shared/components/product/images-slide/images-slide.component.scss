@@ -2,20 +2,24 @@
 
 .images {
   display: flex;
-  align-items: stretch;
-  gap: 20px;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 6px;
 
   &__left {
-    overflow-y: auto;
-    max-height: 560px;
+    order: 2;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 12px;
-    width: 92px;
-    flex: none;
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
 
     .background-image {
+      padding-block: 3px;
+      width: 92px;
       height: 92px;
+      flex: none;
       margin: 0;
     }
     &::-webkit-scrollbar {
@@ -39,9 +43,10 @@
   }
 
   &__right {
+    order: 1;
     margin: 0;
     position: relative;
-    flex: 1;
+    width: 100%;
     min-width: 0;
 
     .badges {
@@ -160,16 +165,14 @@
 @media only screen and (max-width: 1025px) {
   .images {
     &__right {
-      margin: 30px 15px;
+      margin: 0;
     }
   }
 }
 
 @media only screen and (max-width: 768px) {
   .images {
-    flex-direction: column-reverse;
     &__right {
-      margin: 30px 0;
       width: 100%;
       .background-image {
         height: 360px;
@@ -177,10 +180,9 @@
     }
     &__left {
       width: 100%;
-      flex-direction: row;
       .background-image {
-        width: 100px;
-        height: 100px;
+        width: 80px;
+        height: 80px;
       }
     }
   }

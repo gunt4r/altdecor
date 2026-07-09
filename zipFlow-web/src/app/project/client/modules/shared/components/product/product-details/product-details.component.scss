@@ -289,7 +289,14 @@
   .buy__row {
     flex-direction: column;
     align-items: stretch;
-    gap: 12px;
+    gap: 16px;
+  }
+
+  /* The 168px basis is a column width for the desktop row; in the mobile
+     column it would become a fixed height and leave a dead gap above the
+     dimension field, so let the quantity field size to its content. */
+  .buy__field--qty {
+    flex: 0 0 auto;
   }
 
   .buy__field--dim {

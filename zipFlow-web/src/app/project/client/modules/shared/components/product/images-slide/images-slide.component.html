@@ -1,5 +1,5 @@
 <div class="images">
-  <div class="images__left">
+  <div class="images__left" *ngIf="images.length > 1">
     <ng-container *ngFor="let image of images; let i = index">
       <div class="background-image">
         <div class="images__item" (click)="changeImage(i)" [ngClass]="{ active: imageIndex === i }" [ngStyle]="{ backgroundImage: 'url(' + image.path +')' }"></div>

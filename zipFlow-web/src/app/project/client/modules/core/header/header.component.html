@@ -265,17 +265,21 @@
       </div>
     </div>
 
-    <div class="product-preview">
+    <div class="product-preview" *ngIf="showProducts?.length">
       <div class="preview-card"
-              *ngFor="let product of showProducts | slice:0:2"
+              *ngFor="let product of showProducts | slice:0:21"
               (click)="goToNavLink({ path: '/products/' + product.id })">
         <div class="preview-image" [style.background-image]="'url(' + product.image + ')'">
-          <span class="preview-badge">-20%</span>
         </div>
-        <div class="preview-content">
+        <div class="preview-info">
           <h4>{{ getLocalizedLabel(product.title) }}</h4>
-          <button class="preview-add" type="button">Adaugă</button>
         </div>
+      </div>
+    </div>
+    <div class="product-preview product-preview--empty" *ngIf="!showProducts?.length">
+      <div class="no-products-msg">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <p>Selectați o categorie</p>
       </div>
     </div>
   </div>
