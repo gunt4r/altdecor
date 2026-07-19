@@ -3,6 +3,11 @@
     <h2 class="spec__title">{{ 'Product.Spec.Title' | translate | uppercase }}</h2>
 
     <div class="spec__table">
+      <div class="spec__row" *ngIf="product.labels?.[0]">
+        <div class="spec__key">{{ 'Product.Label.Cod' | translate }}</div>
+        <div class="spec__val">{{ product.labels[0] | translate }}</div>
+      </div>
+
       <div class="spec__row" *ngIf="product.model">
         <div class="spec__key">{{ 'Product.Spec.Model' | translate }}</div>
         <div class="spec__val">{{ product.model }}</div>
@@ -19,14 +24,10 @@
       </div>
 
       <!-- Every characteristic configured in the admin panel is rendered inside the table. -->
-      <ng-container *ngIf="product.characteristic?.length">
-        <ng-container *ngFor="let carac of product.characteristic">
-          <div class="spec__row" *ngIf="carac.key?.ro || carac.key?.ru || carac.key?.en">
-            <div class="spec__key">{{ carac.key | translate }}</div>
-            <div class="spec__val">{{ carac.value | translate }}</div>
-          </div>
-        </ng-container>
-      </ng-container>
+      <div class="spec__row" *ngFor="let carac of specCharacteristics">
+        <div class="spec__key">{{ carac.key | translate }}</div>
+        <div class="spec__val">{{ carac.value | translate }}</div>
+      </div>
     </div>
   </section>
 

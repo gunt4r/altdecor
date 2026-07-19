@@ -5,6 +5,7 @@ import {PublicService} from "../../../shared/services/public.service";
 import {isPlatformBrowser} from "@angular/common";
 import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
 import {findObjectByKey} from "../../../../../../theme/shared/utils/form.utils";
+import {isDesignerRole} from "../../../../../../theme/client/utils/contact.utils";
 import {catchError, filter, forkJoin, of} from "rxjs";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
@@ -110,12 +111,27 @@ export class ContactsComponent implements OnInit {
   }
 
   private buildDesignerPhones(generalData: any[]) {
-    const designers = findObjectByKey(generalData?.[0]?.data, 'designer_phones');
-    if (Array.isArray(designers)) {
+    const data = generalData?.[0]?.data;
+
+    // Preferred source, if the admin schema ever gains a dedicated list.
+    const designers = findObjectByKey(data, 'designer_phones');
+    if (Array.isArray(designers) && designers.length) {
       this.designerPhones = designers.map((d: any) => ({
         name: typeof d.label === 'object' ? (d.label?.[this.currentLanguage] || d.label?.['ro'] || '') : (d.label || ''),
         phone: d.link || d.phone || ''
-      }));
+      })).filter((d: any) => d.phone);
+      return;
+    }
+
+    // The General details admin form has no designer field — it only has `managers`
+    // (name/role/phone/email). A designer contact is therefore added as a manager
+    // whose role says "designer", so pick those out by role.
+    const managers = findObjectByKey(data, 'managers');
+    if (Array.isArray(managers)) {
+      this.designerPhones = managers
+        .filter((m: any) => isDesignerRole(m?.role))
+        .map((m: any) => ({name: m?.name || '', phone: m?.phone || ''}))
+        .filter((d: any) => d.phone);
     }
   }
 

@@ -105,6 +105,34 @@ export class ProductDetailsComponent implements OnInit {
     localStorage.setItem(this.favKey, JSON.stringify(list));
   }
 
+  /** Translatable values arrive as {ro, ru, en}; flatten to something comparable. */
+  private plainValue(value: any): string {
+    if (value === null || value === undefined) {
+      return '';
+    }
+    if (typeof value === 'object') {
+      return String(value['ro'] ?? value['ru'] ?? value['en'] ?? Object.values(value)[0] ?? '').trim();
+    }
+    return String(value).trim();
+  }
+
+  /**
+   * Admin-configured characteristics for the spec table. Rows without a key are
+   * skipped, and a characteristic repeating the product code is dropped because
+   * the code already has its own dedicated first row.
+   */
+  get specCharacteristics(): any[] {
+    const sku = this.plainValue(this.product?.labels?.[0]);
+
+    return (this.product?.characteristic || []).filter((carac: any) => {
+      const key = carac?.key;
+      if (!(key?.ro || key?.ru || key?.en)) {
+        return false;
+      }
+      return !(sku && this.plainValue(carac?.value) === sku);
+    });
+  }
+
   getSizeMeasure(size: number | string): string {
     return size + ' ' + this.product.measure;
   }

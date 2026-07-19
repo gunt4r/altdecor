@@ -15,7 +15,7 @@ import {
 } from "../../../../../../theme/client/utils/api-params.utils";
 import {findObjectByKey, getLocalized} from "../../../../../../theme/shared/utils/form.utils";
 import {ProductsSort} from "./products-header/products-sort.enum";
-import {forkJoin, tap} from "rxjs";
+import {catchError, forkJoin, of, tap} from "rxjs";
 import {QueryParamsService} from "../../../../../../theme/shared/services/query-params.service";
 import {isPlatformBrowser} from "@angular/common";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
@@ -179,6 +179,12 @@ export class ProductsComponent implements OnInit {
         },
         {
           key: 'product_category',
+          value: params.search,
+          linkWord: LinkWord.CONTAINS,
+          prefix: ParamsPrefix.OR
+        },
+        {
+          key: 'sku',
           value: params.search,
           linkWord: LinkWord.CONTAINS,
           prefix: ParamsPrefix.OR
@@ -618,9 +624,20 @@ export class ProductsComponent implements OnInit {
   getData(params: any) {
     this.productsLoading = true;
 
-    this.publicService.getProducts(params).pipe(takeUntilDestroyed(this.destroy)).subscribe(response => {
+    // `id` is a table column rather than a searchable data key, so a purely numeric
+    // search term is additionally looked up straight by product id. Only done for the
+    // first page — on "load more" the row is already in the list.
+    const term = (this.searchString || '').trim();
+    const byId$ = !this.saveOld && /^\d+$/.test(term)
+      ? this.publicService.getProductById(term).pipe(catchError(() => of(null)))
+      : of(null);
+
+    forkJoin([
+      this.publicService.getProducts(params),
+      byId$
+    ]).pipe(takeUntilDestroyed(this.destroy)).subscribe(([response, byId]: [any, any]) => {
       if (response && response.data) {
-        const content = (this.saveOld ? this.products.content : []).concat(response.data.map((item: any) => {
+        const mapProduct = (item: any) => {
           const configuration = findObjectByKey(item.data, 'configurations')?.[0]?.['configuration']?.[0];
           return {
             image: findObjectByKey(item.data, 'images')?.[0]?.['file_url'],
@@ -639,7 +656,18 @@ export class ProductsComponent implements OnInit {
             comingSoon: findObjectByKey(item.data, 'coming_soon'),
             id: item.id
           };
-        }));
+        };
+
+        const rows = response.data.map(mapProduct);
+
+        const idMatch = byId?.data && !rows.some((row: any) => String(row.id) === String(byId.id))
+          ? mapProduct(byId)
+          : null;
+        if (idMatch) {
+          rows.unshift(idMatch);
+        }
+
+        const content = (this.saveOld ? this.products.content : []).concat(rows);
 
         if (this.priceSortOrder) {
           // Whole set fetched → sort once, keep the pool, show only the first page.
@@ -653,7 +681,7 @@ export class ProductsComponent implements OnInit {
         } else {
           this.products = {
             content,
-            total: response.meta.total
+            total: response.meta.total + (idMatch ? 1 : 0)
           };
         }
 

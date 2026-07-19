@@ -26,24 +26,19 @@
     color: $base-color;
     font-size: clamp(22px, 2.4vw, 32px);
     line-height: 1.15;
-    margin-bottom: 10px;
-  }
-
-  .product__cod {
-    font-size: 15px;
-    font-weight: 600;
-    color: $label-item;
   }
 }
 
-/* ── Trust / feature strip ─────────────────────────────── */
+/* ── Trust / feature strip ─────────────────────────────────
+   Lives at the bottom of the media column (under the gallery), filling the
+   space the taller aside would otherwise leave blank. */
 .product-features {
-  margin: 40px 50px 0;
-  padding: 26px 0 8px;
+  margin-top: 28px;
+  padding-top: 24px;
   border-top: 1px solid #ececec;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px 20px;
 
   &__item {
     display: flex;
@@ -86,15 +81,31 @@
 }
 
 @media only screen and (max-width: 1100px) {
+  /* Stacked layout: `display: contents` lifts the gallery and the feature strip out
+     of the media column so the strip can be ordered below the details instead of
+     wedging itself between the gallery and the title. */
   .product {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 24px;
     margin: 0;
   }
 
+  .product__media {
+    display: contents;
+  }
+
+  .product__media app-images-slide {
+    order: 1;
+  }
+
+  .product__aside {
+    order: 2;
+  }
+
   .product-features {
-    margin: 32px 0 0;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    order: 3;
+    margin-top: 4px;
     gap: 20px;
   }
 }
@@ -103,11 +114,6 @@
   .product__head {
     .product__title {
       font-size: 20px;
-    }
-
-    .product__cod {
-      font-size: 12px;
-      font-weight: 500;
     }
   }
 

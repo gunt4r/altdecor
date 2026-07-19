@@ -441,24 +441,42 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
     const searchParam = [
       {key: 'product_type', value: term, linkWord: LinkWord.CONTAINS, prefix: ParamsPrefix.OR},
       {key: 'product_category', value: term, linkWord: LinkWord.CONTAINS, prefix: ParamsPrefix.OR},
+      {key: 'sku', value: term, linkWord: LinkWord.CONTAINS, prefix: ParamsPrefix.OR},
       {key: 'title', value: term, linkWord: LinkWord.CONTAINS}
     ];
     const params = getApiParams(searchParam, undefined, {sortBy: 'created_at', sortOrder: SortTypes.DESC}, 1, 6, false);
 
-    this.publicService.getProducts(params).pipe(
-      catchError(() => of({data: []})),
+    // `id` is a table column, not a searchable data key, so a numeric term is also
+    // looked up directly by product id and surfaced first.
+    const byId$ = /^\d+$/.test(term)
+      ? this.publicService.getProductById(term).pipe(catchError(() => of(null)))
+      : of(null);
+
+    forkJoin([
+      this.publicService.getProducts(params).pipe(catchError(() => of({data: []}))),
+      byId$
+    ]).pipe(
       takeUntilDestroyed(this.destroy)
-    ).subscribe((res: any) => {
+    ).subscribe(([res, byId]: [any, any]) => {
       // Ignore a stale response if the user has kept typing.
       if ((this.searchTerm || '').trim() !== term) {
         return;
       }
-      this.searchResults = (res?.data || []).map((product: any) => ({
+
+      const toResult = (product: any) => ({
         id: product.id,
         title: this.getLocalizedLabel(findObjectByKey(product.data, 'title')),
         image: findObjectByKey(product.data, 'images')?.[0]?.['file_url'] || '',
         url: `/products/${product.id}`
-      }));
+      });
+
+      const results = (res?.data || []).map(toResult);
+
+      if (byId?.data && !results.some((r: MenuProduct) => String(r.id) === String(byId.id))) {
+        results.unshift(toResult(byId));
+      }
+
+      this.searchResults = results.slice(0, 6);
       this.isSearchLoading = false;
       this.cdr.detectChanges();
     });
