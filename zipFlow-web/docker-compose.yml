@@ -7,6 +7,9 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - /etc/letsencrypt/live/altdecor.md/fullchain.pem:/etc/letsencrypt/live/altdecor.md/fullchain.pem
       - /etc/letsencrypt/live/altdecor.md/privkey.pem:/etc/letsencrypt/live/altdecor.md/privkey.pem
+      # Webroot certbot writes ACME challenge tokens into; nginx serves it from
+      # the port-80 /.well-known/acme-challenge/ block during cert renewal.
+      - /var/www/certbot:/usr/share/nginx/certbot
     ports:
       - "443:443"
       - "80:80"
