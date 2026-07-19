@@ -8,9 +8,12 @@ import {ToastrModule, ToastrService} from "ngx-toastr";
 @NgModule({
   imports: [
     ToastrModule.forRoot({
+      timeOut: 3000,
       extendedTimeOut: 2000,
       tapToDismiss: true,
-      positionClass: 'toast-top-center',
+      positionClass: 'toast-bottom-right',
+      progressBar: true,
+      closeButton: true,
       preventDuplicates: true
     })
   ],

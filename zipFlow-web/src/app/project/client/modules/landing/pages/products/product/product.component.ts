@@ -19,15 +19,6 @@ export class ProductComponent {
   constructor(private cartService: CartProductService, private dialog: Dialog) {
   }
 
-  // Vertical dimension chip shown on the card image (e.g. "2800 mm"). Sizes come
-  // as "970x2800x4" / "970*2800*4" etc; the principal (largest) dimension is the
-  // panel height shown in the design. Empty when there's no usable size.
-  get dimensionLabel(): string {
-    const nums = String(this.product.size ?? '').match(/\d+/g)?.map(Number) ?? [];
-    if (!nums.length) return '';
-    return `${Math.max(...nums)} mm`;
-  }
-
   private isValidPrice(value?: string): boolean {
     return !!value && !/undefined|null|nan/i.test(value);
   }

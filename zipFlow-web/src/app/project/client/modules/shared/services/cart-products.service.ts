@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import {CartProduct} from "../interfaces/interfaces";
 import {ToastrService} from "ngx-toastr";
+import {TranslateService} from "./translate.service";
 import {BehaviorSubject} from "rxjs";
+import * as _ from "lodash";
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +11,7 @@ import {BehaviorSubject} from "rxjs";
 export class CartProductService {
   cartCountValue: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
-  constructor(private toastr: ToastrService) {}
+  constructor(private toastr: ToastrService, private translate: TranslateService) {}
 
   addProductToCart(product: any, quantity?: number) {
     let storageProducts: any = localStorage.getItem('cart_products');
@@ -33,7 +35,9 @@ export class CartProductService {
       localStorage.setItem('cart_products', JSON.stringify(storageProducts));
 
       if(!quantity) {
-        this.toastr.success(`Product added to cart!`);
+        const text = _.get(this.translate.data, 'Cart.AddedToastText') || 'Product added to your cart.';
+        const title = _.get(this.translate.data, 'Cart.AddedToastTitle') || 'Added to cart';
+        this.toastr.success(text, title);
       }
     }
   }

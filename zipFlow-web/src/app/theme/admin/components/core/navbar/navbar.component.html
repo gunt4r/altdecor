@@ -2,6 +2,49 @@
   <div class="container-fluid px-lg">
     <div class=" navbar-wrapper">
       <a class=" navbar-logo" [routerLink]="['/']"><img src="app/theme/admin/assets/icons/logo.png"></a>
+
+      <div class="admin-search">
+        <div class="admin-search__box">
+          <svg class="admin-search__icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+          </svg>
+          <input #adminSearch class="admin-search__input" type="text" autocomplete="off"
+                 [value]="searchTerm"
+                 (input)="onSearch(adminSearch.value)"
+                 (focus)="focusSearch()"
+                 placeholder="Search across all entities..." />
+          <svg *ngIf="isSearching" class="admin-search__spinner" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+               viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+          </svg>
+          <button class="admin-search__clear" type="button" *ngIf="searchTerm && !isSearching"
+                  (click)="adminSearch.value=''; clearSearch()" aria-label="Clear search">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="admin-search__results" *ngIf="showResults">
+          <div class="admin-search__empty" *ngIf="!isSearching && !results.length">
+            No results for “{{ searchTerm }}”
+          </div>
+          <div class="admin-search__loading" *ngIf="isSearching && !results.length">
+            Searching…
+          </div>
+          <div class="admin-search__group" *ngFor="let group of results">
+            <div class="admin-search__group-title">{{ group.label }}</div>
+            <button class="admin-search__result" type="button"
+                    *ngFor="let item of group.items"
+                    (click)="selectResult(group.slug, item.id)">
+              <span class="admin-search__result-label">{{ item.label }}</span>
+              <span class="admin-search__result-id">#{{ item.id }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="navbar-collapse" [ngbCollapse]="isCollapsed">
       <ul class="navbar-nav ml-auto">

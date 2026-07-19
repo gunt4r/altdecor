@@ -204,7 +204,9 @@
 
   &.cart-open {
     backdrop-filter: blur(5px);
-    z-index: 15;
+    // Above the sticky page-header (z-index 1200) so the drawer overlays it
+    // instead of the header painting over the drawer's top.
+    z-index: 9999;
   }
 }
 

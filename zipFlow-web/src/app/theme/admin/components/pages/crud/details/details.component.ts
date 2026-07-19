@@ -41,23 +41,34 @@ export class DetailsComponent implements OnInit {
   ) {
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     if(isPlatformBrowser(this.platformId)) {
-      this.config = await this.getConfig();
-      this.currentModel = await this.getModel();
-      this.publicService.getLanguages().subscribe(res => {
-        this.languages = res.data;
-
-        if (!this.languages?.length) {
-          this.languages = [{label: 'Romanian', key: this.formLanguage}]
-        }
-
-        // create form if config exists
-        if (this.config) {
-          this.getFormData();
-        }
-      })
+      // Subscribe to the route params (not a one-time snapshot): navigating straight
+      // from one record to another (e.g. picking a second global-search result) reuses
+      // this component instance, so we must reload on every param change.
+      this.route.paramMap.subscribe(async (params) => {
+        this.modelId = params.get('entityId');
+        this.entitySlug = params.get('entitySlug');
+        await this.load();
+      });
     }
+  }
+
+  private async load() {
+    this.config = await this.getConfig();
+    this.currentModel = await this.getModel();
+    this.publicService.getLanguages().subscribe(res => {
+      this.languages = res.data;
+
+      if (!this.languages?.length) {
+        this.languages = [{label: 'Romanian', key: this.formLanguage}]
+      }
+
+      // create form if config exists
+      if (this.config) {
+        this.getFormData();
+      }
+    })
   }
 
   public async getModel() {

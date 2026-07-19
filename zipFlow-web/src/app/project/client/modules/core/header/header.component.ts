@@ -11,7 +11,8 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  PLATFORM_ID
+  PLATFORM_ID,
+  ViewChild
 } from '@angular/core';
 import {isPlatformBrowser} from "@angular/common";
 import {PageSlug} from "../../shared/components/page-container/pages.type";
@@ -19,9 +20,9 @@ import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 import {TranslateService} from "../../shared/services/translate.service";
 import {PublicService} from "../../shared/services/public.service";
 import {CartProductService} from "../../shared/services/cart-products.service";
-import {catchError, debounceTime, filter, forkJoin, of, tap} from "rxjs";
+import {catchError, debounceTime, filter, forkJoin, of, Subject, tap} from "rxjs";
 import {QueryParamsService} from "../../../../../theme/shared/services/query-params.service";
-import {SortTypes} from "../../../../../theme/client/utils/api-params.utils";
+import {getApiParams, LinkWord, ParamsPrefix, SortTypes} from "../../../../../theme/client/utils/api-params.utils";
 import {findObjectByKey} from "../../../../../theme/shared/utils/form.utils";
 import {ToastrService} from "ngx-toastr";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
@@ -54,9 +55,11 @@ interface NavProductLink {
 
 interface TopNavLink {
   label: string;
-  type: 'category' | 'route';
+  type: 'category' | 'route' | 'link';
   path?: string;
   query?: any;
+  link?: string;
+  icon?: string;
 }
 
 const FALLBACK_LANGUAGES = ['RO', 'RU', 'EN'];
@@ -64,7 +67,11 @@ const FALLBACK_LANGUAGES = ['RO', 'RU', 'EN'];
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+  styleUrls: ['./header.component.scss'],
+  // The header is highly interactive (cart, language/search/catalog dropdowns) and
+  // was producing SSR hydration mismatches that left toggles broken. Skip hydration
+  // so it renders cleanly on the client.
+  host: {ngSkipHydration: 'true'}
 })
 export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   @Output() active: EventEmitter<boolean> = new EventEmitter(false);
@@ -92,6 +99,8 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   menuKeys: string[] = [];
   selectedLanguage = (localStorage.getItem('language') || 'ro').toUpperCase();
   isCartOpen: boolean = false;
+  isSearchOpen = false;
+  @ViewChild('searchInput') searchInput?: ElementRef<HTMLInputElement>;
   isSideMenuOpen: boolean = false;
   isMobile: boolean = false;
   sizeChecked: boolean = false;
@@ -99,6 +108,11 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   cartCount = 0;
   searchParam = "search";
   searchTerm!: string;
+  // Live product-search popover (client-facing content only — products, not admin entities).
+  searchResults: MenuProduct[] = [];
+  isSearchLoading = false;
+  showSearchResults = false;
+  private searchSubject = new Subject<string>();
   currentUrl = '';
   isLanguageDropdownOpen = false;
   isMobileNavOpen = false;
@@ -107,8 +121,17 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   private openMenuTimer: ReturnType<typeof setTimeout> | null = null;
   private closeMenuTimer: ReturnType<typeof setTimeout> | null = null;
   navProductLinks: NavProductLink[] = [];
+  // Flat desktop nav (admin "Desktop Menu" config). First MAX_FLAT_NAV shown
+  // inline; any beyond that collapse into the "More" dropdown.
   topNavLinks: TopNavLink[] = [];
-  staticNavLinks: Array<{ label: string; path: string }> = [];
+  overflowNavLinks: TopNavLink[] = [];
+  moreMenuOpen = false;
+  // Mobile drawer (admin "Drawer Menu") — flat links.
+  drawerMenuLinks: TopNavLink[] = [];
+  private desktopMenuRaw: { label: any; link: string; order: number; icon?: string }[] = [];
+  private drawerMenuRaw: { label: any; link: string; order: number; icon?: string }[] = [];
+  private readonly MAX_FLAT_NAV = 4;
+  staticNavLinks: Array<{ label: string; path: string; icon?: string }> = [];
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object,
               private route: ActivatedRoute,
@@ -144,6 +167,7 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.elementRef.nativeElement.contains(event.target)) {
       this.isLanguageDropdownOpen = false;
       this.toggleMenuOpened(false);
+      this.showSearchResults = false;
     }
   }
 
@@ -153,6 +177,7 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
       this.selectedLanguage = this.getLanguage().toUpperCase();
       this.getMenuKeys();
       this.rebuildNavLabels();
+      this.loadMenus();
       this.checkScreenSize();
 
       this.router.events.pipe(
@@ -205,6 +230,12 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
           this.searchTerm = params.search;
         }
       });
+
+      // Debounced live product search for the header popover.
+      this.searchSubject.pipe(
+        debounceTime(300),
+        takeUntilDestroyed(this.destroy)
+      ).subscribe((term: string) => this.runProductSearch(term));
 
       if (!this.languages.length) {
         this.languages = [...FALLBACK_LANGUAGES];
@@ -375,6 +406,110 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isCartOpen = !this.isCartOpen;
   }
 
+  toggleSearch(open?: boolean): void {
+    this.isSearchOpen = open ?? !this.isSearchOpen;
+    if (this.isSearchOpen && isPlatformBrowser(this.platformId)) {
+      setTimeout(() => this.searchInput?.nativeElement?.focus(), 0);
+    } else {
+      this.showSearchResults = false;
+      this.searchResults = [];
+    }
+  }
+
+  // Live typeahead: as the user types, fetch matching PRODUCTS only (client content)
+  // and show them in the popover. Enter / "see all" still opens the full results page.
+  onSearchInput(value: string): void {
+    this.searchTerm = value;
+    const term = (value || '').trim();
+    if (term.length < 2) {
+      this.searchResults = [];
+      this.showSearchResults = false;
+      this.isSearchLoading = false;
+      return;
+    }
+    this.showSearchResults = true;
+    this.isSearchLoading = true;
+    this.searchSubject.next(term);
+  }
+
+  private runProductSearch(term: string): void {
+    if (!term || term.trim().length < 2) {
+      this.isSearchLoading = false;
+      return;
+    }
+
+    const searchParam = [
+      {key: 'product_type', value: term, linkWord: LinkWord.CONTAINS, prefix: ParamsPrefix.OR},
+      {key: 'product_category', value: term, linkWord: LinkWord.CONTAINS, prefix: ParamsPrefix.OR},
+      {key: 'sku', value: term, linkWord: LinkWord.CONTAINS, prefix: ParamsPrefix.OR},
+      {key: 'title', value: term, linkWord: LinkWord.CONTAINS}
+    ];
+    const params = getApiParams(searchParam, undefined, {sortBy: 'created_at', sortOrder: SortTypes.DESC}, 1, 6, false);
+
+    // `id` is a table column, not a searchable data key, so a numeric term is also
+    // looked up directly by product id and surfaced first.
+    const byId$ = /^\d+$/.test(term)
+      ? this.publicService.getProductById(term).pipe(catchError(() => of(null)))
+      : of(null);
+
+    forkJoin([
+      this.publicService.getProducts(params).pipe(catchError(() => of({data: []}))),
+      byId$
+    ]).pipe(
+      takeUntilDestroyed(this.destroy)
+    ).subscribe(([res, byId]: [any, any]) => {
+      // Ignore a stale response if the user has kept typing.
+      if ((this.searchTerm || '').trim() !== term) {
+        return;
+      }
+
+      const toResult = (product: any) => ({
+        id: product.id,
+        title: this.getLocalizedLabel(findObjectByKey(product.data, 'title')),
+        image: findObjectByKey(product.data, 'images')?.[0]?.['file_url'] || '',
+        url: `/products/${product.id}`
+      });
+
+      const results = (res?.data || []).map(toResult);
+
+      if (byId?.data && !results.some((r: MenuProduct) => String(r.id) === String(byId.id))) {
+        results.unshift(toResult(byId));
+      }
+
+      this.searchResults = results.slice(0, 6);
+      this.isSearchLoading = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  selectSearchResult(product: MenuProduct): void {
+    this.showSearchResults = false;
+    this.searchResults = [];
+    this.isSearchOpen = false;
+    this.router.navigate([`/${this.getLanguage()}/products/${product.id}`]);
+    this.toggleMobileNav(false);
+  }
+
+  submitSearch(): void {
+    const term = (this.searchInput?.nativeElement?.value || this.searchTerm || '').trim();
+    if (!term) {
+      return;
+    }
+    const language = this.getLanguage();
+    this.showSearchResults = false;
+    this.searchResults = [];
+    this.router.navigate([`/${language}/products`], {
+      queryParams: {search: term, sortBy: 'created_at', sortOrder: 'DESC', page: 1, rowsPerPage: 12}
+    });
+    this.isSearchOpen = false;
+    this.toggleMobileNav(false);
+  }
+
+  get searchPlaceholder(): string {
+    const l = this.getLanguage();
+    return l === 'ru' ? 'Поиск товаров...' : l === 'en' ? 'Search products...' : 'Caută produse...';
+  }
+
   setActiveType(id: any) {
     this.productsMenuData.forEach((el: any) => {
       el.type.active = el.type.id === id;
@@ -401,38 +536,34 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    if (this.openMenuTimer) {
-      clearTimeout(this.openMenuTimer);
-    }
-
     if (this.closeMenuTimer) {
       clearTimeout(this.closeMenuTimer);
       this.closeMenuTimer = null;
     }
 
-    this.openMenuTimer = setTimeout(() => {
+    // Hover opens the menu immediately (only if closed, so it never fights a click).
+    if (!this.menuOpened) {
       this.toggleMenuOpened(true);
-      this.openMenuTimer = null;
-    }, 90);
+    }
+  }
+
+  onCatalogClick() {
+    // Plain toggle. Opening is usually done by hover; a click on the trigger is the
+    // explicit "close" (and the primary open action on touch devices with no hover).
+    this.toggleMenuOpened(!this.menuOpened);
   }
 
   onNavMouseLeave() {
-    if (this.isMobile) {
-      return;
-    }
+    // Intentionally a no-op: once the Catalog menu is open it must STAY open when the
+    // mouse leaves. It only closes on: clicking Catalog again, clicking outside
+    // (onDocumentClick), selecting an item (NavigationEnd), or pressing Escape.
+  }
 
-    if (this.openMenuTimer) {
-      clearTimeout(this.openMenuTimer);
-      this.openMenuTimer = null;
-    }
-
-    if (this.closeMenuTimer) {
-      clearTimeout(this.closeMenuTimer);
-    }
-
-    this.closeMenuTimer = setTimeout(() => {
+  @HostListener('document:keydown.escape')
+  onEscape() {
+    if (this.menuOpened) {
       this.toggleMenuOpened(false);
-    }, 220);
+    }
   }
 
   toggleMobileNav(value?: boolean) {
@@ -458,12 +589,41 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   handleTopNavClick(link: TopNavLink) {
+    if (link.type === 'link' && link.link) {
+      this.goToRawLink(link.link);
+      return;
+    }
+
     if (link.type === 'route' && link.path) {
       this.goToNavLink({path: link.path, query: link.query || {sortBy: 'created_at', sortOrder: 'DESC', page: 1, rowsPerPage: 12}});
       return;
     }
 
     this.goToCategoryByName(link.label);
+  }
+
+  // Navigate to an admin-provided menu link. Handles both a relative "/products?..."
+  // path and a full "https://altdecor.md/ro/products?..." URL; strips any origin and
+  // leading language segment, then re-prefixes with the active language.
+  goToRawLink(link: string) {
+    const language = this.getLanguage();
+    let path = link;
+    try {
+      if (/^https?:\/\//i.test(link)) {
+        const url = new URL(link);
+        path = url.pathname + url.search;
+      }
+    } catch {
+      // keep raw link on parse failure
+    }
+    path = path.replace(/^\/[a-z]{2}(?=\/|$)/i, '');
+    if (!path.startsWith('/')) {
+      path = `/${path}`;
+    }
+    this.router.navigateByUrl(`/${language}${path}`);
+    this.moreMenuOpen = false;
+    this.toggleMenuOpened(false);
+    this.toggleMobileNav(false);
   }
 
   goToCategoryByName(label: string) {
@@ -570,14 +730,18 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
       return this.isActiveNav(link.path);
     }
 
-    const filter = this.normalizeText(this.qpService.getParamValue('filter') || '');
-    const label = this.normalizeText(link.label);
-
-    if (!filter || !this.isActiveNav('/products')) {
+    const currentFilter = this.normalizeText(this.qpService.getParamValue('filter') || '');
+    if (!currentFilter || !this.isActiveNav('/products')) {
       return false;
     }
 
-    return filter.includes(label);
+    // For admin menu links, compare the link's own filter= param to the active one.
+    if (link.type === 'link' && link.link) {
+      const linkFilter = this.normalizeText(decodeURIComponent((link.link.match(/[?&]filter=([^&]*)/)?.[1]) || ''));
+      return !!linkFilter && currentFilter === linkFilter;
+    }
+
+    return currentFilter.includes(this.normalizeText(link.label));
   }
 
   getLocalizedLabel(label: any): string {
@@ -631,19 +795,68 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   private rebuildNavLabels() {
     const language = this.getLanguage();
 
-    this.topNavLinks = [
-      {label: language === 'ru' ? 'Промо' : language === 'en' ? 'Promotions' : 'Promoții', type: 'route', path: '/products'},
-      {label: language === 'ru' ? 'Стена' : language === 'en' ? 'Wall' : 'Perete', type: 'category'},
-      {label: language === 'ru' ? 'Пол' : language === 'en' ? 'Floor' : 'Podea', type: 'category'},
-      {label: language === 'ru' ? 'Потолок' : language === 'en' ? 'Ceiling' : 'Tavan', type: 'category'},
-      {label: language === 'ru' ? 'Аксессуары' : language === 'en' ? 'Accessories' : 'Accesorii', type: 'category'}
-    ];
+    // Desktop nav + mobile drawer entries come from the admin menus (site_config
+    // config_type=desktop_menu / drawer_menu). Rebuilt here so labels follow language.
+    this.buildDesktopMenuNav();
+    this.buildDrawerMenuNav();
 
     this.staticNavLinks = [
-      {label: language === 'ru' ? 'Блог' : language === 'en' ? 'Blog' : 'Blog', path: '/blog'},
-      {label: language === 'ru' ? 'Наши проекты' : language === 'en' ? 'Our Projects' : 'Proiectele Noastre', path: '/proiecte'},
-      {label: language === 'ru' ? 'Контакты' : language === 'en' ? 'Contacts' : 'Contacte', path: '/contacts'}
+      {label: language === 'ru' ? 'Блог' : language === 'en' ? 'Blog' : 'Blog', path: '/blog', icon: 'book'},
+      {label: language === 'ru' ? 'Наши проекты' : language === 'en' ? 'Our Projects' : 'Proiectele Noastre', path: '/proiecte', icon: 'image'},
+      {label: language === 'ru' ? 'Контакты' : language === 'en' ? 'Contacts' : 'Contacte', path: '/contacts', icon: 'phone'}
     ];
+  }
+
+  // Load the admin-configured menus from site_config in one fetch: the desktop
+  // top bar (config_type=desktop_menu) and the mobile drawer (config_type=drawer_menu).
+  // Both are lists of active entries ordered by order_index, each with a pre-built link.
+  private loadMenus() {
+    this.publicService.getSiteConfig({rowsPerPage: 200}).pipe(
+      catchError(() => of({data: []})),
+      takeUntilDestroyed(this.destroy)
+    ).subscribe((res: any) => {
+      this.desktopMenuRaw = this.extractMenu(res?.data, 'desktop_menu');
+      this.drawerMenuRaw = this.extractMenu(res?.data, 'drawer_menu');
+      this.buildDesktopMenuNav();
+      this.buildDrawerMenuNav();
+      this.cdr.detectChanges();
+    });
+  }
+
+  private extractMenu(rows: any[], configType: string) {
+    return (rows || [])
+      .filter((row: any) => findObjectByKey(row.data, 'config_type') === configType
+        && findObjectByKey(row.data, 'is_active') !== false)
+      .map((row: any) => ({
+        label: findObjectByKey(row.data, 'label'),
+        link: findObjectByKey(row.data, 'link') || '',
+        order: findObjectByKey(row.data, 'order_index') ?? 0,
+        icon: findObjectByKey(row.data, 'icon') || ''
+      }))
+      .sort((a: any, b: any) => a.order - b.order);
+  }
+
+  // Split the desktop-menu entries into the inline row + "More" overflow, with
+  // labels localized to the active language.
+  private buildDesktopMenuNav() {
+    const links: TopNavLink[] = (this.desktopMenuRaw || [])
+      .filter((e) => e.link)
+      .map((e) => ({label: this.getLocalizedLabel(e.label), type: 'link' as const, link: e.link}));
+
+    this.topNavLinks = links.slice(0, this.MAX_FLAT_NAV);
+    this.overflowNavLinks = links.slice(this.MAX_FLAT_NAV);
+  }
+
+  // Mobile drawer entries (config_type=drawer_menu), localized to the active language,
+  // carrying the admin-configured icon name (lucide: hexagon/puzzle/square/layers…).
+  private buildDrawerMenuNav() {
+    this.drawerMenuLinks = (this.drawerMenuRaw || [])
+      .filter((e) => e.link)
+      .map((e) => ({label: this.getLocalizedLabel(e.label), type: 'link' as const, link: e.link, icon: e.icon}));
+  }
+
+  toggleMoreMenu(open?: boolean) {
+    this.moreMenuOpen = open ?? !this.moreMenuOpen;
   }
 
   private syncScrollLock() {

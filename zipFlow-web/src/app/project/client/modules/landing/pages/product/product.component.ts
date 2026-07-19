@@ -44,17 +44,36 @@ export class ProductPageComponent implements OnInit {
   }
 
   ngOnInit() {
-    // if (isPlatformBrowser(this.platformId)) {
-      // this is a workaround for url matcher, fix in future releases
-      this.getInitialData();
-    // }
+    // this is a workaround for url matcher, fix in future releases
+    this.getInitialData();
+
+    // Navigating from one product to another (e.g. from the "Recommended" section)
+    // reuses this component instance, so re-fetch whenever the product id in the URL
+    // changes — otherwise the route changed but the content stayed the same.
+    this.subscriptions.push(
+      this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe(() => {
+        const parts = this.router.url.split('/');
+        const newId = parts[parts.length - 1]?.split('?')[0];
+        if (newId && newId !== this.productId) {
+          this.getInitialData();
+        }
+      })
+    );
   }
 
   getInitialData() {
     const urlParts = this.router.url.split('/');
     this.productId = urlParts[urlParts.length - 1]?.split('?')[0];
 
+    // Tear the view down while the new product loads so the details subtree
+    // (sizes, favourite state, etc.) is rebuilt for the new product.
+    this.loading = true;
     this.pages = [];
+
+    if (isPlatformBrowser(this.platformId)) {
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+
     this.getProductData();
   }
 
@@ -77,16 +96,14 @@ export class ProductPageComponent implements OnInit {
         this.product =
           {
             id: productData.id,
-            characteristic: findObjectByKey(productData.data, 'characteristic')?.map((el: any) => {
-              if (el?.property?.[0]) {
-                return {
-                  key: el?.property?.[0]['key'],
-                  value: el?.property?.[0]['value']
-                }
-              }
-
-              return null;
-            }).filter((el: any) => el),
+            // Every characteristic (and every property inside it) configured in the
+            // admin panel becomes a row in the Detalii produs table — nothing hardcoded.
+            characteristic: (findObjectByKey(productData.data, 'characteristic') || [])
+              .flatMap((el: any) => (el?.property || []).map((p: any) => ({
+                key: p?.key,
+                value: p?.value
+              })))
+              .filter((el: any) => el.key),
             labels: [findObjectByKey(productData.data, 'sku')],
             images: findObjectByKey(productData.data, 'images')?.map((el: any) => ({
               id: el.id,

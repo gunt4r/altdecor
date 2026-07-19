@@ -39,6 +39,9 @@ export class ProductDetailsComponent implements OnInit {
 
   quantity = 1;
 
+  isFavorite = false;
+  private readonly favKey = 'favorite_products';
+
   constructor(private cartService: CartProductService,
               private router: Router,
               private publicService: PublicService,
@@ -60,6 +63,8 @@ export class ProductDetailsComponent implements OnInit {
           this.initialOption = this.getSizesOption(this.selectedSizes);
         }
       }
+      this.isFavorite = this.readFavorites().includes(String(this.product.id));
+
       this.publicService.getGeneralDetails().subscribe((response: any) => {
         if (response && response.data) {
           this.contactPhone = {
@@ -71,8 +76,65 @@ export class ProductDetailsComponent implements OnInit {
     }
   }
 
+  private readFavorites(): string[] {
+    if (!isPlatformBrowser(this.platformId)) {
+      return [];
+    }
+    try {
+      const raw = JSON.parse(localStorage.getItem(this.favKey) || '[]');
+      return Array.isArray(raw) ? raw.map((id: any) => String(id)) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  toggleFavorite() {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    const id = String(this.product.id);
+    const list = this.readFavorites();
+    const idx = list.indexOf(id);
+    if (idx >= 0) {
+      list.splice(idx, 1);
+      this.isFavorite = false;
+    } else {
+      list.push(id);
+      this.isFavorite = true;
+    }
+    localStorage.setItem(this.favKey, JSON.stringify(list));
+  }
+
+  /** Translatable values arrive as {ro, ru, en}; flatten to something comparable. */
+  private plainValue(value: any): string {
+    if (value === null || value === undefined) {
+      return '';
+    }
+    if (typeof value === 'object') {
+      return String(value['ro'] ?? value['ru'] ?? value['en'] ?? Object.values(value)[0] ?? '').trim();
+    }
+    return String(value).trim();
+  }
+
+  /**
+   * Admin-configured characteristics for the spec table. Rows without a key are
+   * skipped, and a characteristic repeating the product code is dropped because
+   * the code already has its own dedicated first row.
+   */
+  get specCharacteristics(): any[] {
+    const sku = this.plainValue(this.product?.labels?.[0]);
+
+    return (this.product?.characteristic || []).filter((carac: any) => {
+      const key = carac?.key;
+      if (!(key?.ro || key?.ru || key?.en)) {
+        return false;
+      }
+      return !(sku && this.plainValue(carac?.value) === sku);
+    });
+  }
+
   getSizeMeasure(size: number | string): string {
-    return size + ' (' + this.product.measure + ')';
+    return size + ' ' + this.product.measure;
   }
 
   changeOption(sizes: ProductSize | unknown) {
@@ -86,7 +148,7 @@ export class ProductDetailsComponent implements OnInit {
   }
 
   private getSizesOption(sizes: ProductSize): string {
-    return `${sizes.height}x${sizes.width}x${sizes.length} (${this.product.measure})`;
+    return `${sizes.width} × ${sizes.length} × ${sizes.height} ${this.product.measure}`;
   }
 
   addToCart() {

@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://localhost:8080/',
+  apiUrl: 'https://altdecor.md/',
   appUrl: 'https://altdecor.md',
   googleCloudFileUrl: '',
   secretKey: 123

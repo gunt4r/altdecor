@@ -2,19 +2,25 @@
 
 .images {
   display: flex;
-  align-items: stretch;
-  gap: 20px;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 6px;
 
   &__left {
-    overflow-y: auto;
-    max-height: 610px;
-    margin: auto 0;
+    order: 2;
     display: flex;
-    flex-direction: column;
-    width: 30%;
+    flex-direction: row;
+    gap: 12px;
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
 
     .background-image {
-      height: 145px;
+      padding-block: 3px;
+      width: 92px;
+      height: 92px;
+      flex: none;
+      margin: 0;
     }
     &::-webkit-scrollbar {
       display: none;
@@ -27,19 +33,21 @@
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
-    margin: 5px;
-    border-radius: 2px;
+    margin: 0;
+    border-radius: 10px;
 
     &.active {
-      outline: 2px solid #FFE0B1;
-      border-radius: 2px;
+      outline: 2px solid #f47920;
+      border-radius: 10px;
     }
   }
 
   &__right {
-    margin: 90px 65px;
+    order: 1;
+    margin: 0;
     position: relative;
-    width: 70%;
+    width: 100%;
+    min-width: 0;
 
     .badges {
       position: absolute;
@@ -52,7 +60,10 @@
     }
 
     .background-image {
-      height: 420px;
+      height: 560px;
+      margin: 0;
+      border-radius: 14px;
+      overflow: hidden;
     }
   }
 
@@ -63,6 +74,79 @@
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
+    border-radius: 14px;
+  }
+
+  &__nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: #ffffff;
+    color: #1b1b1b;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 5;
+    transition: background 0.18s ease, transform 0.18s ease;
+
+    &:hover {
+      background: #f47920;
+      color: #ffffff;
+    }
+
+    &--prev {
+      left: 16px;
+    }
+
+    &--next {
+      right: 16px;
+    }
+  }
+
+  &__counter {
+    position: absolute;
+    left: 50%;
+    bottom: 16px;
+    transform: translateX(-50%);
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+  }
+
+  &__counter-index {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1b1b1b;
+  }
+
+  &__dots {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  &__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #d3d3d3;
+    transition: background 0.18s ease, transform 0.18s ease;
+
+    &.active {
+      background: #f47920;
+      transform: scale(1.25);
+    }
   }
 
   // Change by animationSpeed / 2
@@ -81,16 +165,14 @@
 @media only screen and (max-width: 1025px) {
   .images {
     &__right {
-      margin: 30px 15px;
+      margin: 0;
     }
   }
 }
 
 @media only screen and (max-width: 768px) {
   .images {
-    flex-direction: column-reverse;
     &__right {
-      margin: 30px 0;
       width: 100%;
       .background-image {
         height: 360px;
@@ -98,10 +180,9 @@
     }
     &__left {
       width: 100%;
-      flex-direction: row;
       .background-image {
-        width: 100px;
-        height: 100px;
+        width: 80px;
+        height: 80px;
       }
     }
   }

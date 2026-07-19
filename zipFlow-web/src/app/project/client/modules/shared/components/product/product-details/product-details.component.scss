@@ -2,143 +2,304 @@
 @import '../../../../../../../../assets/styles/components';
 
 .details {
-  margin: 30px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
 
-  &__item, &__label {
-    font-size: 11px;
-    font-weight: 700;
-    line-height: inherit;
-  }
-
-  &__item {
-    color: $label-item;
-  }
-
-  &__label {
-    color: $base-color;
-  }
+/* ── Detalii produs card ───────────────────────────────── */
+.spec {
+  border: 1px solid #ececec;
+  border-radius: 12px;
+  padding: 20px 22px 22px;
+  background: #fff;
 
   &__title {
-    font-weight: 700;
+    margin: 0 0 14px;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
     color: $base-color;
-    font-size: 30px;
-    margin-bottom: 10px;
-    line-height: inherit;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #f47920;
+    display: inline-block;
   }
 
-  &__prices {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-
-    .price {
-      &--new {
-        color: $sea-green;
-        font-size: 20px;
-        font-weight: 700;
-        line-height: inherit;
-      }
-
-      &--old {
-        color: $gray-light;
-        font-size: 15px;
-        font-weight: 700;
-        line-height: inherit;
-        text-decoration: line-through;
-      }
-    }
-  }
-
-  &__spacer {
-    width: 100%;
-    height: 20px;
-  }
-
-  &__stock {
-    font-size: 12px;
-    line-height: inherit;
-    font-weight: 400;
-    color: $base-color;
-    display: flex;
-    align-items: center;
-    gap: 5px;
+  &__table {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    overflow: hidden;
   }
 
   &__row {
-    display: flex;
-    align-items: stretch;
-    gap: 10px;
-    margin-bottom: 5px;
-  }
+    display: grid;
+    grid-template-columns: minmax(130px, 0.8fr) minmax(0, 1.2fr);
+    gap: 16px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
 
-  &__col {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
+    &:nth-child(even) {
+      background: #f8f8f8;
+    }
 
-  &__quantity {
-    .details__label {
-      font-size: 14px;
-      line-height: inherit;
-      margin-top: 20px;
+    &:last-child {
+      border-bottom: none;
     }
   }
 
- .green-button {
-   background: #5ECE7B;
-   a {
-     text-decoration: none;
-     color: white;
-   }
- }
+  &__key {
+    font-size: 14px;
+    font-weight: 700;
+    color: $base-color;
+  }
 
-  &__button {
-    margin-top: 7px;
-    width: 100% !important;
-    max-width: 433px;
+  &__val {
+    font-size: 14px;
+    color: $label-item;
+    word-break: break-word;
   }
 }
 
-@media only screen and (max-width: 1200px) {
-  .details {
-    text-align: left;
-    &__title {
-      display: none;
-    }
-    &__prices, &__stock {
-      justify-content: flex-start;
-    }
-    &__row {
-      justify-content: flex-start;
-      flex-wrap: wrap;
-    }
-    &__item, &__label {
-      font-size: 16px;
-      line-height: inherit;
-      padding: 5px 0;
+/* ── Dimensions strip ──────────────────────────────────── */
+.dims {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border: 1px solid #ececec;
+  border-radius: 8px;
+  overflow: hidden;
+
+  &__col {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 16px 18px;
+
+    & + & {
+      border-left: 1px solid #ececec;
     }
   }
-  .product-cod {
-    display: none;
+
+  &__label {
+    font-size: 13px;
+    font-weight: 700;
+    color: $base-color;
+  }
+
+  &__val {
+    font-size: 14px;
+    color: $label-item;
+  }
+}
+
+/* ── Stock pill ────────────────────────────────────────── */
+.stock {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border: 1px solid #d9efdc;
+  border-radius: 10px;
+  background: #f4fbf5;
+  font-size: 14px;
+  font-weight: 600;
+  color: #2f9d47;
+}
+
+/* ── Purchase block ────────────────────────────────────── */
+.buy {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  &__row {
+    display: flex;
+    gap: 16px;
+    align-items: flex-end;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    &--qty {
+      flex: 0 0 168px;
+    }
+
+    &--dim {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+
+  &__label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: $label-item;
+  }
+}
+
+/* Scoped restyle of the shared counter + select so they read as a matched pair on the
+   product page (design parity). `.buy` keeps these overrides from leaking to the cart /
+   checkout / products-header, which use the same components with their own look. */
+.buy ::ng-deep .counter {
+  height: 52px;
+  width: 100%;
+  padding: 0 4px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  gap: 0;
+  justify-content: space-between;
+
+  .counter__action {
+    height: 100%;
+    width: 44px;
+    border-radius: 6px;
+    transition: background 0.15s ease;
+
+    &:hover {
+      background: #f6f6f6;
+    }
+
+    img {
+      width: 13px;
+    }
+  }
+
+  .counter__value {
+    flex: 1;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    color: $base-color;
+  }
+}
+
+.buy__field--dim ::ng-deep .custom-select {
+  display: block;
+  width: 100%;
+
+  .custom-select__button {
+    width: 100%;
+    min-width: 0;
+    height: 52px;
+    padding: 0 18px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    color: $base-color;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+    &:hover {
+      border-color: #c9c9c9;
+    }
+
+    span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    img {
+      width: 14px;
+      flex: none;
+      margin-left: 12px;
+    }
+  }
+
+  .custom-select__list {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+
+    li {
+      text-align: left;
+      padding: 12px 18px;
+      font-size: 14px;
+      transition: background 0.15s ease;
+
+      &:hover {
+        background: #faf1e7;
+      }
+    }
+  }
+}
+
+.btn {
+  width: 100%;
+  height: 54px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+
+  &--cart {
+    background: #f47920;
+    color: #fff;
+
+    &:hover {
+      background: #e06a15;
+    }
+  }
+
+  &--contact {
+    background: #fff;
+    color: #2f9d47;
+    border-color: #2f9d47;
+
+    &:hover {
+      background: #f4fbf5;
+    }
+  }
+
+  &--fav {
+    height: 44px;
+    background: transparent;
+    color: $label-item;
+    font-weight: 600;
+
+    &:hover {
+      color: #f47920;
+    }
+
+    &.active {
+      color: #f47920;
+    }
   }
 }
 
 @media (max-width: 767px) {
   .details {
-    &__item, &__label {
-      font-size: 12px;
-      padding: 0;
-      line-height: normal;
-      font-weight: 500;
-    }
-    &__spacer {
-      height: 0;
-    }
-    &__quantity {
-      .details__label {
-        margin-top: 5px;
-      }
-    }
+    gap: 16px;
+  }
+
+  .spec {
+    padding: 16px 16px 4px;
+  }
+
+  .buy__row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  /* The 168px basis is a column width for the desktop row; in the mobile
+     column it would become a fixed height and leave a dead gap above the
+     dimension field, so let the quantity field size to its content. */
+  .buy__field--qty {
+    flex: 0 0 auto;
+  }
+
+  .buy__field--dim {
+    width: 100%;
   }
 }
